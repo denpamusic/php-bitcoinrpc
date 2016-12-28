@@ -1,0 +1,11 @@
+{
+    "name": "denpa/php-bitapi",
+    "autoload": {
+        "psr-0" : {
+            "Denpa\\Bitcoin" : "src"
+        }
+    },
+	"require": {
+        "guzzlehttp/guzzle": "^6.2"
+    }
+}
