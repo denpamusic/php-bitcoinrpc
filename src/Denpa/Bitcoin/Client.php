@@ -72,8 +72,12 @@ class Client {
 	 * @param string $method
 	 * @param array $params
 	 */
-	public function request($method, Array $params = []) {
+	public function request($method, $params = []) {
 		try {
+			if(!is_array($params)) {
+				$params = [ $params ];
+			}
+
 			$response = $this->client->request('POST', '/', ['json' => [
 				'method' => $method,
 				'params' => $params,
