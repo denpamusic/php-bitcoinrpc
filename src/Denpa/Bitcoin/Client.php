@@ -65,6 +65,7 @@ class Client {
 				$params['username'],
 				$params['password']
 			],
+			'verify'   => (isset($params['ca']) && is_file($params['ca']) ? $params['ca'] : true),
 		]);
 	}
 
