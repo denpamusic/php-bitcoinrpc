@@ -1,17 +1,11 @@
 # Simple Bitcoin JSON-RPC client based on GuzzleHttp
 
 ## Installation
-Add following lines to your project composer.json
+Run ```composer require denpa/php-bitapi``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
 	"denpa/php-bitapi": "dev-master"
-},
-"repositories": [
-	{
-		"type": "vcs",
-		"url": "https://github.com/denpamusic/php-bitapi"
-	}
-]
+}
 ```
 and run ```composer update```.
 
