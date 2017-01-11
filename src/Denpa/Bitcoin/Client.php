@@ -80,7 +80,7 @@ class Client {
 			}
 
 			$response = $this->client->request('POST', '/', ['json' => [
-				'method' => $method,
+				'method' => strtolower($method),
 				'params' => $params,
 				'id'     => $this->id++,
 			]]);
