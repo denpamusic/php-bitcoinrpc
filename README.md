@@ -5,7 +5,7 @@ Add following lines to your project composer.json
 ```javascript
 "require": {
 	"denpa/php-bitapi": "dev-master"
-}
+},
 "repositories": [
 	{
 		"type": "vcs",
