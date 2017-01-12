@@ -1,13 +1,16 @@
 # Simple Bitcoin JSON-RPC client based on GuzzleHttp
 
 ## Installation
-Run ```composer require denpa/php-bitapi``` in your project directory or add following lines to composer.json
+Run ```php composer.phar require denpa/php-bitapi``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
 	"denpa/php-bitapi": "dev-master"
 }
 ```
-and run ```composer update```.
+and run ```php composer.phar update```.
+
+## Requirements
+PHP 5.4 or higher
 
 ## Usage
 Create new object
