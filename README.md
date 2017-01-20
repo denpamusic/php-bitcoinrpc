@@ -12,7 +12,7 @@ Run ```php composer.phar require denpa/php-bitapi``` in your project directory o
 and run ```php composer.phar update```.
 
 ## Requirements
-PHP 5.4 or higher
+PHP 5.6 or higher
 
 ## Usage
 Create new object
