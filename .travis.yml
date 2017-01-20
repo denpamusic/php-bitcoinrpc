@@ -10,9 +10,14 @@ before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
 
-script: phpunit
+script:
+  - mkdir -p build/logs
+  - phpunit
 
 matrix:
   allow_failures:
     - php: hhvm
   fast_finish: true
+
+after_success:
+  - travis_retry php vendor/bin/coveralls -v
