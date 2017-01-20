@@ -6,7 +6,7 @@
 Run ```php composer.phar require denpa/php-bitapi``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-	"denpa/php-bitapi": "dev-master"
+	"denpa/php-bitapi": "~1.0"
 }
 ```
 and run ```php composer.phar update```.
