@@ -143,3 +143,5 @@ class ClientTest extends TestCase {
 		return $bitcoind;
 	}
 }
+
+?>

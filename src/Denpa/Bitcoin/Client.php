@@ -72,7 +72,7 @@ class Client {
 				$params['password']
 			],
 			'verify'   => (isset($params['ca']) && is_file($params['ca']) ? $params['ca'] : true),
-			'handler'  => (isset($params['handler']) ? $params['handler'] : ''),
+			'handler'  => (isset($params['handler']) ? $params['handler'] : null),
 		]);
 	}
 
