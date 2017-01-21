@@ -30,8 +30,7 @@ $bitcoind = new Denpa\Bitcoin\Client([
     'verify'   => '/etc/ssl/ca-cert.pem'
 ]);
 ```
-Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis).
-with magic
+Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic
 ```php
 $bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 ```

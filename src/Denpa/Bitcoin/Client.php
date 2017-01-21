@@ -19,60 +19,29 @@ class Client {
 	/**
 	 * @param array $params
 	 */
-	public function __construct(Array $params = [])
-	{
+	public function __construct(Array $params = []) {
 		if(isset($params['url'])) {
 			$url_parts = parse_url($params['url']);
 
-			if(isset($url_parts['scheme'])) {
-				$params['scheme'] = $url_parts['scheme'];
-			}
-
-			if(isset($url_parts['host'])) {
-				$params['host'] = $url_parts['host'];
-			}
-
-			if(isset($url_parts['port'])) {
-				$params['port'] = $url_parts['port'];
-			}
-
-			if(isset($url_parts['user'])) {
-				$params['username'] = $url_parts['user'];
-			}
-
-			if(isset($url_parts['pass'])) {
-				$params['password'] = $url_parts['pass'];
+			foreach(['scheme', 'host', 'port', 'user', 'pass'] as $v) {
+				if(isset($url_parts[$v])) {
+					$params[$v] = $url_parts[$v];
+				}
 			}
 		}
 
-		if(!isset($params['scheme'])) {
-			$params['scheme'] = 'http';
-		}
+		// init defaults
+		$params = $this->defaultConfig($params);
 
-		if(!isset($params['host'])) {
-			$params['host'] = '127.0.0.1';
-		}
-
-		if(!isset($params['port'])) {
-			$params['port'] = 8332;
-		}
-
-		if(!isset($params['username'])) {
-			$params['username'] = '';
-		}
-
-		if(!isset($params['password'])) {
-			$params['password'] = '';
-		}
-
+		// construct client
 		$this->client = new \GuzzleHttp\Client([
-			'base_uri' => "${params['scheme']}://${params['host']}:${params['port']}",
-			'auth'     => [
-				$params['username'],
-				$params['password']
+			'base_uri'    => "${params['scheme']}://${params['host']}:${params['port']}",
+			'auth'        => [
+				$params['user'],
+				$params['pass']
 			],
-			'verify'   => (isset($params['ca']) && is_file($params['ca']) ? $params['ca'] : true),
-			'handler'  => (isset($params['handler']) ? $params['handler'] : null),
+			'verify'      => (isset($params['ca']) && is_file($params['ca']) ? $params['ca'] : true),
+			'handler'     => (isset($params['handler']) ? $params['handler'] : null),
 		]);
 	}
 
@@ -84,27 +53,35 @@ class Client {
 	}
 
 	/**
+	 * @param array $params
+	 */
+	private function defaultConfig(Array $params = []) {
+		$defaults = [
+			'scheme' => 'http',
+			'host'   => '127.0.0.1',
+			'port'   => 8332,
+			'user'   => '',
+			'pass'   => ''
+		];
+
+		foreach($defaults as $k => $v) {
+			$params[$k] = (!isset($params[$k]) ? $v : $params[$k]);
+		}
+
+		return $params;
+	}
+
+	/**
 	 * @param string $method
 	 * @param array $params
 	 */
 	public function request($method, $params = []) {
 		try {
-			if(!is_array($params)) {
-				$params = [ $params ];
-			}
-
 			$response = $this->client->request('POST', '/', ['json' => [
 				'method' => strtolower($method),
-				'params' => $params,
-				'id'     => $this->id++,
+				'params' => (!is_array($params) ? [ $params ] : $params),
+				'id'     => $this->id++
 			]]);
-
-			$response = json_decode((string)$response->getBody(), true);
-			if(isset($response['error']) && !is_null($response['error'])) {
-				throw new ClientException($response['error']['message'], $response['error']['code']);
-			}
-
-			return $response['result'];
 		} catch(RequestException $e) {
 			if ($e->hasResponse()) {
 				$response = json_decode((string)$e->getResponse()->getBody(), true);
@@ -114,9 +91,14 @@ class Client {
 					throw new ClientException($message, $code);
 				}
 			}
-		} catch(ServerException $e) {
-			// silence is golden
 		}
+
+		$response = json_decode((string)$response->getBody(), true);
+		if(isset($response['error']) && !is_null($response['error'])) {
+			throw new ClientException($response['error']['message'], $response['error']['code']);
+		}
+
+		return $response['result'];
 	}
 
 	/**

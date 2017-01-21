@@ -8,6 +8,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Middleware;
 
 class ClientTest extends TestCase {
@@ -35,7 +36,7 @@ class ClientTest extends TestCase {
     /**
      * @dataProvider urlProvider
      */
-	public function testUrlParser($url, $scheme, $host, $port, $username, $password) {
+	public function testUrlParser($url, $scheme, $host, $port, $user, $pass) {
 		$bitcoind = new Client(['url' => $url]);
 
 		$this->assertInstanceOf(Client::class, $bitcoind);
@@ -47,8 +48,8 @@ class ClientTest extends TestCase {
 		$this->assertEquals($base_uri->getPort(), $port);
 
 		$auth = $bitcoind->getConfig('auth');
-		$this->assertEquals($auth[0], $username);
-		$this->assertEquals($auth[1], $password);
+		$this->assertEquals($auth[0], $user);
+		$this->assertEquals($auth[1], $pass);
 	}
 
 	public function urlProvider() {
@@ -75,16 +76,14 @@ class ClientTest extends TestCase {
 			'id'	 => 0,
 		]);
 
-		$mock = new MockHandler([
+		$queue = [
 			new Response(200, [], $blockHeaderJson),
 			new Response(200, [], $blockHeaderJson),
 			new Response(200, [], $rawTransactionErrorJson),
 			new Response(500, [], $rawTransactionErrorJson),
-		]);
+		];
 
-		$handlerStack = HandlerStack::create($mock);
-
-		$bitcoind = new Client(['handler' => $handlerStack]);
+		$bitcoind = new Client(['handler' => MockHandler::createWithMiddleware($queue)]);
 
 		$this->assertInstanceOf(Client::class, $bitcoind);
 
