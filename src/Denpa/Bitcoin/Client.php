@@ -3,7 +3,6 @@
 namespace Denpa\Bitcoin;
 
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ServerException;
 
 class Client {
 	/**
@@ -14,18 +13,18 @@ class Client {
 	/**
 	 * JSON-RPC Id
 	 */
-	private $id = 0;
+	private $rpcId = 0;
 
 	/**
 	 * @param array $params
 	 */
 	public function __construct(Array $params = []) {
 		if(isset($params['url'])) {
-			$url_parts = parse_url($params['url']);
+			$urlParts = parse_url($params['url']);
 
 			foreach(['scheme', 'host', 'port', 'user', 'pass'] as $v) {
-				if(isset($url_parts[$v])) {
-					$params[$v] = $url_parts[$v];
+				if(isset($urlParts[$v])) {
+					$params[$v] = $urlParts[$v];
 				}
 			}
 		}
@@ -80,7 +79,7 @@ class Client {
 			$response = $this->client->request('POST', '/', ['json' => [
 				'method' => strtolower($method),
 				'params' => (!is_array($params) ? [ $params ] : $params),
-				'id'     => $this->id++
+				'id'     => $this->rpcId++
 			]]);
 		} catch(RequestException $e) {
 			if ($e->hasResponse()) {

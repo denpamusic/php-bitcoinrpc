@@ -1,12 +1,12 @@
 # Simple Bitcoin JSON-RPC client based on GuzzleHttp
 
-[![Latest Stable Version](https://poser.pugx.org/denpa/php-bitapi/v/stable)](https://packagist.org/packages/denpa/php-bitapi) [![License](https://poser.pugx.org/denpa/php-bitapi/license)](https://packagist.org/packages/denpa/php-bitapi) [![Build Status](https://travis-ci.org/denpamusic/php-bitapi.svg?branch=master)](https://travis-ci.org/denpamusic/php-bitapi) [![Coverage Status](https://coveralls.io/repos/github/denpamusic/php-bitapi/badge.svg?branch=master)](https://coveralls.io/github/denpamusic/php-bitapi?branch=master) [![Dependency Status](https://www.versioneye.com/user/projects/58827bdae25f59002c91be10/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58827bdae25f59002c91be10)
+[![Latest Stable Version](https://poser.pugx.org/denpa/php-bitcoinrpc/v/stable)](https://packagist.org/packages/denpa/php-bitcoinrpc)[![License](https://poser.pugx.org/denpa/php-bitcoinrpc/license)](https://packagist.org/packages/denpa/php-bitcoinrpc) [![Build Status](https://travis-ci.org/denpamusic/php-bitcoinrpc.svg?branch=master)](https://travis-ci.org/denpamusic/php-bitcoinrpc) [![Test Coverage](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/coverage.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/coverage) [![Code Climate](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/gpa.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc) [![Dependency Status](https://www.versioneye.com/user/projects/58833bfce25f5900365362cf/badge.svg?style=rounded)](https://www.versioneye.com/user/projects/58833bfce25f5900365362cf)
 
 ## Installation
-Run ```php composer.phar require denpa/php-bitapi``` in your project directory or add following lines to composer.json
+Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-	"denpa/php-bitapi": "^1.0"
+	"denpa/php-bitcoinrpc": "^1.0"
 }
 ```
 and run ```php composer.phar update```.
@@ -27,7 +27,7 @@ $bitcoind = new Denpa\Bitcoin\Client([
     'port'     => 8332,
     'user'     => 'rpcuser',
     'pass'     => 'rpcpassword',
-    'verify'   => '/etc/ssl/ca-cert.pem'
+    'ca'       => '/etc/ssl/ca-cert.pem'
 ]);
 ```
 Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic

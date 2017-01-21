@@ -1,9 +1,9 @@
 {
-    "name": "denpa/php-bitapi",
+    "name": "denpa/php-bitcoinrpc",
 	"type": "library",
 	"description": "Bitcoin JSON-RPC client based on GuzzleHttp",
 	"keywords": ["bitcoin","api","jsonrpc","guzzle"],
-	"homepage": "https://github.com/denpamusic/php-bitapi",
+	"homepage": "https://github.com/denpamusic/php-bitcoinrpc",
     "license": "MIT",
     "authors": [
         {
@@ -17,8 +17,7 @@
         "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "5.7.*",
-		"satooshi/php-coveralls": "dev-master"
+        "phpunit/phpunit": "5.7.*"
     },
     "autoload": {
         "psr-0" : {

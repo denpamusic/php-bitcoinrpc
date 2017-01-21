@@ -4,12 +4,8 @@ namespace Denpa\Bitcoin;
 
 use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Middleware;
 
 class ClientTest extends TestCase {
 	private static $blockHeaderResponse = [
