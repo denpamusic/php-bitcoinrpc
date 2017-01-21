@@ -91,6 +91,7 @@ class Client {
 					throw new ClientException($message, $code);
 				}
 			}
+			throw new ClientException('Error Communicating with Server', 500);
 		}
 
 		$response = json_decode((string)$response->getBody(), true);

@@ -33,9 +33,9 @@ class ClientTest extends TestCase {
 		'message' => 'No information available about transaction'
 	];
 
-    /**
-     * @dataProvider urlProvider
-     */
+	/**
+	 * @dataProvider urlProvider
+	 */
 	public function testUrlParser($url, $scheme, $host, $port, $user, $pass) {
 		$bitcoind = new Client(['url' => $url]);
 
@@ -81,6 +81,7 @@ class ClientTest extends TestCase {
 			new Response(200, [], $blockHeaderJson),
 			new Response(200, [], $rawTransactionErrorJson),
 			new Response(500, [], $rawTransactionErrorJson),
+			new Response(500),
 		];
 
 		$bitcoind = new Client(['handler' => MockHandler::createWithMiddleware($queue)]);
@@ -90,9 +91,9 @@ class ClientTest extends TestCase {
 		return $bitcoind;
 	}
 
-    /**
-     * @depends testInstance
-     */
+	/**
+	 * @depends testInstance
+	 */
 	public function testRequest(Client $bitcoind) {
 		$response = $bitcoind->request('getblockheader', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
@@ -101,9 +102,9 @@ class ClientTest extends TestCase {
 		return $bitcoind;
 	}
 
-    /**
-     * @depends testRequest
-     */
+	/**
+	 * @depends testRequest
+	 */
 	public function testMagic(Client $bitcoind) {
 		$response = $bitcoind->getBlockHeader('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
@@ -112,9 +113,9 @@ class ClientTest extends TestCase {
 		return $bitcoind;
 	}
 
-    /**
-     * @depends testMagic
-     */
+	/**
+	 * @depends testMagic
+	 */
 	public function testClientException(Client $bitcoind) {
 		try {
 			$response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
@@ -127,9 +128,9 @@ class ClientTest extends TestCase {
 		return $bitcoind;
 	}
 
-    /**
-     * @depends testClientException
-     */
+	/**
+	 * @depends testClientException
+	 */
 	public function testClientExceptionWithServerErrorCode(Client $bitcoind) {
 		try {
 			$response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
@@ -137,6 +138,21 @@ class ClientTest extends TestCase {
 		} catch(ClientException $e) {
 			$this->assertEquals(self::$rawTransactionError['message'], $e->getMessage());
 			$this->assertEquals(self::$rawTransactionError['code'], $e->getCode());
+		}
+
+		return $bitcoind;
+	}
+
+	/**
+	 * @depends testClientExceptionWithServerErrorCode
+	 */
+	public function testClientExceptionWithNoResponseBody(Client $bitcoind) {
+		try {
+			$response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
+			$this->expectException(ClientException::class);
+		} catch(ClientException $e) {
+			$this->assertEquals('Error Communicating with Server', $e->getMessage());
+			$this->assertEquals(500, $e->getCode());
 		}
 
 		return $bitcoind;
