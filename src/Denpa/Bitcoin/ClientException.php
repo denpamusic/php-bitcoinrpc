@@ -2,6 +2,6 @@
 
 namespace Denpa\Bitcoin;
 
-class ClientException extends \Exception {}
-
-?>
+class ClientException extends \Exception
+{
+}
