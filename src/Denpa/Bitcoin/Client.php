@@ -9,7 +9,7 @@ class Client
     /**
      * Guzzle Client.
      */
-    private $client;
+    private $client = null;
 
     /**
      * JSON-RPC Id.
@@ -53,6 +53,14 @@ class Client
     {
         return (isset($this->client) && $this->client instanceof \GuzzleHttp\Client) ? $this->client->getConfig($option) : false;
     }
+
+	/**
+	 * @param void
+	 */
+	public function getClient()
+	{
+		return $this->client;
+	}
 
     /**
      * @param array $params
