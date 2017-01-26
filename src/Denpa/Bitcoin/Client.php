@@ -54,13 +54,21 @@ class Client
         return (isset($this->client) && $this->client instanceof \GuzzleHttp\Client) ? $this->client->getConfig($option) : false;
     }
 
-	/**
-	 * @param void
-	 */
-	public function getClient()
-	{
-		return $this->client;
-	}
+    /**
+     * @param void
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param \GuzzleHttp\Client
+     */
+    public function setClient(\GuzzleHttp\Client $client)
+    {
+        $this->client = $client;
+    }
 
     /**
      * @param array $params
