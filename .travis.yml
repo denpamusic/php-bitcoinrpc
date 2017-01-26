@@ -12,7 +12,7 @@ before_script:
 
 script:
   - mkdir -p build/logs
-  - phpunit
+  - php vendor/bin/phpunit
 
 matrix:
   allow_failures:
