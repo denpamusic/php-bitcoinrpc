@@ -6,7 +6,7 @@
 Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-	"denpa/php-bitcoinrpc": "^1.0"
+    "denpa/php-bitcoinrpc": "^1.0"
 }
 ```
 and run ```php composer.phar update```.
@@ -15,19 +15,19 @@ and run ```php composer.phar update```.
 PHP 5.6 or higher
 
 ## Usage
-Create new object
+Create new object with url as parameter
 ```php
-$bitcoind = new Denpa\Bitcoin\Client('https://rpcuser:rpcpassword@localhost:8332/');
+$bitcoind = new Denpa\Bitcoin\Client('http://rpcuser:rpcpassword@localhost:8332/');
 ```
 or use array to define your bitcoind settings
 ```php
 $bitcoind = new Denpa\Bitcoin\Client([
-	'scheme'   => 'https',
-    'host'     => 'localhost',
-    'port'     => 8332,
-    'user'     => 'rpcuser',
-    'pass'     => 'rpcpassword',
-    'ca'       => '/etc/ssl/ca-cert.pem'
+    'scheme' => 'http',                 // optional, default http
+    'host'   => 'localhost',            // optional, default localhost
+    'port'   => 8332,                   // optional, default 8332
+    'user'   => 'rpcuser',              // required
+    'pass'   => 'rpcpassword',          // required
+    'ca'     => '/etc/ssl/ca-cert.pem'  // optional, for use with https scheme
 ]);
 ```
 Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic
