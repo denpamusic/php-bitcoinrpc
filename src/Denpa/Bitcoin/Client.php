@@ -16,12 +16,12 @@ class Client
     /**
      * JSON-RPC Id.
      *
-     * @var integer
+     * @var int
      */
     private $rpcId = 0;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param array $params
      *
