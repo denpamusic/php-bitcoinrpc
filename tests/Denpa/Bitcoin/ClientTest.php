@@ -61,6 +61,24 @@ class ClientTest extends TestCase
             ['http://testuser:testpass@localhost:8000', 'http', 'localhost', 8000, 'testuser', 'testpass'],
         ];
     }
+    
+    public function testClientSetterGetter()
+    {
+        $bitcoind = new Client(['url' => 'http://old_client.org']);
+        $this->assertInstanceOf(Client::class, $bitcoind);
+        
+        $base_uri = $bitcoind->getConfig('base_uri');
+        $this->assertEquals($base_uri->getHost(), 'old_client.org');
+        
+        $oldClient = $bitcoind->getClient();
+        $this->assertInstanceOf(\GuzzleHttp\Client::class, $oldClient);
+        
+        $newClient = new \GuzzleHttp\Client(['base_uri' => 'http://new_client.org']);
+        $bitcoind->setClient($newClient);
+        
+        $base_uri = $bitcoind->getConfig('base_uri');
+        $this->assertEquals($base_uri->getHost(), 'new_client.org');
+    }
 
     public function testInstance()
     {
