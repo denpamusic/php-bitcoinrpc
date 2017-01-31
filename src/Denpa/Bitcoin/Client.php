@@ -7,17 +7,25 @@ use GuzzleHttp\Exception\RequestException;
 class Client
 {
     /**
-     * Guzzle Client.
+     * Http Client.
+     *
+     * @var \GuzzleHttp\Client
      */
     private $client = null;
 
     /**
      * JSON-RPC Id.
+     *
+     * @var integer
      */
     private $rpcId = 0;
 
     /**
+     * Class constructor
+     *
      * @param array $params
+     *
+     * @return void
      */
     public function __construct(array $params = [])
     {
@@ -47,7 +55,11 @@ class Client
     }
 
     /**
+     * Get http client config.
+     *
      * @param string $option
+     *
+     * @return mixed
      */
     public function getConfig($option = null)
     {
@@ -55,7 +67,9 @@ class Client
     }
 
     /**
-     * @param void
+     * Get http client.
+     *
+     * @return \GuzzleHttp\Client
      */
     public function getClient()
     {
@@ -63,7 +77,11 @@ class Client
     }
 
     /**
+     * Set http client.
+     *
      * @param \GuzzleHttp\Client
+     *
+     * @return void
      */
     public function setClient(\GuzzleHttp\Client $client)
     {
@@ -71,7 +89,11 @@ class Client
     }
 
     /**
+     * Set default config values.
+     *
      * @param array $params
+     *
+     * @return array
      */
     private function defaultConfig(array $params = [])
     {
@@ -91,8 +113,12 @@ class Client
     }
 
     /**
+     * Make request to Bitcoin Core.
+     *
      * @param string $method
      * @param array  $params
+     *
+     * @return array
      */
     public function request($method, $params = [])
     {
@@ -123,8 +149,12 @@ class Client
     }
 
     /**
+     * Magical method for making requests to Bitcoin Core.
+     *
      * @param string $method
      * @param array  $params
+     *
+     * @return array
      */
     public function __call($method, array $params = [])
     {
