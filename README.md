@@ -17,11 +17,15 @@ PHP 5.6 or higher
 ## Usage
 Create new object with url as parameter
 ```php
-$bitcoind = new Denpa\Bitcoin\Client('http://rpcuser:rpcpassword@localhost:8332/');
+use Denpa\Bitcoin\Client as BitcoinClient;
+
+$bitcoind = new BitcoinClient('http://rpcuser:rpcpassword@localhost:8332/');
 ```
 or use array to define your bitcoind settings
 ```php
-$bitcoind = new Denpa\Bitcoin\Client([
+use Denpa\Bitcoin\Client as BitcoinClient;
+
+$bitcoind = new BitcoinClient([
     'scheme' => 'http',                 // optional, default http
     'host'   => 'localhost',            // optional, default localhost
     'port'   => 8332,                   // optional, default 8332
