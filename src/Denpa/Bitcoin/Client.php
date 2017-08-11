@@ -2,6 +2,10 @@
 
 namespace Denpa\Bitcoin;
 
+use Closure;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client as GuzzleHttp;
+use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
 
 class Client
@@ -23,53 +27,46 @@ class Client
     /**
      * Class constructor.
      *
-     * @param array $params
-     *
+     * @param  array  $config
      * @return void
      */
-    public function __construct(array $params = [])
+    public function __construct(array $config = [])
     {
-        if (isset($params['url'])) {
-            $urlParts = parse_url($params['url']);
-
-            foreach (['scheme', 'host', 'port', 'user', 'pass'] as $v) {
-                if (isset($urlParts[$v])) {
-                    $params[$v] = $urlParts[$v];
-                }
-            }
-        }
-
         // init defaults
-        $params = $this->defaultConfig($params);
+        $config = $this->defaultConfig($this->expandUrl($config));
 
         // construct client
-        $this->client = new \GuzzleHttp\Client([
-            'base_uri'    => "${params['scheme']}://${params['host']}:${params['port']}",
+        $this->client = new GuzzleHttp([
+            'base_uri'    => "${config['scheme']}://${config['host']}:${config['port']}",
             'auth'        => [
-                $params['user'],
-                $params['pass'],
+                $config['user'],
+                $config['pass'],
             ],
-            'verify'      => (isset($params['ca']) && is_file($params['ca']) ? $params['ca'] : true),
-            'handler'     => (isset($params['handler']) ? $params['handler'] : null),
+            'verify'      => isset($config['ca']) && is_file($config['ca']) ?
+                $config['ca'] : true,
+            'handler'     => isset($config['handler']) ?
+                $config['handler'] : null,
         ]);
     }
 
     /**
      * Get http client config.
      *
-     * @param string $option
-     *
+     * @param  string|null  $option
      * @return mixed
      */
     public function getConfig($option = null)
     {
-        return (isset($this->client) && $this->client instanceof \GuzzleHttp\Client) ? $this->client->getConfig($option) : false;
+        return (
+                isset($this->client) &&
+                $this->client instanceof ClientInterface
+            ) ? $this->client->getConfig($option) : false;
     }
 
     /**
      * Get http client.
      *
-     * @return \GuzzleHttp\Client
+     * @return \GuzzleHttp\ClientInterface
      */
     public function getClient()
     {
@@ -79,23 +76,145 @@ class Client
     /**
      * Set http client.
      *
-     * @param \GuzzleHttp\Client
-     *
+     * @param  \GuzzleHttp\ClientInterface
      * @return void
      */
-    public function setClient(\GuzzleHttp\Client $client)
+    public function setClient(ClientInterface $client)
     {
         $this->client = $client;
+        return $this;
+    }
+
+    /**
+     * Make request to Bitcoin Core.
+     *
+     * @param  string  $method
+     * @param  mixed   $params
+     * @return array
+     */
+    public function request($method, $params = [])
+    {
+        try {
+            $json = [
+                'method' => strtolower($method),
+                'params' => (array)$params,
+                'id'     => $this->rpcId++,
+            ];
+
+            $response = $this->client->request('POST', '/', ['json' => $json]);
+
+            return $this->handleResponse($response);
+        } catch (RequestException $exception) {
+            if ($exception->hasResponse()) {
+                return $this->handleResponse($exception->getResponse());
+            }
+
+            throw new ClientException('Error Communicating with Server', 500);
+        }
+    }
+
+    /**
+     * Make async request to Bitcoin Core.
+     *
+     * @param  string  $method
+     * @param  mixed  $params
+     * @param  Closure|null  $onFullfiled
+     * @param  Closure|null  $onRejected
+     * @return void
+     */
+    public function requestAsync(
+        $method,
+        $params = [],
+        callable $onFullfiled = null,
+        callable $onRejected = null)
+    {
+        $json = [
+            'method' => strtolower($method),
+            'params' => (array)$params,
+            'id'     => $this->rpcId++,
+        ];
+
+        $promise = $this->client
+            ->requestAsync('POST', '/', ['json' => $json]);
+
+        $promise->then(
+            function (ResponseInterface $response) use ($onFullfiled) {
+                try {
+                    $response = $this->handleResponse($response);
+                } catch (ClientException $exception) {
+                    $response = $exception;
+                }
+
+                if ($onFullfiled instanceof Closure) {
+                    $onFullfiled($response);
+                }
+            },
+            function (RequestException $exception) use ($onRejected) {
+                $response = null;
+
+                if ($exception->hasResponse()) {
+                    try {
+                        $response = $this->handleResponse(
+                            $exception->getResponse()
+                        );
+                    } catch (ClientException $exception) {
+                        $response = $exception;
+                    }
+                }
+
+                if ($onRejected instanceof Closure) {
+                    $onRejected($response);
+                }
+            }
+        );
+    }
+
+    /**
+     * Magical method for making requests to Bitcoin Core.
+     *
+     * @param  string  $method
+     * @param  array  $params
+     * @return array
+     */
+    public function __call($method, array $params = [])
+    {
+        return $this->request($method, $params);
+    }
+
+    /**
+     * Handle bitcoind response.
+     *
+     * @param  \Psr\Http\Message\ResponseInterface  $response
+     * @return array
+     */
+    protected function handleResponse(ResponseInterface $response)
+    {
+        $data = json_decode($response->getBody()->__toString(), true);
+
+        if (isset($data['error'])) {
+            throw new ClientException(
+                $data['error']['message'],
+                $data['error']['code']
+            );
+        }
+
+        if ($response->getStatusCode() != 200) {
+            throw new ClientException(
+                'Error Communicating with Server',
+                $response->getStatusCode()
+            );
+        }
+
+        return isset($data['result']) ? $data['result'] : null;
     }
 
     /**
      * Set default config values.
      *
-     * @param array $params
-     *
+     * @param  array  $config
      * @return array
      */
-    private function defaultConfig(array $params = [])
+    protected function defaultConfig(array $config = [])
     {
         $defaults = [
             'scheme' => 'http',
@@ -105,59 +224,27 @@ class Client
             'pass'   => '',
         ];
 
-        foreach ($defaults as $k => $v) {
-            $params[$k] = (!isset($params[$k]) ? $v : $params[$k]);
-        }
-
-        return $params;
+        return array_merge($defaults, $config);
     }
 
     /**
-     * Make request to Bitcoin Core.
+     * Expand URL config into components.
      *
-     * @param string $method
-     * @param array  $params
-     *
+     * @param  array  $param
      * @return array
      */
-    public function request($method, $params = [])
+    protected function expandUrl(array $config)
     {
-        try {
-            $response = $this->client->request('POST', '/', ['json' => [
-                'method' => strtolower($method),
-                'params' => (!is_array($params) ? [$params] : $params),
-                'id'     => $this->rpcId++,
-            ]]);
-        } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                $response = json_decode((string) $e->getResponse()->getBody(), true);
-                if (isset($response['error'])) {
-                    $code = isset($response['error']['code']) ? $response['error']['code'] : 500;
-                    $message = isset($response['error']['message']) ? $response['error']['message'] : '';
-                    throw new ClientException($message, $code);
+        if (isset($config['url'])) {
+            $parts = parse_url($config['url']);
+
+            foreach (['scheme', 'host', 'port', 'user', 'pass'] as $setting) {
+                if (isset($parts[$setting])) {
+                    $config[$setting] = $parts[$setting];
                 }
             }
-            throw new ClientException('Error Communicating with Server', 500);
         }
 
-        $response = json_decode((string) $response->getBody(), true);
-        if (isset($response['error']) && !is_null($response['error'])) {
-            throw new ClientException($response['error']['message'], $response['error']['code']);
-        }
-
-        return $response['result'];
-    }
-
-    /**
-     * Magical method for making requests to Bitcoin Core.
-     *
-     * @param string $method
-     * @param array  $params
-     *
-     * @return array
-     */
-    public function __call($method, array $params = [])
-    {
-        return $this->request($method, $params);
+        return $config;
     }
 }

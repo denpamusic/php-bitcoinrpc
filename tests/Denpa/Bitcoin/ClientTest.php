@@ -2,13 +2,19 @@
 
 namespace Denpa\Bitcoin;
 
-use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Exception\RequestException;
 
 class ClientTest extends TestCase
 {
+    /**
+     * Block header response.
+     *
+     * @var array
+     */
     private static $blockHeaderResponse = [
         'hash'          => '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
         'confirmations' => 449162,
@@ -25,15 +31,43 @@ class ClientTest extends TestCase
         'nextblockhash' => '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048',
     ];
 
+    /**
+     * Transaction error response.
+     *
+     * @var array
+     */
     private static $rawTransactionError = [
         'code'    => -5,
         'message' => 'No information available about transaction',
     ];
 
     /**
+     * Set up test.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->bitcoind = new Client;
+    }
+
+
+    /**
+     * Test url expander.
+     *
+     * @param  string  $url
+     * @param  string  $scheme
+     * @param  string  $host
+     * @param  int  $port
+     * @param  string  $user
+     * @param  string  $pass
+     * @return void
+     *
      * @dataProvider urlProvider
      */
-    public function testUrlParser($url, $scheme, $host, $port, $user, $pass)
+    public function testUrlExpander($url, $scheme, $host, $port, $user, $pass)
     {
         $bitcoind = new Client(['url' => $url]);
 
@@ -50,6 +84,11 @@ class ClientTest extends TestCase
         $this->assertEquals($auth[1], $pass);
     }
 
+    /**
+     * Data provider for url expander test.
+     *
+     * @return array
+     */
     public function urlProvider()
     {
         return [
@@ -62,6 +101,11 @@ class ClientTest extends TestCase
         ];
     }
 
+    /**
+     * Test client getter and setter.
+     *
+     * @return void
+     */
     public function testClientSetterGetter()
     {
         $bitcoind = new Client(['url' => 'http://old_client.org']);
@@ -80,104 +124,369 @@ class ClientTest extends TestCase
         $this->assertEquals($base_uri->getHost(), 'new_client.org');
     }
 
-    public function testInstance()
+    /**
+     * Test simple request.
+     *
+     * @return void
+     */
+    public function testRequest()
     {
-        $blockHeaderJson = json_encode([
+        $guzzle = $this->mockGuzzle([
+            $this->blockHeaderResponse()
+        ]);
+
+        $response = $this->bitcoind
+            ->setClient($guzzle)
+            ->request(
+                'getblockheader',
+                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+            );
+
+        $this->assertEquals(self::$blockHeaderResponse, $response);
+    }
+
+    /**
+     * Test async request.
+     *
+     * @return void
+     */
+    public function testAsyncRequest()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->blockHeaderResponse()
+        ]);
+
+        $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getblockheader',
+                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
+                function ($response) {
+                    $this->assertEquals(self::$blockHeaderResponse, $response);
+                }
+            );
+    }
+
+    /**
+     * Test magic request.
+     *
+     * @return void
+     */
+    public function testMagic()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->blockHeaderResponse()
+        ]);
+
+        $response = $this->bitcoind
+            ->setClient($guzzle)
+            ->getBlockHeader(
+                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+            );
+
+        $this->assertEquals(self::$blockHeaderResponse, $response);
+    }
+
+    /**
+     * Test request exception.
+     *
+     * @return void
+     */
+    public function testRequestException()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->rawTransactionError(200)
+        ]);
+
+        try {
+            $response = $this->bitcoind
+                ->setClient($guzzle)
+                ->getRawTransaction(
+                    '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
+                );
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $e) {
+            $this->assertEquals(self::$rawTransactionError['message'], $e->getMessage());
+            $this->assertEquals(self::$rawTransactionError['code'], $e->getCode());
+        }
+    }
+
+    /**
+     * Test async request exception.
+     *
+     * @return void
+     */
+    public function testAsyncRequestException()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->rawTransactionError(200)
+        ]);
+
+        $response = $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getrawtransaction',
+                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
+                function ($response) {
+                    $this->assertInstanceOf(
+                        ClientException::class,
+                        $response
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['message'],
+                        $response->getMessage()
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['code'],
+                        $response->getCode()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Test request exception with error code.
+     *
+     * @return void
+     */
+    public function testRequestExceptionWithServerErrorCode()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->rawTransactionError(500)
+        ]);
+
+        try {
+            $response = $this->bitcoind
+                ->setClient($guzzle)
+                ->getRawTransaction(
+                    '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
+                );
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $exception) {
+            $this->assertEquals(
+                self::$rawTransactionError['message'],
+                $exception->getMessage()
+            );
+            $this->assertEquals(
+                self::$rawTransactionError['code'],
+                $exception->getCode()
+            );
+        }
+    }
+
+    /**
+     * Test async request exception with error code.
+     *
+     * @return void
+     */
+    public function testAsyncRequestExceptionWithServerErrorCode()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->rawTransactionError(500)
+        ]);
+
+        $response = $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getrawtransaction',
+                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
+                function ($response) {
+                    $this->assertInstanceOf(
+                        ClientException::class,
+                        $response
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['message'],
+                        $response->getMessage()
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['code'],
+                        $response->getCode()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Test request exception with empty response body.
+     *
+     * @return void
+     */
+    public function testRequestExceptionWithEmptyResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            new Response(500)
+        ]);
+
+        try {
+            $response = $this->bitcoind
+                ->setClient($guzzle)
+                ->getRawTransaction(
+                    '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
+                );
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $exception) {
+            $this->assertEquals(
+                'Error Communicating with Server',
+                $exception->getMessage()
+            );
+            $this->assertEquals(500, $exception->getCode());
+        }
+    }
+
+    /**
+     * Test async request exception with empty response body.
+     *
+     * @return void
+     */
+    public function testAsyncRequestExceptionWithEmptyResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            new Response(500)
+        ]);
+
+        $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getrawtransaction',
+                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
+                function ($response) {
+                    $this->assertInstanceOf(
+                        ClientException::class,
+                        $response
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['message'],
+                        $response->getMessage()
+                    );
+                    $this->assertEquals(
+                        self::$rawTransactionError['code'],
+                        $response->getCode()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Test request exception with no response.
+     *
+     * @return void
+     */
+    public function testRequestExceptionWithNoResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->requestException()
+        ]);
+
+        try {
+            $response = $this->bitcoind
+                ->setClient($guzzle)
+                ->getRawTransaction(
+                    '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
+                );
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $exception) {
+            $this->assertEquals(
+                'Error Communicating with Server',
+                $exception->getMessage()
+            );
+            $this->assertEquals(500, $exception->getCode());
+        }
+    }
+
+    /**
+     * Test async request exception with no response.
+     *
+     * @return void
+     */
+    public function testAsyncRequestExceptionWithNoResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->requestException()
+        ]);
+
+        $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getrawtransaction',
+                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
+                null,
+                function ($exception) {
+                    $this->assertInstanceOf(
+                        ClientException::class,
+                        $exception
+                    );
+                    $this->assertEquals(
+                        'Error Communicating with Server',
+                        $exception->getMessage()
+                    );
+                    $this->assertEquals(500, $exception->getCode());
+                }
+            );
+    }
+
+    /**
+     * Get Guzzle mock client.
+     *
+     * @param  array  $queue
+     * @return \GuzzleHttp\Client
+     */
+    protected function mockGuzzle(array $queue = [])
+    {
+        return new \GuzzleHttp\Client([
+            'handler' => new MockHandler($queue)
+        ]);
+    }
+
+    /**
+     * Make block header response.
+     *
+     * @param  int  $code
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function blockHeaderResponse($code = 200)
+    {
+        $json = json_encode([
             'result' => self::$blockHeaderResponse,
             'error'  => null,
             'id'     => 0,
         ]);
 
-        $rawTransactionErrorJson = json_encode([
+        return new Response($code, [], $json);
+    }
+
+    /**
+     * Make raw transaction error response.
+     *
+     * @param  int  $code
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function rawTransactionError($code = 500)
+    {
+        $json = json_encode([
             'result' => null,
             'error'  => self::$rawTransactionError,
             'id'     => 0,
         ]);
 
-        $queue = [
-            new Response(200, [], $blockHeaderJson),
-            new Response(200, [], $blockHeaderJson),
-            new Response(200, [], $rawTransactionErrorJson),
-            new Response(500, [], $rawTransactionErrorJson),
-            new Response(500),
-        ];
-
-        $bitcoind = new Client(['handler' => MockHandler::createWithMiddleware($queue)]);
-
-        $this->assertInstanceOf(Client::class, $bitcoind);
-
-        return $bitcoind;
+        return new Response($code, [], $json);
     }
 
     /**
-     * @depends testInstance
+     * Return exception without response.
+     *
+     * @return Closure
      */
-    public function testRequest(Client $bitcoind)
+    protected function requestException()
     {
-        $response = $bitcoind->request('getblockheader', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+        $exception = function ($request) {
+            return new RequestException('test', $request);
+        };
 
-        $this->assertArraySubset(self::$blockHeaderResponse, $response);
-
-        return $bitcoind;
-    }
-
-    /**
-     * @depends testRequest
-     */
-    public function testMagic(Client $bitcoind)
-    {
-        $response = $bitcoind->getBlockHeader('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
-
-        $this->assertArraySubset(self::$blockHeaderResponse, $response);
-
-        return $bitcoind;
-    }
-
-    /**
-     * @depends testMagic
-     */
-    public function testClientException(Client $bitcoind)
-    {
-        try {
-            $response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
-            $this->expectException(ClientException::class);
-        } catch (ClientException $e) {
-            $this->assertEquals(self::$rawTransactionError['message'], $e->getMessage());
-            $this->assertEquals(self::$rawTransactionError['code'], $e->getCode());
-        }
-
-        return $bitcoind;
-    }
-
-    /**
-     * @depends testClientException
-     */
-    public function testClientExceptionWithServerErrorCode(Client $bitcoind)
-    {
-        try {
-            $response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
-            $this->expectException(ClientException::class);
-        } catch (ClientException $e) {
-            $this->assertEquals(self::$rawTransactionError['message'], $e->getMessage());
-            $this->assertEquals(self::$rawTransactionError['code'], $e->getCode());
-        }
-
-        return $bitcoind;
-    }
-
-    /**
-     * @depends testClientExceptionWithServerErrorCode
-     */
-    public function testClientExceptionWithNoResponseBody(Client $bitcoind)
-    {
-        try {
-            $response = $bitcoind->getRawTransaction('4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b');
-            $this->expectException(ClientException::class);
-        } catch (ClientException $e) {
-            $this->assertEquals('Error Communicating with Server', $e->getMessage());
-            $this->assertEquals(500, $e->getCode());
-        }
-
-        return $bitcoind;
+        return $exception;
     }
 }
