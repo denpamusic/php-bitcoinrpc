@@ -69,7 +69,7 @@ class ClientTest extends TestCase
      */
     public function testUrlExpander($url, $scheme, $host, $port, $user, $pass)
     {
-        $bitcoind = new Client(['url' => $url]);
+        $bitcoind = new Client($url);
 
         $this->assertInstanceOf(Client::class, $bitcoind);
 
@@ -108,7 +108,7 @@ class ClientTest extends TestCase
      */
     public function testClientSetterGetter()
     {
-        $bitcoind = new Client(['url' => 'http://old_client.org']);
+        $bitcoind = new Client('http://old_client.org');
         $this->assertInstanceOf(Client::class, $bitcoind);
 
         $base_uri = $bitcoind->getConfig('base_uri');

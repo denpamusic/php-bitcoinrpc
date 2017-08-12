@@ -27,14 +27,14 @@ class Client
     /**
      * Class constructor.
      *
-     * @param array $config
+     * @param mixed $config
      *
      * @return void
      */
-    public function __construct(array $config = [])
+    public function __construct($config = [])
     {
         // init defaults
-        $config = $this->defaultConfig($this->expandUrl($config));
+        $config = $this->defaultConfig($this->parseUrl($config));
 
         // construct client
         $this->client = new GuzzleHttp([
@@ -249,20 +249,19 @@ class Client
     /**
      * Expand URL config into components.
      *
-     * @param array $param
+     * @param mixed $config
      *
      * @return array
      */
-    protected function expandUrl(array $config)
+    protected function parseUrl($config)
     {
-        if (isset($config['url'])) {
-            $parts = parse_url($config['url']);
-
-            foreach (['scheme', 'host', 'port', 'user', 'pass'] as $setting) {
-                if (isset($parts[$setting])) {
-                    $config[$setting] = $parts[$setting];
-                }
+        if (is_string($config)) {
+            $parts = parse_url($config);
+            if (!$parts) {
+                throw new ClientException('Invalid url');
             }
+
+            return $parts;
         }
 
         return $config;
