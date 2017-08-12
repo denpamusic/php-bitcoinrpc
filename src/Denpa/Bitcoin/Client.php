@@ -120,7 +120,7 @@ class Client
      * @param  mixed  $params
      * @param  Closure|null  $onFullfiled
      * @param  Closure|null  $onRejected
-     * @return void
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function requestAsync(
         $method,
@@ -150,23 +150,28 @@ class Client
                 }
             },
             function (RequestException $exception) use ($onRejected) {
-                $response = null;
-
-                if ($exception->hasResponse()) {
-                    try {
+                try {
+                    if ($exception->hasResponse()) {
                         $response = $this->handleResponse(
                             $exception->getResponse()
                         );
-                    } catch (ClientException $exception) {
-                        $response = $exception;
                     }
+
+                    throw new ClientException(
+                        'Error Communicating with Server',
+                        500
+                    );
+                } catch (ClientException $exception) {
+                    $exception = $exception;
                 }
 
                 if ($onRejected instanceof Closure) {
-                    $onRejected($response);
+                    $onRejected($exception);
                 }
             }
         );
+
+        return $promise;
     }
 
     /**

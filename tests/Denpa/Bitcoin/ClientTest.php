@@ -156,15 +156,24 @@ class ClientTest extends TestCase
             $this->blockHeaderResponse()
         ]);
 
-        $this->bitcoind
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function ($response) {
+                return is_array($response) &&
+                    $response == self::$blockHeaderResponse;
+            })
+        ]);
+
+        $promise = $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getblockheader',
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-                function ($response) {
-                    $this->assertEquals(self::$blockHeaderResponse, $response);
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
                 }
             );
+
+        $promise->wait();
     }
 
     /**
@@ -223,26 +232,25 @@ class ClientTest extends TestCase
             $this->rawTransactionError(200)
         ]);
 
-        $response = $this->bitcoind
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function ($exception) {
+                return $exception instanceof ClientException &&
+                    $exception->getMessage() == self::$rawTransactionError['message'] &&
+                    $exception->getCode() == self::$rawTransactionError['code'];
+            })
+        ]);
+
+        $promise = $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-                function ($response) {
-                    $this->assertInstanceOf(
-                        ClientException::class,
-                        $response
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['message'],
-                        $response->getMessage()
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['code'],
-                        $response->getCode()
-                    );
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
                 }
             );
+
+        $promise->wait();
     }
 
     /**
@@ -257,7 +265,7 @@ class ClientTest extends TestCase
         ]);
 
         try {
-            $response = $this->bitcoind
+            $this->bitcoind
                 ->setClient($guzzle)
                 ->getRawTransaction(
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -287,26 +295,25 @@ class ClientTest extends TestCase
             $this->rawTransactionError(500)
         ]);
 
-        $response = $this->bitcoind
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function ($exception) {
+                return $exception instanceof ClientException &&
+                    $exception->getMessage() == self::$rawTransactionError['message'] &&
+                    $exception->getCode() == self::$rawTransactionError['code'];
+            })
+        ]);
+
+        $promise = $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-                function ($response) {
-                    $this->assertInstanceOf(
-                        ClientException::class,
-                        $response
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['message'],
-                        $response->getMessage()
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['code'],
-                        $response->getCode()
-                    );
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
                 }
             );
+
+        $promise->wait();
     }
 
     /**
@@ -348,26 +355,25 @@ class ClientTest extends TestCase
             new Response(500)
         ]);
 
-        $this->bitcoind
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function ($exception) {
+                return $exception instanceof ClientException &&
+                    $exception->getMessage() == 'Error Communicating with Server' &&
+                    $exception->getCode() == 500;
+            })
+        ]);
+
+        $promise = $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-                function ($response) {
-                    $this->assertInstanceOf(
-                        ClientException::class,
-                        $response
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['message'],
-                        $response->getMessage()
-                    );
-                    $this->assertEquals(
-                        self::$rawTransactionError['code'],
-                        $response->getCode()
-                    );
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
                 }
             );
+
+        $promise->wait();
     }
 
     /**
@@ -401,6 +407,7 @@ class ClientTest extends TestCase
     /**
      * Test async request exception with no response.
      *
+     * @expectedException GuzzleHttp\Exception\RequestException
      * @return void
      */
     public function testAsyncRequestExceptionWithNoResponseBody()
@@ -409,24 +416,45 @@ class ClientTest extends TestCase
             $this->requestException()
         ]);
 
-        $this->bitcoind
+        $onRejected = $this->mockCallable([
+            $this->callback(function ($exception) {
+                return $exception instanceof ClientException &&
+                    $exception->getMessage() == 'Error Communicating with Server' &&
+                    $exception->getCode() == 500;
+            })
+        ]);
+
+        $promise = $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
                 null,
-                function ($exception) {
-                    $this->assertInstanceOf(
-                        ClientException::class,
-                        $exception
-                    );
-                    $this->assertEquals(
-                        'Error Communicating with Server',
-                        $exception->getMessage()
-                    );
-                    $this->assertEquals(500, $exception->getCode());
+                function ($exception) use ($onRejected) {
+                    $onRejected($exception);
                 }
             );
+
+        $promise->wait();
+    }
+
+    /**
+     * Get Closure mock.
+     *
+     * @param  array  $with
+     * @return callable
+     */
+    protected function mockCallable(array $with = [])
+    {
+        $callable = $this->getMockBuilder(\stdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
+        $callable->expects($this->once())
+            ->method('__invoke')
+            ->with(...$with);
+
+        return $callable;
     }
 
     /**
