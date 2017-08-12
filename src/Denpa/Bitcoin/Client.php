@@ -183,6 +183,11 @@ class Client
      */
     public function __call($method, array $params = [])
     {
+        $method = str_ireplace('async', '', $method, $count);
+        if ($count > 0) {
+            return $this->requestAsync($method, ...$params);
+        }
+
         return $this->request($method, $params);
     }
 

@@ -239,6 +239,36 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test magic request.
+     *
+     * @return void
+     */
+    public function testAsyncMagic()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->blockHeaderResponse()
+        ]);
+
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function ($response) {
+                return is_array($response) &&
+                    $response == self::$blockHeaderResponse;
+            })
+        ]);
+
+        $promise = $this->bitcoind
+            ->setClient($guzzle)
+            ->getBlockHeaderAsync(
+                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
+                }
+            );
+
+        $promise->wait();
+    }
+
+    /**
      * Test request exception.
      *
      * @return void
