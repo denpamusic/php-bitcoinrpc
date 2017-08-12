@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" stopOnFailure="true" syntaxCheck="true" bootstrap="vendor/autoload.php">
+<phpunit
+    backupGlobals="false"
+    backupStaticAttributes="false"
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
+    syntaxCheck="true"
+    verbose="true"
+>
     <testsuites>
         <testsuite name="Bitcoin API Test Suite">
             <directory>tests</directory>

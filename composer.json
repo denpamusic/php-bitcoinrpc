@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4" : {
-            "Denpa\\Bitcoin": "src"
+            "Denpa\\Bitcoin\\": "src"
         }
     }
 }
