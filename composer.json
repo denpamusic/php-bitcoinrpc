@@ -21,7 +21,7 @@
 		"codeclimate/php-test-reporter": "dev-master"
     },
     "autoload": {
-        "psr-0" : {
+        "psr-4" : {
             "Denpa\\Bitcoin": "src"
         }
     }
