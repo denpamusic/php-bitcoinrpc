@@ -256,8 +256,12 @@ class Client
     protected function parseUrl($config)
     {
         if (is_string($config)) {
-            $parts = parse_url($config);
-            if (!$parts) {
+            $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
+
+            $parts = (array) parse_url($config);
+            $parts = array_intersect_key($parts, array_flip($allowed));
+
+            if (!$parts || empty($parts)) {
                 throw new ClientException('Invalid url');
             }
 

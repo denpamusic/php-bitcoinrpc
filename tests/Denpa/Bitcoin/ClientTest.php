@@ -54,7 +54,7 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test url expander.
+     * Test url parser.
      *
      * @param string $url
      * @param string $scheme
@@ -67,7 +67,7 @@ class ClientTest extends TestCase
      *
      * @dataProvider urlProvider
      */
-    public function testUrlExpander($url, $scheme, $host, $port, $user, $pass)
+    public function testUrlParser($url, $scheme, $host, $port, $user, $pass)
     {
         $bitcoind = new Client($url);
 
@@ -99,6 +99,22 @@ class ClientTest extends TestCase
             ['http://testuser@127.0.0.1:8000/', 'http', '127.0.0.1', 8000, 'testuser', ''],
             ['http://testuser:testpass@localhost:8000', 'http', 'localhost', 8000, 'testuser', 'testpass'],
         ];
+    }
+
+    /**
+     * Test url parser with invalid url.
+     *
+     * @return array
+     */
+    public function testUrlParserWithInvalidUrl()
+    {
+        try {
+            $bitcoind = new Client('cookies!');
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $e) {
+            $this->assertEquals('Invalid url', $e->getMessage());
+        }
     }
 
     /**
