@@ -377,6 +377,71 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test request exception with response.
+     *
+     * @return void
+     */
+    public function testRequestExceptionWithResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->requestExceptionWithResponse()
+        ]);
+
+        try {
+            $response = $this->bitcoind
+                ->setClient($guzzle)
+                ->getRawTransaction(
+                    '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
+                );
+
+            $this->expectException(ClientException::class);
+        } catch (ClientException $exception) {
+            $this->assertEquals(
+                self::$rawTransactionError['message'],
+                $exception->getMessage()
+            );
+            $this->assertEquals(
+                self::$rawTransactionError['code'],
+                $exception->getCode()
+            );
+        }
+    }
+
+    /**
+     * Test async request exception with response.
+     *
+     * @expectedException GuzzleHttp\Exception\RequestException
+     * @return void
+     */
+    public function testAsyncRequestExceptionWithResponseBody()
+    {
+        $guzzle = $this->mockGuzzle([
+            $this->requestExceptionWithResponse()
+        ]);
+
+        $onRejected = $this->mockCallable([
+            $this->callback(function ($exception) {
+                return $exception instanceof ClientException &&
+                    $exception->getMessage() == self::$rawTransactionError['message'] &&
+                    $exception->getCode() == self::$rawTransactionError['code'];
+            })
+        ]);
+
+        $promise = $this->bitcoind
+            ->setClient($guzzle)
+            ->requestAsync(
+                'getrawtransaction',
+                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
+                null,
+                function ($exception) use ($onRejected) {
+                    $onRejected($exception);
+                }
+            );
+
+        $promise->wait();
+    }
+
+    /**
      * Test request exception with no response.
      *
      * @return void
@@ -384,7 +449,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithNoResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestException()
+            $this->requestExceptionWithoutResponse()
         ]);
 
         try {
@@ -413,7 +478,7 @@ class ClientTest extends TestCase
     public function testAsyncRequestExceptionWithNoResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestException()
+            $this->requestExceptionWithoutResponse()
         ]);
 
         $onRejected = $this->mockCallable([
@@ -505,11 +570,29 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Return exception with response.
+     *
+     * @return Closure
+     */
+    protected function requestExceptionWithResponse()
+    {
+        $exception = function ($request) {
+            return new RequestException(
+                'test',
+                $request,
+                $this->rawTransactionError()
+            );
+        };
+
+        return $exception;
+    }
+
+    /**
      * Return exception without response.
      *
      * @return Closure
      */
-    protected function requestException()
+    protected function requestExceptionWithoutResponse()
     {
         $exception = function ($request) {
             return new RequestException('test', $request);

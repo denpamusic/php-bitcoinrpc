@@ -106,7 +106,7 @@ class Client
             return $this->handleResponse($response);
         } catch (RequestException $exception) {
             if ($exception->hasResponse()) {
-                return $this->handleResponse($exception->getResponse());
+                $this->handleResponse($exception->getResponse());
             }
 
             throw new ClientException('Error Communicating with Server', 500);
@@ -162,11 +162,11 @@ class Client
                         500
                     );
                 } catch (ClientException $exception) {
-                    $exception = $exception;
+                    $response = $exception;
                 }
 
                 if ($onRejected instanceof Closure) {
-                    $onRejected($exception);
+                    $onRejected($response);
                 }
             }
         );
