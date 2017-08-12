@@ -2,11 +2,11 @@
 
 namespace Denpa\Bitcoin;
 
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\Exception\RequestException;
 
 class ClientTest extends TestCase
 {
@@ -50,19 +50,19 @@ class ClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->bitcoind = new Client;
+        $this->bitcoind = new Client();
     }
-
 
     /**
      * Test url expander.
      *
-     * @param  string  $url
-     * @param  string  $scheme
-     * @param  string  $host
-     * @param  int  $port
-     * @param  string  $user
-     * @param  string  $pass
+     * @param string $url
+     * @param string $scheme
+     * @param string $host
+     * @param int    $port
+     * @param string $user
+     * @param string $pass
+     *
      * @return void
      *
      * @dataProvider urlProvider
@@ -174,7 +174,7 @@ class ClientTest extends TestCase
     public function testRequest()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse()
+            $this->blockHeaderResponse(),
         ]);
 
         $response = $this->bitcoind
@@ -195,14 +195,14 @@ class ClientTest extends TestCase
     public function testAsyncRequest()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse()
+            $this->blockHeaderResponse(),
         ]);
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function ($response) {
                 return is_array($response) &&
                     $response == self::$blockHeaderResponse;
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -226,7 +226,7 @@ class ClientTest extends TestCase
     public function testMagic()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse()
+            $this->blockHeaderResponse(),
         ]);
 
         $response = $this->bitcoind
@@ -246,14 +246,14 @@ class ClientTest extends TestCase
     public function testAsyncMagic()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse()
+            $this->blockHeaderResponse(),
         ]);
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function ($response) {
                 return is_array($response) &&
                     $response == self::$blockHeaderResponse;
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -276,7 +276,7 @@ class ClientTest extends TestCase
     public function testRequestException()
     {
         $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(200)
+            $this->rawTransactionError(200),
         ]);
 
         try {
@@ -301,7 +301,7 @@ class ClientTest extends TestCase
     public function testAsyncRequestException()
     {
         $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(200)
+            $this->rawTransactionError(200),
         ]);
 
         $onFulfilled = $this->mockCallable([
@@ -309,7 +309,7 @@ class ClientTest extends TestCase
                 return $exception instanceof ClientException &&
                     $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -333,7 +333,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithServerErrorCode()
     {
         $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(500)
+            $this->rawTransactionError(500),
         ]);
 
         try {
@@ -364,7 +364,7 @@ class ClientTest extends TestCase
     public function testAsyncRequestExceptionWithServerErrorCode()
     {
         $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(500)
+            $this->rawTransactionError(500),
         ]);
 
         $onFulfilled = $this->mockCallable([
@@ -372,7 +372,7 @@ class ClientTest extends TestCase
                 return $exception instanceof ClientException &&
                     $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -396,7 +396,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithEmptyResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            new Response(500)
+            new Response(500),
         ]);
 
         try {
@@ -424,7 +424,7 @@ class ClientTest extends TestCase
     public function testAsyncRequestExceptionWithEmptyResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            new Response(500)
+            new Response(500),
         ]);
 
         $onFulfilled = $this->mockCallable([
@@ -432,7 +432,7 @@ class ClientTest extends TestCase
                 return $exception instanceof ClientException &&
                     $exception->getMessage() == 'Error Communicating with Server' &&
                     $exception->getCode() == 500;
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -456,7 +456,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithResponse()
+            $this->requestExceptionWithResponse(),
         ]);
 
         try {
@@ -483,12 +483,13 @@ class ClientTest extends TestCase
      * Test async request exception with response.
      *
      * @expectedException GuzzleHttp\Exception\RequestException
+     *
      * @return void
      */
     public function testAsyncRequestExceptionWithResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithResponse()
+            $this->requestExceptionWithResponse(),
         ]);
 
         $onRejected = $this->mockCallable([
@@ -496,7 +497,7 @@ class ClientTest extends TestCase
                 return $exception instanceof ClientException &&
                     $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -521,7 +522,7 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithNoResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithoutResponse()
+            $this->requestExceptionWithoutResponse(),
         ]);
 
         try {
@@ -545,12 +546,13 @@ class ClientTest extends TestCase
      * Test async request exception with no response.
      *
      * @expectedException GuzzleHttp\Exception\RequestException
+     *
      * @return void
      */
     public function testAsyncRequestExceptionWithNoResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithoutResponse()
+            $this->requestExceptionWithoutResponse(),
         ]);
 
         $onRejected = $this->mockCallable([
@@ -558,7 +560,7 @@ class ClientTest extends TestCase
                 return $exception instanceof ClientException &&
                     $exception->getMessage() == 'Error Communicating with Server' &&
                     $exception->getCode() == 500;
-            })
+            }),
         ]);
 
         $promise = $this->bitcoind
@@ -578,7 +580,8 @@ class ClientTest extends TestCase
     /**
      * Get Closure mock.
      *
-     * @param  array  $with
+     * @param array $with
+     *
      * @return callable
      */
     protected function mockCallable(array $with = [])
@@ -597,20 +600,22 @@ class ClientTest extends TestCase
     /**
      * Get Guzzle mock client.
      *
-     * @param  array  $queue
+     * @param array $queue
+     *
      * @return \GuzzleHttp\Client
      */
     protected function mockGuzzle(array $queue = [])
     {
         return new \GuzzleHttp\Client([
-            'handler' => new MockHandler($queue)
+            'handler' => new MockHandler($queue),
         ]);
     }
 
     /**
      * Make block header response.
      *
-     * @param  int  $code
+     * @param int $code
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function blockHeaderResponse($code = 200)
@@ -627,7 +632,8 @@ class ClientTest extends TestCase
     /**
      * Make raw transaction error response.
      *
-     * @param  int  $code
+     * @param int $code
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function rawTransactionError($code = 500)

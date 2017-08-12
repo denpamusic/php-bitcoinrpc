@@ -3,10 +3,10 @@
 namespace Denpa\Bitcoin;
 
 use Closure;
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Client as GuzzleHttp;
-use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
@@ -27,7 +27,8 @@ class Client
     /**
      * Class constructor.
      *
-     * @param  array  $config
+     * @param array $config
+     *
      * @return void
      */
     public function __construct(array $config = [])
@@ -52,7 +53,8 @@ class Client
     /**
      * Get http client config.
      *
-     * @param  string|null  $option
+     * @param string|null $option
+     *
      * @return mixed
      */
     public function getConfig($option = null)
@@ -77,19 +79,22 @@ class Client
      * Set http client.
      *
      * @param  \GuzzleHttp\ClientInterface
+     *
      * @return void
      */
     public function setClient(ClientInterface $client)
     {
         $this->client = $client;
+
         return $this;
     }
 
     /**
      * Make request to Bitcoin Core.
      *
-     * @param  string  $method
-     * @param  mixed   $params
+     * @param string $method
+     * @param mixed  $params
+     *
      * @return array
      */
     public function request($method, $params = [])
@@ -97,7 +102,7 @@ class Client
         try {
             $json = [
                 'method' => strtolower($method),
-                'params' => (array)$params,
+                'params' => (array) $params,
                 'id'     => $this->rpcId++,
             ];
 
@@ -116,10 +121,11 @@ class Client
     /**
      * Make async request to Bitcoin Core.
      *
-     * @param  string  $method
-     * @param  mixed  $params
-     * @param  Closure|null  $onFullfiled
-     * @param  Closure|null  $onRejected
+     * @param string       $method
+     * @param mixed        $params
+     * @param Closure|null $onFullfiled
+     * @param Closure|null $onRejected
+     *
      * @return \GuzzleHttp\Promise\Promise
      */
     public function requestAsync(
@@ -130,7 +136,7 @@ class Client
     {
         $json = [
             'method' => strtolower($method),
-            'params' => (array)$params,
+            'params' => (array) $params,
             'id'     => $this->rpcId++,
         ];
 
@@ -177,8 +183,9 @@ class Client
     /**
      * Magical method for making requests to Bitcoin Core.
      *
-     * @param  string  $method
-     * @param  array  $params
+     * @param string $method
+     * @param array  $params
+     *
      * @return array
      */
     public function __call($method, array $params = [])
@@ -194,7 +201,8 @@ class Client
     /**
      * Handle bitcoind response.
      *
-     * @param  \Psr\Http\Message\ResponseInterface  $response
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
      * @return array
      */
     protected function handleResponse(ResponseInterface $response)
@@ -221,7 +229,8 @@ class Client
     /**
      * Set default config values.
      *
-     * @param  array  $config
+     * @param array $config
+     *
      * @return array
      */
     protected function defaultConfig(array $config = [])
@@ -240,7 +249,8 @@ class Client
     /**
      * Expand URL config into components.
      *
-     * @param  array  $param
+     * @param array $param
+     *
      * @return array
      */
     protected function expandUrl(array $config)
