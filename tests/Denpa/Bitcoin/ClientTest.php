@@ -125,6 +125,48 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test handler config option.
+     *
+     * @return void
+     */
+    public function testHandlerOption()
+    {
+        $bitcoind = new Client();
+
+        $this->assertInstanceOf(
+            \GuzzleHttp\HandlerStack::class,
+            $bitcoind->getConfig('handler')
+        );
+
+        $bitcoind = new Client([
+            'handler' => new MockHandler(),
+        ]);
+
+        $this->assertInstanceOf(
+            MockHandler::class,
+            $bitcoind->getConfig('handler')
+        );
+    }
+
+    /**
+     * Test ca config option.
+     *
+     * @return void
+     */
+    public function testCaOption()
+    {
+        $bitcoind = new Client();
+
+        $this->assertEquals(null, $bitcoind->getConfig('ca'));
+
+        $bitcoind = new Client([
+            'ca' => __FILE__,
+        ]);
+
+        $this->assertEquals(__FILE__, $bitcoind->getConfig('verify'));
+    }
+
+    /**
      * Test simple request.
      *
      * @return void
