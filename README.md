@@ -12,7 +12,7 @@ Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directo
 and run ```php composer.phar update```.
 
 ## Requirements
-PHP 5.6 or higher
+PHP 7.0 or higher (should also work on 5.6, but this is unsupported)
 
 ## Usage
 Create new object with url as parameter
