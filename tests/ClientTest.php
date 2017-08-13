@@ -111,8 +111,8 @@ class ClientTest extends TestCase
         try {
             $bitcoind = new Client('cookies!');
 
-            $this->expectException(ClientException::class);
-        } catch (ClientException $e) {
+            $this->expectException(Exceptions\ClientException::class);
+        } catch (Exceptions\ClientException $e) {
             $this->assertEquals('Invalid url', $e->getMessage());
         }
     }
@@ -276,8 +276,8 @@ class ClientTest extends TestCase
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
                 );
 
-            $this->expectException(BitcoindException::class);
-        } catch (BitcoindException $e) {
+            $this->expectException(Exceptions\BitcoindException::class);
+        } catch (Exceptions\BitcoindException $e) {
             $this->assertEquals(self::$rawTransactionError['message'], $e->getMessage());
             $this->assertEquals(self::$rawTransactionError['code'], $e->getCode());
         }
@@ -295,7 +295,7 @@ class ClientTest extends TestCase
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (BitcoindException $exception) {
+            $this->callback(function (Exceptions\BitcoindException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
             }),
@@ -332,8 +332,8 @@ class ClientTest extends TestCase
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
                 );
 
-            $this->expectException(BitcoindException::class);
-        } catch (BitcoindException $exception) {
+            $this->expectException(Exceptions\BitcoindException::class);
+        } catch (Exceptions\BitcoindException $exception) {
             $this->assertEquals(
                 self::$rawTransactionError['message'],
                 $exception->getMessage()
@@ -357,7 +357,7 @@ class ClientTest extends TestCase
         ]);
 
         $onRejected = $this->mockCallable([
-            $this->callback(function (BitcoindException $exception) {
+            $this->callback(function (Exceptions\BitcoindException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
             }),
@@ -395,8 +395,8 @@ class ClientTest extends TestCase
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
                 );
 
-            $this->expectException(ClientException::class);
-        } catch (ClientException $exception) {
+            $this->expectException(Exceptions\ClientException::class);
+        } catch (Exceptions\ClientException $exception) {
             $this->assertEquals(
                 $this->error500(),
                 $exception->getMessage()
@@ -417,7 +417,7 @@ class ClientTest extends TestCase
         ]);
 
         $onRejected = $this->mockCallable([
-            $this->callback(function (ClientException $exception) {
+            $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == $this->error500() &&
                     $exception->getCode() == 500;
             }),
@@ -455,8 +455,8 @@ class ClientTest extends TestCase
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
                 );
 
-            $this->expectException(BitcoindException::class);
-        } catch (BitcoindException $exception) {
+            $this->expectException(Exceptions\BitcoindException::class);
+        } catch (Exceptions\BitcoindException $exception) {
             $this->assertEquals(
                 self::$rawTransactionError['message'],
                 $exception->getMessage()
@@ -482,7 +482,7 @@ class ClientTest extends TestCase
         ]);
 
         $onRejected = $this->mockCallable([
-            $this->callback(function (BitcoindException $exception) {
+            $this->callback(function (Exceptions\BitcoindException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
             }),
@@ -520,8 +520,8 @@ class ClientTest extends TestCase
                     '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
                 );
 
-            $this->expectException(ClientException::class);
-        } catch (ClientException $exception) {
+            $this->expectException(Exceptions\ClientException::class);
+        } catch (Exceptions\ClientException $exception) {
             $this->assertEquals(
                 'test',
                 $exception->getMessage()
@@ -544,7 +544,7 @@ class ClientTest extends TestCase
         ]);
 
         $onRejected = $this->mockCallable([
-            $this->callback(function (ClientException $exception) {
+            $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == 'test' &&
                     $exception->getCode() == 0;
             }),

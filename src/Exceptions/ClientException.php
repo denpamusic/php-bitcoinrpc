@@ -1,6 +1,6 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Exceptions;
 
 use RuntimeException;
 

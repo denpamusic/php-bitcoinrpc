@@ -118,7 +118,7 @@ class Client
 
             if ($response->hasError()) {
                 // throw exception on error
-                throw new BitcoindException($response->error());
+                throw new Exceptions\BitcoindException($response->error());
             }
 
             return $response;
@@ -127,14 +127,14 @@ class Client
                 $exception->hasResponse() &&
                 $exception->getResponse()->hasError()
             ) {
-                throw new BitcoindException($exception->getResponse()->error());
+                throw new Exceptions\BitcoindException($exception->getResponse()->error());
             }
 
-            throw new ClientException(
+            throw new Exceptions\ClientException(
                 $exception->getMessage(),
                 $exception->getCode()
             );
-        } catch (BitcoindException $exception) {
+        } catch (Exceptions\BitcoindException $exception) {
             throw $exception;
         }
     }
@@ -168,7 +168,7 @@ class Client
             function (ResponseInterface $response) use ($onFullfiled) {
                 $error = null;
                 if ($response->hasError()) {
-                    $error = new BitcoindException($response->error());
+                    $error = new Exceptions\BitcoindException($response->error());
                 }
 
                 if (is_callable($onFullfiled)) {
@@ -180,13 +180,13 @@ class Client
                     $exception->hasResponse() &&
                     $exception->getResponse()->hasError()
                 ) {
-                    $exception = new BitcoindException(
+                    $exception = new Exceptions\BitcoindException(
                         $exception->getResponse()->error()
                     );
                 }
 
                 if ($exception instanceof RequestException) {
-                    $exception = new ClientException(
+                    $exception = new Exceptions\ClientException(
                         $exception->getMessage(),
                         $exception->getCode()
                     );
@@ -255,7 +255,7 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                throw new ClientException('Invalid url');
+                throw new Exceptions\ClientException('Invalid url');
             }
 
             return $parts;
