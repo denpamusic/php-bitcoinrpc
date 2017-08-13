@@ -11,7 +11,10 @@ class BitcoindResponse implements
     \Serializable,
     \JsonSerializable
 {
-    use MessageTrait, ResponseArrayTrait, ReadOnlyArrayTrait;
+    use MessageTrait,
+        ResponseArrayTrait,
+        ReadOnlyArrayTrait,
+        SerializableContainerTrait;
 
     /**
      * Response instance.
@@ -92,38 +95,6 @@ class BitcoindResponse implements
         if ($this->hasResult()) {
             return $this->container['result'];
         }
-    }
-
-    /**
-     * Returns the string representation of the object.
-     *
-     * @return string
-     */
-    public function serialize()
-    {
-        return serialize($this->container);
-    }
-
-    /**
-     * Constructs object from serialized string.
-     *
-     * @param string $serialized
-     *
-     * @return void
-     */
-    public function unserialize($serialized)
-    {
-        $this->container = unserialize($serialized);
-    }
-
-    /**
-     * Serializes the object to a value that can be serialized by json_encode().
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return $this->container;
     }
 
     /**
