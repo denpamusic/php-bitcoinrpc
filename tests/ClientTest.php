@@ -571,7 +571,7 @@ class ClientTest extends TestCase
      */
     protected function error500()
     {
-        return 'Server error: `POST /` ' .
+        return 'Server error: `POST /` '.
             'resulted in a `500 Internal Server Error` response';
     }
 

@@ -19,7 +19,8 @@ trait MessageTrait
     /**
      * Return an instance with the specified HTTP protocol version.
      *
-     * @param  string  $version
+     * @param string $version
+     *
      * @return static
      */
     public function withProtocolVersion($version)
@@ -40,7 +41,8 @@ trait MessageTrait
     /**
      * Checks if a header exists by the given case-insensitive name.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return bool
      */
     public function hasHeader($name)
@@ -51,7 +53,8 @@ trait MessageTrait
     /**
      * Retrieves a message header value by the given case-insensitive name.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return array
      */
     public function getHeader($name)
@@ -62,7 +65,8 @@ trait MessageTrait
     /**
      * Retrieves a comma-separated string of the values for a single header.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return string
      */
     public function getHeaderLine($name)
@@ -73,8 +77,9 @@ trait MessageTrait
     /**
      * Return an instance with the provided value replacing the specified header.
      *
-     * @param  string        $name
-     * @param  string|array  $value
+     * @param string       $name
+     * @param string|array $value
+     *
      * @return static
      */
     public function withHeader($name, $value)
@@ -85,7 +90,8 @@ trait MessageTrait
     /**
      * Return an instance with the specified header appended with the given value.
      *
-     * @param  string|array  $value
+     * @param string|array $value
+     *
      * @return static
      */
     public function withAddedHeader($name, $value)
@@ -96,7 +102,8 @@ trait MessageTrait
     /**
      * Return an instance without the specified header.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return static
      */
     public function withoutHeader($name)
@@ -117,7 +124,8 @@ trait MessageTrait
     /**
      * Return an instance with the specified message body.
      *
-     * @param  \Psr\Http\Message\StreamInterface  $body
+     * @param \Psr\Http\Message\StreamInterface $body
+     *
      * @return static
      */
     public function withBody(StreamInterface $body)

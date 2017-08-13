@@ -3,10 +3,10 @@
 namespace Denpa\Bitcoin;
 
 use GuzzleHttp\Client as GuzzleHttp;
-use GuzzleHttp\Middleware;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -142,8 +142,8 @@ class Client
     /**
      * Makes async request to Bitcoin Core.
      *
-     * @param string $method
-     * @param mixed $params
+     * @param string        $method
+     * @param mixed         $params
      * @param callable|null $onFullfiled
      * @param callable|null $onRejected
      *
