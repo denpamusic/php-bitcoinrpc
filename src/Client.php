@@ -2,8 +2,9 @@
 
 namespace Denpa\Bitcoin;
 
-use Closure;
 use GuzzleHttp\Client as GuzzleHttp;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
@@ -25,7 +26,7 @@ class Client
     private $rpcId = 0;
 
     /**
-     * Class constructor.
+     * Constructs new client.
      *
      * @param mixed $config
      *
@@ -36,6 +37,14 @@ class Client
         // init defaults
         $config = $this->defaultConfig($this->parseUrl($config));
 
+        $handlerStack = HandlerStack::create();
+        $handlerStack->push(
+            Middleware::mapResponse(function (ResponseInterface $response) {
+                return BitcoindResponse::createFrom($response);
+            }),
+            'json_response'
+        );
+
         // construct client
         $this->client = new GuzzleHttp([
             'base_uri'    => "${config['scheme']}://${config['host']}:${config['port']}",
@@ -45,13 +54,12 @@ class Client
             ],
             'verify'      => isset($config['ca']) && is_file($config['ca']) ?
                 $config['ca'] : true,
-            'handler'     => isset($config['handler']) ?
-                $config['handler'] : null,
+            'handler'     => $handlerStack,
         ]);
     }
 
     /**
-     * Get http client config.
+     * Gets http client config.
      *
      * @param string|null $option
      *
@@ -66,7 +74,7 @@ class Client
     }
 
     /**
-     * Get http client.
+     * Gets http client.
      *
      * @return \GuzzleHttp\ClientInterface
      */
@@ -76,7 +84,7 @@ class Client
     }
 
     /**
-     * Set http client.
+     * Sets http client.
      *
      * @param  \GuzzleHttp\ClientInterface
      *
@@ -90,7 +98,7 @@ class Client
     }
 
     /**
-     * Make request to Bitcoin Core.
+     * Makes request to Bitcoin Core.
      *
      * @param string $method
      * @param mixed  $params
@@ -108,23 +116,36 @@ class Client
 
             $response = $this->client->request('POST', '/', ['json' => $json]);
 
-            return $this->handleResponse($response);
-        } catch (RequestException $exception) {
-            if ($exception->hasResponse()) {
-                $this->handleResponse($exception->getResponse());
+            if ($response->hasError()) {
+                // throw exception on error
+                throw new BitcoindException($response->error());
             }
 
-            throw new ClientException('Error Communicating with Server', 500);
+            return $response;
+        } catch (RequestException $exception) {
+            if (
+                $exception->hasResponse() &&
+                $exception->getResponse()->hasError()
+            ) {
+                throw new BitcoindException($exception->getResponse()->error());
+            }
+
+            throw new ClientException(
+                $exception->getMessage(),
+                $exception->getCode()
+            );
+        } catch (BitcoindException $exception) {
+            throw $exception;
         }
     }
 
     /**
-     * Make async request to Bitcoin Core.
+     * Makes async request to Bitcoin Core.
      *
-     * @param string       $method
-     * @param mixed        $params
-     * @param Closure|null $onFullfiled
-     * @param Closure|null $onRejected
+     * @param string $method
+     * @param mixed $params
+     * @param callable|null $onFullfiled
+     * @param callable|null $onRejected
      *
      * @return \GuzzleHttp\Promise\Promise
      */
@@ -145,34 +166,34 @@ class Client
 
         $promise->then(
             function (ResponseInterface $response) use ($onFullfiled) {
-                try {
-                    $response = $this->handleResponse($response);
-                } catch (ClientException $exception) {
-                    $response = $exception;
+                $error = null;
+                if ($response->hasError()) {
+                    $error = new BitcoindException($response->error());
                 }
 
-                if ($onFullfiled instanceof Closure) {
-                    $onFullfiled($response);
+                if (is_callable($onFullfiled)) {
+                    $onFullfiled($error ?: $response);
                 }
             },
             function (RequestException $exception) use ($onRejected) {
-                try {
-                    if ($exception->hasResponse()) {
-                        $response = $this->handleResponse(
-                            $exception->getResponse()
-                        );
-                    }
-
-                    throw new ClientException(
-                        'Error Communicating with Server',
-                        500
+                if (
+                    $exception->hasResponse() &&
+                    $exception->getResponse()->hasError()
+                ) {
+                    $exception = new BitcoindException(
+                        $exception->getResponse()->error()
                     );
-                } catch (ClientException $exception) {
-                    $response = $exception;
                 }
 
-                if ($onRejected instanceof Closure) {
-                    $onRejected($response);
+                if ($exception instanceof RequestException) {
+                    $exception = new ClientException(
+                        $exception->getMessage(),
+                        $exception->getCode()
+                    );
+                }
+
+                if (is_callable($onRejected)) {
+                    $onRejected($exception);
                 }
             }
         );
@@ -181,7 +202,7 @@ class Client
     }
 
     /**
-     * Magical method for making requests to Bitcoin Core.
+     * Makes request to Bitcoin Core.
      *
      * @param string $method
      * @param array  $params
@@ -196,34 +217,6 @@ class Client
         }
 
         return $this->request($method, $params);
-    }
-
-    /**
-     * Handle bitcoind response.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return array
-     */
-    protected function handleResponse(ResponseInterface $response)
-    {
-        $data = json_decode($response->getBody()->__toString(), true);
-
-        if (isset($data['error'])) {
-            throw new ClientException(
-                $data['error']['message'],
-                $data['error']['code']
-            );
-        }
-
-        if ($response->getStatusCode() != 200) {
-            throw new ClientException(
-                'Error Communicating with Server',
-                $response->getStatusCode()
-            );
-        }
-
-        return isset($data['result']) ? $data['result'] : null;
     }
 
     /**
