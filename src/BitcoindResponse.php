@@ -268,7 +268,7 @@ class BitcoindResponse implements
      */
     public function unserialize($serialized)
     {
-        $this->container = unserialize($this->container);
+        $this->container = unserialize($serialized);
     }
 
     /**
