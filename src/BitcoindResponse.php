@@ -2,11 +2,14 @@
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\MessageTrait;
 use Psr\Http\Message\ResponseInterface;
 
-class BitcoindResponse implements ResponseInterface,
-    \ArrayAccess, \Countable, \Serializable, \JsonSerializable
+class BitcoindResponse implements
+    ResponseInterface,
+    \ArrayAccess,
+    \Countable,
+    \Serializable,
+    \JsonSerializable
 {
     use MessageTrait;
 
@@ -67,8 +70,6 @@ class BitcoindResponse implements ResponseInterface,
         if ($this->hasError()) {
             return $this->container['error'];
         }
-
-        return null;
     }
 
     /**
@@ -91,8 +92,6 @@ class BitcoindResponse implements ResponseInterface,
         if ($this->hasResult()) {
             return $this->container['result'];
         }
-
-        return null;
     }
 
     /**
@@ -113,7 +112,7 @@ class BitcoindResponse implements ResponseInterface,
 
         foreach ($parts as $part) {
             if (!$result || !isset($result[$part])) {
-                return null;
+                return;
             }
 
             $result = $result[$part];
@@ -287,15 +286,15 @@ class BitcoindResponse implements ResponseInterface,
      *
      * @return int
      */
-     public function getStatusCode()
-     {
+    public function getStatusCode()
+    {
         return $this->response->getStatusCode();
-     }
+    }
 
     /**
      * Return an instance with the specified status code and, optionally, reason phrase.
      *
-     * @param int $code
+     * @param int    $code
      * @param string $reasonPhrase
      *
      * @return static
