@@ -87,7 +87,7 @@ trait ResponseArrayTrait
     /**
      * Gets random value.
      *
-     * @param integer $number
+     * @param int         $number
      * @param string|null $key
      *
      * @return mixed
