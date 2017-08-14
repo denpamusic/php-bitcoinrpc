@@ -1,10 +1,9 @@
 <?php
 
 use Denpa\Bitcoin;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Response;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -27,12 +26,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         'difficulty'    => 1,
         'chainwork'     => '0000000000000000000000000000000000000000000000000000000100010001',
         'nextblockhash' => '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048',
-        'tx'  => [
+        'tx'            => [
             'bedb088c480e5f7424a958350f2389c839d17e27dae13643632159b9e7c05482',
             '59b36164c777b34aee28ef623ec34700371d33ff011244d8ee22d02b0547c13b',
             'ead6116a07f2a6911ac93eb0ae00ce05d49c7bb288f2fb9c338819e85414cf2c',
             null,
-        ]
+        ],
     ];
 
     /**

@@ -2,7 +2,6 @@
 
 use Denpa\Bitcoin;
 use Denpa\Bitcoin\Exceptions;
-use GuzzleHttp\Psr7\Response;
 
 class BitcoindResponseTest extends TestCase
 {

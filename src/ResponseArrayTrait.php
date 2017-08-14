@@ -109,7 +109,7 @@ trait ResponseArrayTrait
     /**
      * Parses dotted notation.
      *
-     * @param string $key
+     * @param string   $key
      * @param callable $callback
      *
      * @return mixed
