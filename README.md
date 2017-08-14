@@ -6,7 +6,7 @@
 Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-    "denpa/php-bitcoinrpc": "^1.0"
+    "denpa/php-bitcoinrpc": "^2.0"
 }
 ```
 and run ```php composer.phar update```.
@@ -36,37 +36,68 @@ $bitcoind = new BitcoinClient([
 ```
 Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic:
 ```php
-$bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+$block = $bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+
+$block('hash');            // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+$block['height'];          // 0 (array access)
+$block->get('tx.0');       // 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
+$block->count('tx');       // 1
+$block->has('version');    // key must exist and CAN NOT be null
+$block->exists('version'); // key must exist and CAN be null
+$block->contains(0);       // check if response contains value
+$block->values();          // array of values
+$block->keys();            // array of keys
+$block->random(1, 'tx');   // random block txid
 ```
 To send asynchronous request, add Async to method name:
 ```php
-$bitcoind->getBlockAsync(
-	'000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-    function ($success) {
-    	//
+use Denpa\Bitcoin\BitcoindResponse;
+
+$promise = $bitcoind->getBlockAsync(
+    '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
+    function (BitcoindResponse $success) {
+        //
     },
-    function ($exception) {
-    	//
+    function (\Exception $exception) {
+        //
     }
 );
+
+$promise->wait();
 ```
 
 You can also send requests using request method:
 ```php
-$bitcoind->request('getBlock', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+$block = $bitcoind->request('getBlock', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+
+$block('hash');            // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+$block['height'];          // 0 (array access)
+$block->get('tx.0');       // 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
+$block->count('tx');       // 1
+$block->has('version');    // key must exist and CAN NOT be null
+$block->exists('version'); // key must exist and CAN be null
+$block->contains(0);       // check if response contains value
+$block->values();          // get response values
+$block->keys();            // get response keys
+$block->random(1, 'tx');   // get random txid
+
 ```
 or requestAsync method for asynchronous calls:
 ```php
-$bitcoind->requestAsync(
-	'getBlock',
+use Denpa\Bitcoin\BitcoindResponse;
+
+$promise = $bitcoind->requestAsync(
+    'getBlock',
     '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-    function ($success) {
-    	//
+    function (BitcoindResponse $success) {
+        //
     },
-    function ($exception) {
-    	//
+    function (\Exception $exception) {
+        //
     }
 );
+
+$promise->wait();
 ```
 
 ## License
