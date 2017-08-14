@@ -257,7 +257,7 @@ class BitcoindResponseTest extends TestCase
 
     public function testBody()
     {
-        $stream = new BufferStream;
+        $stream = new BufferStream();
         $stream->write('cookies');
 
         $response = $this->response->withBody($stream);

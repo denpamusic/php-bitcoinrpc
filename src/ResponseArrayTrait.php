@@ -95,6 +95,7 @@ trait ResponseArrayTrait
 
         if (is_array($values)) {
             $key = mt_rand(0, count($values) - 1);
+
             return $values[$key];
         }
 
