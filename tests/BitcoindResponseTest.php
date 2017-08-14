@@ -2,6 +2,7 @@
 
 use Denpa\Bitcoin;
 use Denpa\Bitcoin\Exceptions;
+use GuzzleHttp\Psr7\BufferStream;
 
 class BitcoindResponseTest extends TestCase
 {
@@ -22,6 +23,9 @@ class BitcoindResponseTest extends TestCase
     {
         $this->assertTrue($this->response->hasResult());
 
+        $this->assertEquals(
+            null, $this->response->error()
+        );
         $this->assertEquals(
             self::$getBlockResponse,
             $this->response->result()
@@ -47,6 +51,14 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals('OK', $this->response->getReasonPhrase());
     }
 
+    public function testWithStatus()
+    {
+        $response = $this->response->withStatus(444, 'test');
+
+        $this->assertEquals(444, $response->getStatusCode());
+        $this->assertEquals('test', $response->getReasonPhrase());
+    }
+
     public function testCreateFrom()
     {
         $guzzleResponse = $this->getBlockResponse();
@@ -65,6 +77,9 @@ class BitcoindResponseTest extends TestCase
 
         $this->assertTrue($response->hasError());
 
+        $this->assertEquals(
+            null, $response->result()
+        );
         $this->assertEquals(
             self::$rawTransactionError,
             $response->error()
@@ -179,6 +194,14 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    public function testRandom()
+    {
+        $tx1 = $this->response->random('tx');
+        $tx2 = $this->response->random('tx');
+        $this->assertContains($tx1, self::$getBlockResponse['tx']);
+        $this->assertContains($tx2, self::$getBlockResponse['tx']);
+    }
+
     public function testCount()
     {
         $this->assertEquals(
@@ -190,5 +213,55 @@ class BitcoindResponseTest extends TestCase
             count(self::$getBlockResponse),
             $this->response->count()
         );
+    }
+
+    public function testProtocolVersion()
+    {
+        $response = $this->response->withProtocolVersion(1.0);
+
+        $this->assertEquals(
+            '1.0',
+            $response->getProtocolVersion()
+        );
+    }
+
+    public function testHeaders()
+    {
+        $response = $this->response->withHeader('X-Foo', 'bar');
+        $response = $response->withAddedHeader('X-Bar', 'baz');
+
+        $this->assertTrue($response->hasHeader('X-Foo'));
+        $this->assertTrue($response->hasHeader('X-Bar'));
+        $this->assertEquals(
+            'bar',
+            $response->getHeader('X-Foo')[0]
+        );
+        $this->assertEquals(
+            'baz',
+            $response->getHeader('X-Bar')[0]
+        );
+        $this->assertEquals('bar', $response->getHeaderLine('X-Foo'));
+
+        $this->assertEquals(
+            [
+                'X-Foo' => ['bar'],
+                'X-Bar' => ['baz'],
+            ],
+            $response->getHeaders()
+        );
+
+        $response = $response->withoutHeader('X-Bar');
+
+        $this->assertFalse($response->hasHeader('X-Bar'));
+    }
+
+    public function testBody()
+    {
+        $stream = new BufferStream;
+        $stream->write('cookies');
+
+        $response = $this->response->withBody($stream);
+
+        $this->assertEquals('cookies', $response->getBody()->__toString());
     }
 }
