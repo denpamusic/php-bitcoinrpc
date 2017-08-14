@@ -23,6 +23,9 @@
     "autoload": {
         "psr-4" : {
             "Denpa\\Bitcoin\\": "src"
-        }
+        },
+        "classmap" : [
+            "tests"
+        ]
     }
 }

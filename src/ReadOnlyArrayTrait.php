@@ -14,7 +14,7 @@ trait ReadOnlyArrayTrait
      */
     public function offsetSet($offset, $value)
     {
-        throw new Exceptions\ClientException('Cannot modify json response object');
+        throw new Exceptions\ClientException('Cannot modify readonly object');
     }
 
     /**
@@ -38,7 +38,7 @@ trait ReadOnlyArrayTrait
      */
     public function offsetUnset($offset)
     {
-        throw new Exceptions\ClientException('Cannot modify json response object');
+        throw new Exceptions\ClientException('Cannot modify readonly object');
     }
 
     /**

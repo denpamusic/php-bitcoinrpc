@@ -17,18 +17,11 @@ trait ResponseArrayTrait
             return $this->result();
         }
 
-        $parts = explode('.', $key);
-        $result = $this->result();
-
-        foreach ($parts as $part) {
-            if (!$result || !isset($result[$part])) {
-                return;
+        return $this->parseKey($key, function ($part, $result) {
+            if (isset($result[$part])) {
+                return $result[$part];
             }
-
-            $result = $result[$part];
-        }
-
-        return $result;
+        });
     }
 
     /**
@@ -40,7 +33,9 @@ trait ResponseArrayTrait
      */
     public function exists($key)
     {
-        return array_key_exists($key, $this->result());
+        return $this->parseKey($key, function ($part, $result) {
+            return array_key_exists($part, $result);
+        });
     }
 
     /**
@@ -52,7 +47,9 @@ trait ResponseArrayTrait
      */
     public function has($key)
     {
-        return isset($this->result()[$key]);
+        return $this->parseKey($key, function ($part, $result) {
+            return isset($result[$part]);
+        });
     }
 
     /**
@@ -107,5 +104,29 @@ trait ResponseArrayTrait
     public function __invoke($key = null)
     {
         return $this->get($key);
+    }
+
+    /**
+     * Parses dotted notation.
+     *
+     * @param string $key
+     * @param callable $callback
+     *
+     * @return mixed
+     */
+    protected function parseKey($key, callable $callback)
+    {
+        $parts = explode('.', $key);
+        $result = $this->result();
+
+        foreach ($parts as $part) {
+            if (!$return = $callback($part, $result)) {
+                return $return;
+            }
+
+            $result = $result[$part];
+        }
+
+        return $return;
     }
 }

@@ -1,46 +1,11 @@
 <?php
 
-namespace Denpa\Bitcoin;
-
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\Psr7\Request;
+use Denpa\Bitcoin;
+use Denpa\Bitcoin\Exceptions;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
 {
-    /**
-     * Block header response.
-     *
-     * @var array
-     */
-    private static $blockHeaderResponse = [
-        'hash'          => '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-        'confirmations' => 449162,
-        'height'        => 0,
-        'version'       => 1,
-        'versionHex'    => '00000001',
-        'merkleroot'    => '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-        'time'          => 1231006505,
-        'mediantime'    => 1231006505,
-        'nonce'         => 2083236893,
-        'bits'          => '1d00ffff',
-        'difficulty'    => 1,
-        'chainwork'     => '0000000000000000000000000000000000000000000000000000000100010001',
-        'nextblockhash' => '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048',
-    ];
-
-    /**
-     * Transaction error response.
-     *
-     * @var array
-     */
-    private static $rawTransactionError = [
-        'code'    => -5,
-        'message' => 'No information available about transaction',
-    ];
-
     /**
      * Set up test.
      *
@@ -50,7 +15,7 @@ class ClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->bitcoind = new Client();
+        $this->bitcoind = new Bitcoin\Client();
     }
 
     /**
@@ -69,9 +34,9 @@ class ClientTest extends TestCase
      */
     public function testUrlParser($url, $scheme, $host, $port, $user, $pass)
     {
-        $bitcoind = new Client($url);
+        $bitcoind = new Bitcoin\Client($url);
 
-        $this->assertInstanceOf(Client::class, $bitcoind);
+        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
 
         $base_uri = $bitcoind->getConfig('base_uri');
 
@@ -109,7 +74,7 @@ class ClientTest extends TestCase
     public function testUrlParserWithInvalidUrl()
     {
         try {
-            $bitcoind = new Client('cookies!');
+            $bitcoind = new Bitcoin\Client('cookies!');
 
             $this->expectException(Exceptions\ClientException::class);
         } catch (Exceptions\ClientException $e) {
@@ -124,8 +89,8 @@ class ClientTest extends TestCase
      */
     public function testClientSetterGetter()
     {
-        $bitcoind = new Client('http://old_client.org');
-        $this->assertInstanceOf(Client::class, $bitcoind);
+        $bitcoind = new Bitcoin\Client('http://old_client.org');
+        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
 
         $base_uri = $bitcoind->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'old_client.org');
@@ -147,11 +112,11 @@ class ClientTest extends TestCase
      */
     public function testCaOption()
     {
-        $bitcoind = new Client();
+        $bitcoind = new Bitcoin\Client();
 
         $this->assertEquals(null, $bitcoind->getConfig('ca'));
 
-        $bitcoind = new Client([
+        $bitcoind = new Bitcoin\Client([
             'ca' => __FILE__,
         ]);
 
@@ -166,7 +131,7 @@ class ClientTest extends TestCase
     public function testRequest()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse(),
+            $this->getBlockResponse(),
         ]);
 
         $response = $this->bitcoind
@@ -176,7 +141,7 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $this->assertEquals(self::$blockHeaderResponse, $response());
+        $this->assertEquals(self::$getBlockResponse, $response());
     }
 
     /**
@@ -187,12 +152,12 @@ class ClientTest extends TestCase
     public function testAsyncRequest()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse(),
+            $this->getBlockResponse(),
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (BitcoindResponse $response) {
-                return $response() == self::$blockHeaderResponse;
+            $this->callback(function (Bitcoin\BitcoindResponse $response) {
+                return $response() == self::$getBlockResponse;
             }),
         ]);
 
@@ -217,7 +182,7 @@ class ClientTest extends TestCase
     public function testMagic()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse(),
+            $this->getBlockResponse(),
         ]);
 
         $response = $this->bitcoind
@@ -226,7 +191,7 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $this->assertEquals(self::$blockHeaderResponse, $response());
+        $this->assertEquals(self::$getBlockResponse, $response());
     }
 
     /**
@@ -237,12 +202,12 @@ class ClientTest extends TestCase
     public function testAsyncMagic()
     {
         $guzzle = $this->mockGuzzle([
-            $this->blockHeaderResponse(),
+            $this->getBlockResponse(),
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (BitcoindResponse $response) {
-                return $response() == self::$blockHeaderResponse;
+            $this->callback(function (Bitcoin\BitcoindResponse $response) {
+                return $response() == self::$getBlockResponse;
             }),
         ]);
 
@@ -562,124 +527,5 @@ class ClientTest extends TestCase
             );
 
         $promise->wait();
-    }
-
-    /**
-     * Get error 500 message.
-     *
-     * @return string
-     */
-    protected function error500()
-    {
-        return 'Server error: `POST /` '.
-            'resulted in a `500 Internal Server Error` response';
-    }
-
-    /**
-     * Get Closure mock.
-     *
-     * @param array $with
-     *
-     * @return callable
-     */
-    protected function mockCallable(array $with = [])
-    {
-        $callable = $this->getMockBuilder(\stdClass::class)
-            ->setMethods(['__invoke'])
-            ->getMock();
-
-        $callable->expects($this->once())
-            ->method('__invoke')
-            ->with(...$with);
-
-        return $callable;
-    }
-
-    /**
-     * Get Guzzle mock client.
-     *
-     * @param array $queue
-     *
-     * @return \GuzzleHttp\Client
-     */
-    protected function mockGuzzle(array $queue = [])
-    {
-        $handler = $this->bitcoind->getConfig('handler');
-
-        if ($handler) {
-            $handler->setHandler(new MockHandler($queue));
-        }
-
-        return new \GuzzleHttp\Client([
-            'handler' => $handler,
-        ]);
-    }
-
-    /**
-     * Make block header response.
-     *
-     * @param int $code
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    protected function blockHeaderResponse($code = 200)
-    {
-        $json = json_encode([
-            'result' => self::$blockHeaderResponse,
-            'error'  => null,
-            'id'     => 0,
-        ]);
-
-        return new Response($code, [], $json);
-    }
-
-    /**
-     * Make raw transaction error response.
-     *
-     * @param int $code
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    protected function rawTransactionError($code = 500)
-    {
-        $json = json_encode([
-            'result' => null,
-            'error'  => self::$rawTransactionError,
-            'id'     => 0,
-        ]);
-
-        return new Response($code, [], $json);
-    }
-
-    /**
-     * Return exception with response.
-     *
-     * @return Closure
-     */
-    protected function requestExceptionWithResponse()
-    {
-        $exception = function ($request) {
-            return new RequestException(
-                'test',
-                $request,
-                BitcoindResponse::createFrom($this->rawTransactionError())
-            );
-        };
-
-        return $exception;
-    }
-
-    /**
-     * Return exception without response.
-     *
-     * @return Closure
-     */
-    protected function requestExceptionWithoutResponse()
-    {
-        $exception = function ($request) {
-            return new RequestException('test', $request);
-        };
-
-        return $exception;
     }
 }
