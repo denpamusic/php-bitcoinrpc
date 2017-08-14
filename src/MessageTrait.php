@@ -26,6 +26,7 @@ trait MessageTrait
     public function withProtocolVersion($version)
     {
         $new = clone $this;
+
         return $new->setResponse(
             $this->response->withProtocolVersion($version)
         );
@@ -88,6 +89,7 @@ trait MessageTrait
     public function withHeader($name, $value)
     {
         $new = clone $this;
+
         return $new->setResponse($this->response->withHeader($name, $value));
     }
 
@@ -101,6 +103,7 @@ trait MessageTrait
     public function withAddedHeader($name, $value)
     {
         $new = clone $this;
+
         return $new->setResponse($this->response->withAddedHeader($name, $value));
     }
 
@@ -114,6 +117,7 @@ trait MessageTrait
     public function withoutHeader($name)
     {
         $new = clone $this;
+
         return $new->setResponse($this->response->withoutHeader($name));
     }
 
@@ -137,6 +141,7 @@ trait MessageTrait
     public function withBody(StreamInterface $body)
     {
         $new = clone $this;
+
         return $new->setResponse($this->response->withBody($body));
     }
 }
