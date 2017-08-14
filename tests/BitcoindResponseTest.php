@@ -196,8 +196,8 @@ class BitcoindResponseTest extends TestCase
 
     public function testRandom()
     {
-        $tx1 = $this->response->random('tx');
-        $tx2 = $this->response->random('tx');
+        $tx1 = $this->response->random(1, 'tx');
+        $tx2 = $this->response->random(1, 'tx');
         $this->assertContains($tx1, self::$getBlockResponse['tx']);
         $this->assertContains($tx2, self::$getBlockResponse['tx']);
 
@@ -210,6 +210,9 @@ class BitcoindResponseTest extends TestCase
 
         $random3 = $this->response->random(1, 'merkleroot');
         $this->assertEquals(self::$getBlockResponse['merkleroot'], $random3);
+
+        $random4 = $this->response->random(6, 'tx');
+        $this->assertEquals(self::$getBlockResponse['tx'], $random4);
     }
 
     public function testCount()
@@ -228,11 +231,9 @@ class BitcoindResponseTest extends TestCase
     public function testProtocolVersion()
     {
         $response = $this->response->withProtocolVersion(1.0);
+        $protocolVersion = $response->getProtocolVersion();
 
-        $this->assertEquals(
-            '1.0',
-            $response->getProtocolVersion()
-        );
+        $this->assertEquals('1.0', $protocolVersion);
     }
 
     public function testHeaders()
@@ -240,29 +241,31 @@ class BitcoindResponseTest extends TestCase
         $response = $this->response->withHeader('X-Foo', 'bar');
         $response = $response->withAddedHeader('X-Bar', 'baz');
 
-        $this->assertTrue($response->hasHeader('X-Foo'));
-        $this->assertTrue($response->hasHeader('X-Bar'));
-        $this->assertEquals(
-            'bar',
-            $response->getHeader('X-Foo')[0]
-        );
-        $this->assertEquals(
-            'baz',
-            $response->getHeader('X-Bar')[0]
-        );
-        $this->assertEquals('bar', $response->getHeaderLine('X-Foo'));
+        $headers = $response->getHeaders();
+        $hasXFoo = $response->hasHeader('X-Foo');
+        $hasXBar = $response->hasHeader('X-Bar');
+        $XFoo = $response->getHeader('X-Foo')[0];
+        $XBar = $response->getHeader('X-Bar')[0];
+        $XFooLine = $response->getHeaderLine('X-Foo');
 
-        $this->assertEquals(
-            [
-                'X-Foo' => ['bar'],
-                'X-Bar' => ['baz'],
-            ],
-            $response->getHeaders()
-        );
+        $this->assertTrue($hasXFoo);
+        $this->assertTrue($hasXBar);
+        $this->assertEquals('bar', $XFoo);
+        $this->assertEquals('baz', $XBar);
+        $this->assertEquals('bar', $XFooLine);
+
+        $expected = [
+            'X-Foo' => ['bar'],
+            'X-Bar' => ['baz'],
+        ];
+
+        $this->assertEquals($expected, $headers);
 
         $response = $response->withoutHeader('X-Bar');
 
-        $this->assertFalse($response->hasHeader('X-Bar'));
+        $hasXBar = $response->hasHeader('X-Bar');
+
+        $this->assertFalse($hasXBar);
     }
 
     public function testBody()
