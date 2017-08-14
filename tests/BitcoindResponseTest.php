@@ -200,6 +200,16 @@ class BitcoindResponseTest extends TestCase
         $tx2 = $this->response->random('tx');
         $this->assertContains($tx1, self::$getBlockResponse['tx']);
         $this->assertContains($tx2, self::$getBlockResponse['tx']);
+
+        $random = $this->response->random();
+        $this->assertContains($random, self::$getBlockResponse);
+
+        $random2 = $this->response->random(2);
+        $this->assertCount(2, $random2);
+        $this->assertArraySubset($random2, self::$getBlockResponse);
+
+        $random3 = $this->response->random(1, 'merkleroot');
+        $this->assertEquals(self::$getBlockResponse['merkleroot'], $random3);
     }
 
     public function testCount()
@@ -263,5 +273,42 @@ class BitcoindResponseTest extends TestCase
         $response = $this->response->withBody($stream);
 
         $this->assertEquals('cookies', $response->getBody()->__toString());
+    }
+
+    public function testSerialize()
+    {
+        $serializedContainer = serialize($this->response->getContainer());
+        $class = Bitcoin\BitcoindResponse::class;
+
+        $serialized = sprintf(
+            'C:%u:"%s":%u:{%s}',
+            strlen($class),
+            $class,
+            strlen($serializedContainer),
+            $serializedContainer
+        );
+
+        $this->assertEquals(
+            $serialized,
+            serialize($this->response)
+        );
+    }
+
+    public function testUnserialize()
+    {
+        $container = $this->response->getContainer();
+
+        $this->assertEquals(
+            $container,
+            unserialize(serialize($this->response))->getContainer()
+        );
+    }
+
+    public function testJsonSerialize()
+    {
+        $this->assertEquals(
+            json_encode($this->response->getContainer()),
+            json_encode($this->response)
+        );
     }
 }

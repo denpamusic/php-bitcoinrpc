@@ -5,6 +5,16 @@ namespace Denpa\Bitcoin;
 trait SerializableContainerTrait
 {
     /**
+     * Gets container.
+     *
+     * @return array
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
      * Returns the string representation of the object.
      *
      * @return string

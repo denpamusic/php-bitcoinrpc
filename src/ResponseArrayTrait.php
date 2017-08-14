@@ -87,19 +87,33 @@ trait ResponseArrayTrait
     /**
      * Gets random value.
      *
+     * @param integer $number
+     * @param string|null $key
+     *
      * @return mixed
      */
-    public function random($key = null)
+    public function random($number = 1, $key = null)
     {
-        $values = $this->get($key);
+        $value = $this->get($key);
 
-        if (is_array($values)) {
-            $key = mt_rand(0, count($values) - 1);
+        if (is_array($value)) {
+            $keys = array_keys($value);
+            $keysLength = count($keys);
 
-            return $values[$key];
+            shuffle($keys);
+
+            if ($number > $keysLength) {
+                $number = $keysLength;
+            }
+
+            for ($result = [], $count = 0; $count < $number; $count++) {
+                $result[$keys[$count]] = $value[$keys[$count]];
+            }
+
+            return count($result) > 1 ? $result : current($result);
         }
 
-        return $values;
+        return $value;
     }
 
     /**
