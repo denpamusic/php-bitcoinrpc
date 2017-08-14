@@ -25,7 +25,10 @@ trait MessageTrait
      */
     public function withProtocolVersion($version)
     {
-        return $this->response->withProtocolVersion($version);
+        $new = clone $this;
+        return $new->setResponse(
+            $this->response->withProtocolVersion($version)
+        );
     }
 
     /**
@@ -84,7 +87,8 @@ trait MessageTrait
      */
     public function withHeader($name, $value)
     {
-        return $this->response->withHeader($name, $value);
+        $new = clone $this;
+        return $new->setResponse($this->response->withHeader($name, $value));
     }
 
     /**
@@ -96,7 +100,8 @@ trait MessageTrait
      */
     public function withAddedHeader($name, $value)
     {
-        return $this->response->withAddedHeader($name, $value);
+        $new = clone $this;
+        return $new->setResponse($this->response->withAddedHeader($name, $value));
     }
 
     /**
@@ -108,7 +113,8 @@ trait MessageTrait
      */
     public function withoutHeader($name)
     {
-        return $this->response->withoutHeader($name);
+        $new = clone $this;
+        return $new->setResponse($this->response->withoutHeader($name));
     }
 
     /**
@@ -130,6 +136,7 @@ trait MessageTrait
      */
     public function withBody(StreamInterface $body)
     {
-        return $this->response->withBody($body);
+        $new = clone $this;
+        return $new->setResponse($this->response->withBody($body));
     }
 }

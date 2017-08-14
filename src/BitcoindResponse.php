@@ -54,6 +54,19 @@ class BitcoindResponse implements
     }
 
     /**
+     * Sets response.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
+     *
+     * @return static
+     */
+    public function setResponse(ResponseInterface $response)
+    {
+        $this->response = $response;
+        return $this;
+    }
+
+    /**
      * Checks if response has error.
      *
      * @return bool
@@ -117,7 +130,10 @@ class BitcoindResponse implements
      */
     public function withStatus($code, $reasonPhrase = '')
     {
-        return $this->response->withStatus($code, $reasonPhrase);
+        $new = clone $this;
+        return $new->setResponse(
+            $this->response->withStatus($code, $reasonPhrase)
+        );
     }
 
     /**
