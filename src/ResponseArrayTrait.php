@@ -85,6 +85,23 @@ trait ResponseArrayTrait
     }
 
     /**
+     * Gets random value.
+     *
+     * @return mixed
+     */
+    public function random($key = null)
+    {
+        $values = $this->get($key);
+
+        if (is_array($values)) {
+            $key = mt_rand(0, count($values) - 1);
+            return $values[$key];
+        }
+
+        return $values;
+    }
+
+    /**
      * Counts response items.
      *
      * @return int
