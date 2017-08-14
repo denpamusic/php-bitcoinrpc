@@ -63,6 +63,7 @@ class BitcoindResponse implements
     public function setResponse(ResponseInterface $response)
     {
         $this->response = $response;
+
         return $this;
     }
 
@@ -131,6 +132,7 @@ class BitcoindResponse implements
     public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
+
         return $new->setResponse(
             $this->response->withStatus($code, $reasonPhrase)
         );
