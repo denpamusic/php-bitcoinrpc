@@ -227,6 +227,16 @@ class BitcoindResponseTest extends TestCase
             count(self::$getBlockResponse),
             $this->response->count()
         );
+
+        $this->assertEquals(
+            4,
+            $this->response->count('tx')
+        );
+
+        $this->assertEquals(
+            1,
+            $this->response->count('hash')
+        );
     }
 
     public function testProtocolVersion()

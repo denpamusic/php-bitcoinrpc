@@ -119,11 +119,23 @@ trait ResponseArrayTrait
     /**
      * Counts response items.
      *
+     * @param string|null $key
+     *
      * @return int
      */
-    public function count()
+    public function count($key = null)
     {
-        return count($this->result());
+        if (is_null($key)) {
+            return count($this->result());
+        }
+
+        $value = $this->get($key);
+
+        if (is_array($value)) {
+            return count($value);
+        }
+
+        return 1;
     }
 
     /**
