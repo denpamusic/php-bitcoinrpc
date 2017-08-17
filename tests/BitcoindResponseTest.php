@@ -161,6 +161,11 @@ class BitcoindResponseTest extends TestCase
             self::$getBlockResponse['tx'][0],
             $this->response->key('tx')->first()
         );
+
+        $this->assertEquals(
+            reset(self::$getBlockResponse),
+            $this->response->first()
+        );
     }
 
     public function testLast()
@@ -168,6 +173,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals(
             self::$getBlockResponse['tx'][3],
             $this->response->key('tx')->last()
+        );
+
+        $this->assertEquals(
+            end(self::$getBlockResponse),
+            $this->response->last()
         );
     }
 

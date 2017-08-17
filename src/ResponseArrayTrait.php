@@ -214,7 +214,7 @@ trait ResponseArrayTrait
     protected function constructKey($key = null)
     {
         if (!is_null($key) && !is_null($this->current)) {
-            return $this->current . '.' . $key;
+            return $this->current.'.'.$key;
         }
 
         if (is_null($key) && !is_null($this->current)) {
