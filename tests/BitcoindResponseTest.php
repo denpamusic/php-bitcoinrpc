@@ -138,7 +138,7 @@ class BitcoindResponseTest extends TestCase
 
         $this->assertEquals(
             self::$getBlockResponse['hash'],
-            $response('hash')
+            $response('hash')->get()
         );
     }
 
@@ -155,13 +155,32 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    public function testFirst()
+    {
+        $this->assertEquals(
+            self::$getBlockResponse['tx'][0],
+            $this->response->key('tx')->first()
+        );
+    }
+
+    public function testLast()
+    {
+        $this->assertEquals(
+            self::$getBlockResponse['tx'][3],
+            $this->response->key('tx')->last()
+        );
+    }
+
     public function testHas()
     {
-        $this->assertTrue($this->response->has('hash'));
-        $this->assertTrue($this->response->has('tx.0'));
-        $this->assertFalse($this->response->has('tx.3'));
-        $this->assertFalse($this->response->has('cookies'));
-        $this->assertFalse($this->response->has('height'));
+        $response = $this->response;
+
+        $this->assertTrue($response->has('hash'));
+        $this->assertTrue($response->has('tx.0'));
+        $this->assertTrue($response('tx')->has(0));
+        $this->assertFalse($response->has('tx.3'));
+        $this->assertFalse($response->has('cookies'));
+        $this->assertFalse($response->has('height'));
     }
 
     public function testExists()
@@ -214,6 +233,10 @@ class BitcoindResponseTest extends TestCase
 
         $random4 = $this->response->random(6, 'tx');
         $this->assertEquals(self::$getBlockResponse['tx'], $random4);
+
+        $response = $this->response;
+        $random5 = $response('tx')->random(6);
+        $this->assertEquals(self::$getBlockResponse['tx'], $random5);
     }
 
     public function testCount()

@@ -141,7 +141,7 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $this->assertEquals(self::$getBlockResponse, $response());
+        $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
     /**
@@ -157,7 +157,7 @@ class ClientTest extends TestCase
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function (Bitcoin\BitcoindResponse $response) {
-                return $response() == self::$getBlockResponse;
+                return $response->get() == self::$getBlockResponse;
             }),
         ]);
 
@@ -191,7 +191,7 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $this->assertEquals(self::$getBlockResponse, $response());
+        $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
     /**
@@ -207,7 +207,7 @@ class ClientTest extends TestCase
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function (Bitcoin\BitcoindResponse $response) {
-                return $response() == self::$getBlockResponse;
+                return $response->get() == self::$getBlockResponse;
             }),
         ]);
 

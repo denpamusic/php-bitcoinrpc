@@ -13,6 +13,8 @@ trait ResponseArrayTrait
      */
     public function get($key = null)
     {
+        $key = $this->constructKey($key);
+
         if (is_null($key)) {
             return $this->result();
         }
@@ -27,12 +29,14 @@ trait ResponseArrayTrait
     /**
      * Checks if key exists.
      *
-     * @param string $key
+     * @param string|null $key
      *
      * @return bool
      */
-    public function exists($key)
+    public function exists($key = null)
     {
+        $key = $this->constructKey($key);
+
         return $this->parseKey($key, function ($part, $result) {
             return array_key_exists($part, $result);
         });
@@ -41,15 +45,49 @@ trait ResponseArrayTrait
     /**
      * Checks if key exists and not null.
      *
-     * @param string $key
+     * @param string|null $key
      *
      * @return bool
      */
-    public function has($key)
+    public function has($key = null)
     {
+        $key = $this->constructKey($key);
+
         return $this->parseKey($key, function ($part, $result) {
             return isset($result[$part]);
         });
+    }
+
+    /**
+     * Gets first element.
+     *
+     * @return mixed
+     */
+    public function first()
+    {
+        $value = $this->get();
+
+        if (is_array($value)) {
+            return reset($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Gets last element.
+     *
+     * @return mixed
+     */
+    public function last()
+    {
+        $value = $this->get();
+
+        if (is_array($value)) {
+            return end($value);
+        }
+
+        return $value;
     }
 
     /**
@@ -62,6 +100,20 @@ trait ResponseArrayTrait
     public function contains($value)
     {
         return in_array($value, $this->result());
+    }
+
+    /**
+     * Set current key.
+     *
+     * @param string|null $key
+     *
+     * @return static
+     */
+    public function key($key = null)
+    {
+        $new = clone $this;
+        $new->current = $key;
+        return $new;
     }
 
     /**
@@ -125,6 +177,8 @@ trait ResponseArrayTrait
      */
     public function count($key = null)
     {
+        $key = $this->constructKey($key);
+
         if (is_null($key)) {
             return count($this->result());
         }
@@ -147,7 +201,27 @@ trait ResponseArrayTrait
      */
     public function __invoke($key = null)
     {
-        return $this->get($key);
+        return $this->key($key);
+    }
+
+    /**
+     * Constructs full key.
+     *
+     * @param string|null $key
+     *
+     * @return string|null
+     */
+    protected function constructKey($key = null)
+    {
+        if (!is_null($key) && !is_null($this->current)) {
+            return $this->current . '.' . $key;
+        }
+
+        if (is_null($key) && !is_null($this->current)) {
+            return $this->current;
+        }
+
+        return $key;
     }
 
     /**

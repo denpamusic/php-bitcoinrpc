@@ -31,6 +31,13 @@ class BitcoindResponse implements
     protected $container = [];
 
     /**
+     * Current key.
+     *
+     * @var string
+     */
+    protected $current;
+
+    /**
      * Constructs new json response.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
