@@ -38,7 +38,7 @@ Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.or
 ```php
 $block = $bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
-$block('hash');            // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+$block('hash')->get();     // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 $block['height'];          // 0 (array access)
 $block->get('tx.0');       // 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
 $block->count('tx');       // 1
@@ -48,6 +48,9 @@ $block->contains(0);       // check if response contains value
 $block->values();          // array of values
 $block->keys();            // array of keys
 $block->random(1, 'tx');   // random block txid
+$block('tx')->random(2);   // two random block txid's
+$block('tx')->first();     // txid of first transaction
+$block('tx')->last();      // txid of last transaction
 ```
 To send asynchronous request, add Async to method name:
 ```php
