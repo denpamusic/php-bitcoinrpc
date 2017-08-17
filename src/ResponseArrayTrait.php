@@ -113,6 +113,7 @@ trait ResponseArrayTrait
     {
         $new = clone $this;
         $new->current = $key;
+
         return $new;
     }
 
