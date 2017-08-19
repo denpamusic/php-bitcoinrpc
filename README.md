@@ -38,6 +38,9 @@ $bitcoind = new BitcoinClient([
 ```
 Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic:
 ```php
+/**
+ * Get block info.
+ */
 $block = $bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
 $block('hash')->get();     // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
@@ -53,6 +56,12 @@ $block->random(1, 'tx');   // random block txid
 $block('tx')->random(2);   // two random block txid's
 $block('tx')->first();     // txid of first transaction
 $block('tx')->last();      // txid of last transaction
+
+/**
+ * Send transaction.
+ */
+$result = $bitcoind->sendToAddress('mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.1);
+$txid = $result->get();
 ```
 To send asynchronous request, add Async to method name:
 ```php
@@ -73,6 +82,9 @@ $promise->wait();
 
 You can also send requests using request method:
 ```php
+/**
+ * Get block info.
+ */
 $block = $bitcoind->request('getBlock', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
 $block('hash');            // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
@@ -85,6 +97,12 @@ $block->contains(0);       // check if response contains value
 $block->values();          // get response values
 $block->keys();            // get response keys
 $block->random(1, 'tx');   // get random txid
+
+/**
+ * Send transaction.
+ */
+$result = $BTC->request('sendtoaddress', ['mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.06]);
+$txid = $result->get();
 
 ```
 or requestAsync method for asynchronous calls:
@@ -108,3 +126,10 @@ $promise->wait();
 ## License
 
 This product is distributed under MIT license.
+
+## Donations
+
+If you like this project,
+you can donate Bitcoins to 13gkVWc3sdzpmCLkGkXXfPBwnh6ZXct947.
+
+Thanks for your support!❤
