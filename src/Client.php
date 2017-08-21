@@ -16,14 +16,14 @@ class Client
      *
      * @var \GuzzleHttp\Client
      */
-    private $client = null;
+    protected $client = null;
 
     /**
      * JSON-RPC Id.
      *
      * @var int
      */
-    private $rpcId = 0;
+    protected $rpcId = 0;
 
     /**
      * Constructs new client.

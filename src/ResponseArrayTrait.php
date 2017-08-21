@@ -178,10 +178,8 @@ trait ResponseArrayTrait
      */
     public function count($key = null)
     {
-        $key = $this->constructKey($key);
-
-        if (is_null($key)) {
-            return count($this->result());
+        if (! $this->exists($key)) {
+            return 0;
         }
 
         $value = $this->get($key);
@@ -191,6 +189,39 @@ trait ResponseArrayTrait
         }
 
         return 1;
+    }
+
+    /**
+     * Flattens multi-dimensional array.
+     *
+     * @param string|null $key
+     *
+     * @return array
+     */
+    public function flatten($key = null)
+    {
+        $array = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator((array)$this->get($key))
+        );
+
+        $tmp = [];
+        foreach ($array as $value) {
+            $tmp[] = $value;
+        }
+
+        return $tmp;
+    }
+
+    /**
+     * Gets sum of values.
+     *
+     * @param string|null $key
+     *
+     * @return float
+     */
+    public function sum($key = null)
+    {
+        return array_sum($this->flatten($key));
     }
 
     /**
@@ -233,12 +264,28 @@ trait ResponseArrayTrait
      *
      * @return mixed
      */
-    protected function parseKey($key, callable $callback)
+    protected function parseKey($key, callable $callback, $result = null)
     {
-        $parts = explode('.', $key);
-        $result = $this->result();
+        $parts = explode('.', trim($key, '.'));
+        $result = $result ?: $this->result();
 
-        foreach ($parts as $part) {
+        foreach ($parts as $index => $part) {
+            if ($part == '*') {
+                $sub = [];
+
+                foreach (array_keys($result) as $subKey) {
+                    $path = $subKey;
+
+                    if (isset($parts[$index+1])) {
+                        $path .= '.'.implode('.', array_slice($parts, $index+1));
+                    }
+
+                    $sub[$subKey] = $this->parseKey($path, $callback, $result);
+                }
+
+                return $sub;
+            }
+
             if (!$return = $callback($part, $result)) {
                 return $return;
             }

@@ -375,4 +375,22 @@ class BitcoindResponseTest extends TestCase
             json_encode($this->response)
         );
     }
+
+    public function testSum()
+    {
+        $response = $this->response;
+
+        $this->assertEquals(7, $response('test1.*.*')->sum('amount'));
+        $this->assertEquals(7, $response('test1.*.*.amount')->sum());
+        $this->assertEquals(7, $response->sum('test1.*.*.amount'));
+    }
+
+    public function testFlatten()
+    {
+        $response = $this->response;
+
+        $this->assertEquals([3, 4], $response('test1.*.*')->flatten('amount'));
+        $this->assertEquals([3, 4], $response('test1.*.*.amount')->flatten());
+        $this->assertEquals([3, 4], $response->flatten('test1.*.*.amount'));
+    }
 }

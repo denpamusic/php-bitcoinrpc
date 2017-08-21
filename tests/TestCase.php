@@ -32,6 +32,18 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             'ead6116a07f2a6911ac93eb0ae00ce05d49c7bb288f2fb9c338819e85414cf2c',
             null,
         ],
+        'test1'         => [
+            'test2' => [
+                'test4' => [
+                    'amount' => 3,
+                ],
+            ],
+            'test3' => [
+                'test5' => [
+                    'amount' => 4,
+                ],
+            ],
+        ],
     ];
 
     /**
