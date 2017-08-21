@@ -62,6 +62,13 @@ $block('tx')->last();      // txid of last transaction
  */
 $result = $bitcoind->sendToAddress('mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.1);
 $txid = $result->get();
+
+/**
+ * Get transaction amount.
+ */
+$result = $bitcoind->listSinceBlock();
+$totalAmount = $result->sum('transactions.*.amount');
+$totalSatoshi = BitcoinClient::toSatoshi($totalAmount);
 ```
 To send asynchronous request, add Async to method name:
 ```php
