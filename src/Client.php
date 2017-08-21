@@ -299,6 +299,7 @@ class Client
     public static function toFixed($number, $precision = 8)
     {
         $number = $number * pow(10, $precision);
+
         return bcdiv($number, pow(10, $precision), $precision);
     }
 }
