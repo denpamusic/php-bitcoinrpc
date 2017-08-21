@@ -531,7 +531,7 @@ class ClientTest extends TestCase
 
     public function testToBtc()
     {
-        $this->assertEquals(0.00005849, Bitcoin\Client::toBtc(310000/53));
+        $this->assertEquals(0.00005849, Bitcoin\Client::toBtc(310000 / 53));
     }
 
     public function testToSatoshi()

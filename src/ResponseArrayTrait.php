@@ -178,7 +178,11 @@ trait ResponseArrayTrait
      */
     public function count($key = null)
     {
-        if (! $this->exists($key)) {
+        if (is_null($this->constructKey($key))) {
+            return count($this->result());
+        }
+
+        if (!$this->exists($key)) {
             return 0;
         }
 
@@ -201,7 +205,7 @@ trait ResponseArrayTrait
     public function flatten($key = null)
     {
         $array = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator((array)$this->get($key))
+            new \RecursiveArrayIterator((array) $this->get($key))
         );
 
         $tmp = [];
@@ -259,8 +263,9 @@ trait ResponseArrayTrait
     /**
      * Parses dotted notation.
      *
-     * @param string   $key
-     * @param callable $callback
+     * @param string     $key
+     * @param callable   $callback
+     * @param array|null $result
      *
      * @return mixed
      */
@@ -276,8 +281,9 @@ trait ResponseArrayTrait
                 foreach (array_keys($result) as $subKey) {
                     $path = $subKey;
 
-                    if (isset($parts[$index+1])) {
-                        $path .= '.'.implode('.', array_slice($parts, $index+1));
+                    if (isset($parts[$index + 1])) {
+                        $pathParts = array_slice($parts, $index + 1);
+                        $path .= '.'.implode('.', $pathParts);
                     }
 
                     $sub[$subKey] = $this->parseKey($path, $callback, $result);

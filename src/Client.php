@@ -273,7 +273,7 @@ class Client
      */
     public static function toBtc($amount)
     {
-        return bcdiv((int)$amount, 1e8, 8);
+        return bcdiv((int) $amount, 1e8, 8);
     }
 
     /**
@@ -292,7 +292,7 @@ class Client
      * Brings number to fixed pricision without rounding.
      *
      * @param float $number
-     * @param int $precision
+     * @param int   $precision
      *
      * @return string
      */

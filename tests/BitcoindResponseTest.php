@@ -280,6 +280,16 @@ class BitcoindResponseTest extends TestCase
             1,
             $this->response->count('hash')
         );
+
+        $this->assertEquals(
+            1,
+            $this->response->key('hash')->count()
+        );
+
+        $this->assertEquals(
+            0,
+            $this->response->count('nonexistent')
+        );
     }
 
     public function testProtocolVersion()
