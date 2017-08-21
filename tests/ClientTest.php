@@ -528,4 +528,22 @@ class ClientTest extends TestCase
 
         $promise->wait();
     }
+
+    public function testToBtc()
+    {
+        $this->assertEquals(0.00005849, Bitcoin\Client::toBtc(310000/53));
+    }
+
+    public function testToSatoshi()
+    {
+        $this->assertEquals(5849, Bitcoin\Client::toSatoshi(0.00005849));
+    }
+
+    public function testToFixed()
+    {
+        $this->assertSame('1', Bitcoin\Client::toFixed(1.2345678910, 0));
+        $this->assertSame('1.23', Bitcoin\Client::toFixed(1.2345678910, 2));
+        $this->assertSame('1.2345', Bitcoin\Client::toFixed(1.2345678910, 4));
+        $this->assertSame('1.23456789', Bitcoin\Client::toFixed(1.2345678910, 8));
+    }
 }
