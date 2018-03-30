@@ -94,6 +94,8 @@ class BitcoindResponse implements
         if ($this->hasError()) {
             return $this->container['error'];
         }
+
+        return null;
     }
 
     /**
@@ -116,6 +118,8 @@ class BitcoindResponse implements
         if ($this->hasResult()) {
             return $this->container['result'];
         }
+
+        return null;
     }
 
     /**
