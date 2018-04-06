@@ -134,8 +134,6 @@ class Client
                 $exception->getMessage(),
                 $exception->getCode()
             );
-        } catch (Exceptions\BitcoindException $exception) {
-            throw $exception;
         }
     }
 
