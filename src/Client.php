@@ -243,11 +243,11 @@ class Client
 	 * Handles async request success.
 	 *
 	 * @param \Psr\Http\Message\ResponseInterface $response
-	 * @param callable                            $callback
+	 * @param callable|null                       $callback
 	 *
 	 * @return void
 	 */
-	protected function asyncFulfilled(ResponseInterface $response, callable $callback)
+	protected function asyncFulfilled(ResponseInterface $response, callable $callback = null)
 	{
 		$error = null;
 		if ($response->hasError()) {
@@ -263,11 +263,11 @@ class Client
 	 * Handles async request failure.
 	 *
 	 * @param \GuzzleHttp\Exception\RequestException $exception
-	 * @param callable                               $callback
+	 * @param callable|null                          $callback
 	 *
 	 * @return void
 	 */
-	protected function asyncRejected(RequestException $exception, callable $callback)
+	protected function asyncRejected(RequestException $exception, callable $callback = null)
 	{
 		if (
 			$exception->hasResponse() &&
@@ -278,10 +278,12 @@ class Client
 			);
 		}
 
-		$exception = new Exceptions\ClientException(
-			$exception->getMessage(),
-			$exception->getCode()
-		);
+		if ($exception instanceof RequestException) {
+			$exception = new Exceptions\ClientException(
+				$exception->getMessage(),
+				$exception->getCode()
+			);
+		}
 
 		if (is_callable($callback)) {
 			$callback($exception);
