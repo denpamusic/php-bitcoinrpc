@@ -8,12 +8,16 @@ php:
   - hhvm
 
 before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter 
+  - chmod +x ./cc-test-reporter 
+  - ./cc-test-reporter before-build
   - composer self-update
   - composer install --prefer-source --no-interaction
 
 script:
   - mkdir -p build/logs
   - php vendor/bin/phpunit
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 
 matrix:
   allow_failures:
@@ -21,9 +25,3 @@ matrix:
     - php: 5.6
   fast_finish: true
 
-addons:
-  code_climate:
-    repo_token: 260ab9176fc71a03135174210e0b12c99a453f7846ae0fac904bffacf10a2987
-
-after_success:
-  - vendor/bin/test-reporter
