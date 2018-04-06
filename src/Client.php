@@ -88,7 +88,7 @@ class Client
      *
      * @param  \GuzzleHttp\ClientInterface
      *
-     * @return void
+     * @return static
      */
     public function setClient(ClientInterface $client)
     {
@@ -166,33 +166,10 @@ class Client
 
         $promise->then(
             function (ResponseInterface $response) use ($onFullfiled) {
-                $error = null;
-                if ($response->hasError()) {
-                    $error = new Exceptions\BitcoindException($response->error());
-                }
-
-                if (is_callable($onFullfiled)) {
-                    $onFullfiled($error ?: $response);
-                }
+				$this->asyncFulfilled($response, $onFullfiled);
             },
             function (RequestException $exception) use ($onRejected) {
-                if (
-                    $exception->hasResponse() &&
-                    $exception->getResponse()->hasError()
-                ) {
-                    $exception = new Exceptions\BitcoindException(
-                        $exception->getResponse()->error()
-                    );
-                }
-
-				$exception = new Exceptions\ClientException(
-					$exception->getMessage(),
-					$exception->getCode()
-				);
-
-                if (is_callable($onRejected)) {
-                    $onRejected($exception);
-                }
+				$this->asyncRejected($exception, $onRejected);
             }
         );
 
@@ -261,6 +238,55 @@ class Client
 
         return $config;
     }
+	
+	/**
+	 * Handles async request success.
+	 *
+	 * @param \Psr\Http\Message\ResponseInterface $response
+	 * @param callable                            $callback
+	 *
+	 * @return void
+	 */
+	protected function asyncFulfilled(ResponseInterface $response, callable $callback)
+	{
+		$error = null;
+		if ($response->hasError()) {
+			$error = new Exceptions\BitcoindException($response->error());
+		}
+
+		if (is_callable($callback)) {
+			$callback($error ?: $response);
+		}
+	}
+	
+	/**
+	 * Handles async request failure.
+	 *
+	 * @param \GuzzleHttp\Exception\RequestException $exception
+	 * @param callable                               $callback
+	 *
+	 * @return void
+	 */
+	protected function asyncRejected(RequestException $exception, callable $callback)
+	{
+		if (
+			$exception->hasResponse() &&
+			$exception->getResponse()->hasError()
+		) {
+			$exception = new Exceptions\BitcoindException(
+				$exception->getResponse()->error()
+			);
+		}
+
+		$exception = new Exceptions\ClientException(
+			$exception->getMessage(),
+			$exception->getCode()
+		);
+
+		if (is_callable($callback)) {
+			$callback($exception);
+		}
+	}
 
     /**
      * Converts amount from satoshi to bitcoin.
