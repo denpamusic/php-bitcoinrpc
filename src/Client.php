@@ -185,12 +185,10 @@ class Client
                     );
                 }
 
-                if ($exception instanceof RequestException) {
-                    $exception = new Exceptions\ClientException(
-                        $exception->getMessage(),
-                        $exception->getCode()
-                    );
-                }
+				$exception = new Exceptions\ClientException(
+					$exception->getMessage(),
+					$exception->getCode()
+				);
 
                 if (is_callable($onRejected)) {
                     $onRejected($exception);
