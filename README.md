@@ -108,7 +108,7 @@ $block->random(1, 'tx');   // get random txid
 /**
  * Send transaction.
  */
-$result = $BTC->request('sendtoaddress', ['mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.06]);
+$result = $bitcoind->request('sendtoaddress', ['mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.06]);
 $txid = $result->get();
 
 ```
