@@ -137,6 +137,6 @@ This product is distributed under MIT license.
 ## Donations
 
 If you like this project,
-you can donate Bitcoins to 13gkVWc3sdzpmCLkGkXXfPBwnh6ZXct947.
+you can donate Bitcoins to 3L6dqSBNgdpZan78KJtzoXEk9DN3sgEQJu.
 
 Thanks for your support!❤
