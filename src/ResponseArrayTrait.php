@@ -62,7 +62,7 @@ trait ResponseArrayTrait
      * Gets first element.
      *
      * @param string|null $key
-	 *
+     *
      * @return mixed
      */
     public function first($key = null)
@@ -80,7 +80,7 @@ trait ResponseArrayTrait
      * Gets last element.
      *
      * @param string|null $key
-	 *
+     *
      * @return mixed
      */
     public function last($key = null)
