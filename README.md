@@ -103,6 +103,8 @@ $block->exists('version'); // key must exist and CAN be null
 $block->contains(0);       // check if response contains value
 $block->values();          // get response values
 $block->keys();            // get response keys
+$block->first('tx');       // get txid of the first transaction
+$block->last('tx');        // get txid of the last transaction
 $block->random(1, 'tx');   // get random txid
 
 /**
