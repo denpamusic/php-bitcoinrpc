@@ -61,11 +61,13 @@ trait ResponseArrayTrait
     /**
      * Gets first element.
      *
+     * @param string|null $key
+	 *
      * @return mixed
      */
-    public function first()
+    public function first($key = null)
     {
-        $value = $this->get();
+        $value = $this->get($key);
 
         if (is_array($value)) {
             return reset($value);
@@ -77,11 +79,13 @@ trait ResponseArrayTrait
     /**
      * Gets last element.
      *
+     * @param string|null $key
+	 *
      * @return mixed
      */
-    public function last()
+    public function last($key = null)
     {
-        $value = $this->get();
+        $value = $this->get($key);
 
         if (is_array($value)) {
             return end($value);
@@ -182,17 +186,13 @@ trait ResponseArrayTrait
             return count($this->result());
         }
 
-        if (!$this->exists($key)) {
-            return 0;
-        }
-
         $value = $this->get($key);
 
         if (is_array($value)) {
             return count($value);
         }
 
-        return 1;
+        return (int) $value > 0;
     }
 
     /**
