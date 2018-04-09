@@ -1,9 +1,9 @@
 {
     "name": "denpa/php-bitcoinrpc",
-	"type": "library",
-	"description": "Bitcoin JSON-RPC client based on GuzzleHttp",
-	"keywords": ["bitcoin","api","jsonrpc","guzzle"],
-	"homepage": "https://github.com/denpamusic/php-bitcoinrpc",
+    "type": "library",
+    "description": "Bitcoin JSON-RPC client based on GuzzleHttp",
+    "keywords": ["bitcoin","api","jsonrpc","guzzle"],
+    "homepage": "https://github.com/denpamusic/php-bitcoinrpc",
     "license": "MIT",
     "authors": [
         {
@@ -11,9 +11,9 @@
             "email": "denpa@netfleet.space",
             "role": "Developer"
         }
-	],
-	"require": {
-		"php": ">=5.6.0",
+    ],
+    "require": {
+        "php": ">=5.6.0",
         "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
