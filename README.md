@@ -150,8 +150,8 @@ This product is distributed under MIT license.
 
 ## Donations
 
-If you like this project, please consider donating:
-BTC: 3L6dqSBNgdpZan78KJtzoXEk9DN3sgEQJu
-Bech32: bc1qyj8v6l70c4mjgq7hujywlg6le09kx09nq8d350
+If you like this project, please consider donating:<br>
+**BTC**: 3L6dqSBNgdpZan78KJtzoXEk9DN3sgEQJu<br>
+**Bech32**: bc1qyj8v6l70c4mjgq7hujywlg6le09kx09nq8d350
 
-Thanks for your support!❤
+❤Thanks for your support!❤
