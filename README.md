@@ -19,12 +19,24 @@ PHP 7.0 or higher (should also work on 5.6, but this is unsupported)
 ## Usage
 Create new object with url as parameter
 ```php
+/**
+ * Don't forget to include composer autoloader by uncommenting line below
+ * if you're not already done it anywhere else in your project.
+ **/
+// require 'vendor/autoload.php';
+
 use Denpa\Bitcoin\Client as BitcoinClient;
 
 $bitcoind = new BitcoinClient('http://rpcuser:rpcpassword@localhost:8332/');
 ```
 or use array to define your bitcoind settings
 ```php
+/**
+ * Don't forget to include composer autoloader by uncommenting line below
+ * if you're not already done it anywhere else in your project.
+ **/
+// require 'vendor/autoload.php';
+
 use Denpa\Bitcoin\Client as BitcoinClient;
 
 $bitcoind = new BitcoinClient([
@@ -138,7 +150,8 @@ This product is distributed under MIT license.
 
 ## Donations
 
-If you like this project,
-you can donate Bitcoins to 3L6dqSBNgdpZan78KJtzoXEk9DN3sgEQJu.
+If you like this project, please consider donating:
+BTC: 3L6dqSBNgdpZan78KJtzoXEk9DN3sgEQJu
+Bech32: bc1qyj8v6l70c4mjgq7hujywlg6le09kx09nq8d350
 
 Thanks for your support!❤
