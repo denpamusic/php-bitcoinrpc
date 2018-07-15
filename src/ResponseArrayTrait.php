@@ -271,25 +271,16 @@ trait ResponseArrayTrait
      */
     protected function parseKey($key, callable $callback, $result = null)
     {
-        $parts = explode('.', trim($key, '.'));
+        $parts = is_array($key) ? $key : explode('.', trim($key, '.'));
         $result = $result ?: $this->result();
 
-        foreach ($parts as $index => $part) {
+        while (!is_null($part = array_shift($parts))) {
             if ($part == '*') {
-                $sub = [];
+				array_walk($result, function (&$value) use ($parts, $callback) {
+					$value = $this->parseKey($parts, $callback, $value);
+				});
 
-                foreach (array_keys($result) as $subKey) {
-                    $path = $subKey;
-
-                    if (isset($parts[$index + 1])) {
-                        $pathParts = array_slice($parts, $index + 1);
-                        $path .= '.'.implode('.', $pathParts);
-                    }
-
-                    $sub[$subKey] = $this->parseKey($path, $callback, $result);
-                }
-
-                return $sub;
+				return $result;
             }
 
             if (!$return = $callback($part, $result)) {
