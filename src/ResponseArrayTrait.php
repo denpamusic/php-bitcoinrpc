@@ -276,11 +276,11 @@ trait ResponseArrayTrait
 
         while (!is_null($part = array_shift($parts))) {
             if ($part == '*') {
-				array_walk($result, function (&$value) use ($parts, $callback) {
-					$value = $this->parseKey($parts, $callback, $value);
-				});
+                array_walk($result, function (&$value) use ($parts, $callback) {
+                    $value = $this->parseKey($parts, $callback, $value);
+                });
 
-				return $result;
+                return $result;
             }
 
             if (!$return = $callback($part, $result)) {
