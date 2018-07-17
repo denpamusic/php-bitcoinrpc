@@ -9,6 +9,15 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Class Client
+ * @package Denpa\Bitcoin
+ *
+ * @method string sendFrom($fromAccount, $toAccount, $amount, $minconf = 1, $comment = '')
+ * @method string sendToAddress($toAccount, $amount, $comment = '')
+ * @method mixed getBalance($account, $minconf = 1)
+ * @method array getTransaction($txid)
+ */
 class Client
 {
     /**
