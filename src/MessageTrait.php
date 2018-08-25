@@ -79,7 +79,7 @@ trait MessageTrait
     }
 
     /**
-     * Return an instance with the provided value replacing the specified header.
+     * Returns an instance with the provided value replacing the specified header.
      *
      * @param string       $name
      * @param string|array $value
@@ -94,7 +94,7 @@ trait MessageTrait
     }
 
     /**
-     * Return an instance with the specified header appended with the given value.
+     * Returns an instance with the specified header appended with the given value.
      *
      * @param string|array $value
      *
@@ -108,7 +108,7 @@ trait MessageTrait
     }
 
     /**
-     * Return an instance without the specified header.
+     * Returns an instance without the specified header.
      *
      * @param string $name
      *
@@ -132,7 +132,7 @@ trait MessageTrait
     }
 
     /**
-     * Return an instance with the specified message body.
+     * Returns an instance with the specified message body.
      *
      * @param \Psr\Http\Message\StreamInterface $body
      *

@@ -107,7 +107,7 @@ trait ResponseArrayTrait
     }
 
     /**
-     * Set current key.
+     * Sets current key.
      *
      * @param string|null $key
      *
@@ -229,7 +229,7 @@ trait ResponseArrayTrait
     }
 
     /**
-     * Get response item by key.
+     * Gets response item by key.
      *
      * @param string|null $key
      *

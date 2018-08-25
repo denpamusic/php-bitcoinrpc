@@ -7,7 +7,7 @@ use RuntimeException;
 class BitcoindException extends RuntimeException
 {
     /**
-     * Construct new bitcoind exception.
+     * Constructs new bitcoind exception.
      *
      * @param object $error
      *
