@@ -57,6 +57,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     ];
 
     /**
+     * Balance response.
+     *
+     * @var float
+     */
+    protected static $balanceResponse = 0.1;
+
+    /**
      * Get error 500 message.
      *
      * @return string
@@ -94,11 +101,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \GuzzleHttp\Client
      */
-    protected function mockGuzzle(array $queue = [])
+    protected function mockGuzzle(array $queue = [], &$container = [])
     {
         $handler = $this->bitcoind->getConfig('handler');
 
         if ($handler) {
+            $history = \GuzzleHttp\Middleware::history($container);
+            $handler->push($history);
             $handler->setHandler(new MockHandler($queue));
         }
 
@@ -118,6 +127,24 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     {
         $json = json_encode([
             'result' => self::$getBlockResponse,
+            'error'  => null,
+            'id'     => 0,
+        ]);
+
+        return new Response($code, [], $json);
+    }
+
+    /**
+     * Get getbalance command response.
+     *
+     * @param int $code
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function getBalanceResponse($code = 200)
+    {
+        $json = json_encode([
+            'result' => self::$balanceResponse,
             'error'  => null,
             'id'     => 0,
         ]);

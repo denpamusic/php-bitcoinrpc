@@ -144,6 +144,25 @@ class ClientTest extends TestCase
         $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
+    public function testMultiWalletRequest()
+    {
+        $wallet = 'testwallet.dat';
+        $history = [];
+
+        $guzzle = $this->mockGuzzle([
+            $this->getBalanceResponse(),
+        ], $history);
+
+        $response = $this->bitcoind
+            ->setClient($guzzle)
+            ->wallet($wallet)
+            ->request('getbalance');
+
+        $request = $history[0]['request'];
+        $this->assertEquals(self::$balanceResponse, $response->get());
+        $this->assertEquals($request->getUri()->getPath(), "/wallet/$wallet");
+    }
+
     /**
      * Test async request.
      *
