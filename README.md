@@ -144,6 +144,18 @@ $promise = $bitcoind->requestAsync(
 $promise->wait();
 ```
 
+## Multi-Wallet RPC
+You can use `wallet($name)` function to do a [Multi-Wallet RPC call](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC)#Multi-wallet_RPC_calls):
+```php
+/**
+ * Get wallet2.dat balance.
+ */
+$balance = $bitcoind->wallet('wallet2.dat')->getbalance();
+
+$balance->get(); // 0.10000000
+```
+
+
 ## License
 
 This product is distributed under MIT license.
