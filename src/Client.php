@@ -269,7 +269,8 @@ class Client
      */
     protected function getDsn()
     {
-        $scheme = $this->config['scheme'] ?? 'http';
+        $scheme = isset($this->config['scheme']) ?
+            $this->config['scheme'] : 'http';
 
         return $scheme.'://'.
             $this->config['host'].':'.
