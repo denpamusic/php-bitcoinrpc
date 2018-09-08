@@ -181,7 +181,7 @@ class Client
         ];
 
         $promise = $this->client
-            ->requestAsync('POST', '/', ['json' => $json]);
+            ->requestAsync('POST', $this->path, ['json' => $json]);
 
         $promise->then(
             function (ResponseInterface $response) use ($onFullfiled) {

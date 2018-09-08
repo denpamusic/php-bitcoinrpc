@@ -144,6 +144,11 @@ class ClientTest extends TestCase
         $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
+    /**
+     * Test multiwallet request.
+     *
+     * @return void
+     */
     public function testMultiWalletRequest()
     {
         $wallet = 'testwallet.dat';
@@ -160,6 +165,43 @@ class ClientTest extends TestCase
 
         $request = $history[0]['request'];
         $this->assertEquals(self::$balanceResponse, $response->get());
+        $this->assertEquals($request->getUri()->getPath(), "/wallet/$wallet");
+    }
+
+    /**
+     * Test async multiwallet request.
+     *
+     * @return void
+     */
+    public function testMultiWalletAsyncRequest()
+    {
+        $wallet = 'testwallet2.dat';
+        $history = [];
+
+        $guzzle = $this->mockGuzzle([
+            $this->getBalanceResponse(),
+        ], $history);
+
+        $onFulfilled = $this->mockCallable([
+            $this->callback(function (Bitcoin\BitcoindResponse $response) {
+                return $response->get() == self::$balanceResponse;
+            }),
+        ]);
+
+        $promise = $this->bitcoind
+            ->setClient($guzzle)
+            ->wallet($wallet)
+            ->requestAsync(
+                'getbalance',
+                [],
+                function ($response) use ($onFulfilled) {
+                    $onFulfilled($response);
+                }
+            );
+
+        $promise->wait();
+
+        $request = $history[0]['request'];
         $this->assertEquals($request->getUri()->getPath(), "/wallet/$wallet");
     }
 
