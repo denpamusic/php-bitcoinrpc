@@ -57,7 +57,7 @@ class Client
             'base_uri'    => "${config['scheme']}://${config['host']}:${config['port']}",
             'auth'        => [
                 $config['user'],
-                $config['pass'],
+                $config['password'],
             ],
             'verify'      => isset($config['ca']) && is_file($config['ca']) ?
                 $config['ca'] : true,
@@ -222,12 +222,15 @@ class Client
      */
     protected function defaultConfig(array $config = [])
     {
+        // use same var name as laravel-bitcoinrpc
+        $config['password'] = isset($config['pass']) ? $config['pass'] : '';
+
         $defaults = [
-            'scheme' => 'http',
-            'host'   => '127.0.0.1',
-            'port'   => 8332,
-            'user'   => '',
-            'pass'   => '',
+            'scheme'     => 'http',
+            'host'       => '127.0.0.1',
+            'port'       => 8332,
+            'user'       => '',
+            'password'   => '',
         ];
 
         return array_merge($defaults, $config);
