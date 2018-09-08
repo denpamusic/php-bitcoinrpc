@@ -19,6 +19,13 @@ class Client
     protected $client = null;
 
     /**
+     * Client configuration.
+     *
+     * @var array
+     */
+    protected $config;
+
+    /**
      * URL path.
      *
      * @var string
@@ -42,26 +49,14 @@ class Client
     public function __construct($config = [])
     {
         // init defaults
-        $config = $this->defaultConfig($this->parseUrl($config));
-
-        $handlerStack = HandlerStack::create();
-        $handlerStack->push(
-            Middleware::mapResponse(function (ResponseInterface $response) {
-                return BitcoindResponse::createFrom($response);
-            }),
-            'json_response'
-        );
+        $this->config = $this->defaultConfig($this->parseUrl($config));
 
         // construct client
         $this->client = new GuzzleHttp([
-            'base_uri'    => "${config['scheme']}://${config['host']}:${config['port']}",
-            'auth'        => [
-                $config['user'],
-                $config['password'],
-            ],
-            'verify'      => isset($config['ca']) && is_file($config['ca']) ?
-                $config['ca'] : true,
-            'handler'     => $handlerStack,
+            'base_uri' => $this->getDsn(),
+            'auth'     => $this->getAuth(),
+            'verify'   => $this->getCa(),
+            'handler'  => $this->getHandler(),
         ]);
     }
 
@@ -77,7 +72,7 @@ class Client
         return (
                 isset($this->client) &&
                 $this->client instanceof ClientInterface
-            ) ? $this->client->getConfig($option) : false;
+            ) ? $this->client->getConfig($option) : null;
     }
 
     /**
@@ -241,6 +236,65 @@ class Client
 
         return array_merge($defaults, $config);
     }
+
+    /**
+     * Gets CA file from config.
+     *
+     * @return string|null
+     */
+    protected function getCa()
+    {
+        if (isset($this->config['ca']) && is_file($this->config['ca'])) {
+            return $this->config['ca'];
+        }
+    }
+
+    /**
+     * Gets authentication array.
+     *
+     * @return array
+     */
+    protected function getAuth()
+    {
+        return [
+            $this->config['user'],
+            $this->config['password']
+        ];
+    }
+
+    /**
+     * Gets DSN string.
+     *
+     * @return string
+     */
+    protected function getDsn()
+    {
+        $scheme = $this->config['scheme'] ?? 'http';
+
+        return $scheme.'://'.
+            $this->config['host'].':'.
+            $this->config['port'];
+    }
+
+    /**
+     * Gets Guzzle handler stack.
+     *
+     * @return \GuzzleHttp\HandlerStack
+     */
+    protected function getHandler()
+    {
+        $stack = HandlerStack::create();
+
+        $stack->push(
+            Middleware::mapResponse(function (ResponseInterface $response) {
+                return BitcoindResponse::createFrom($response);
+            }),
+            'json_response'
+        );
+
+        return $stack;
+    }
+
 
     /**
      * Expand URL config into components.
