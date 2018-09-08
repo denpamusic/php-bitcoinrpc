@@ -258,7 +258,7 @@ class Client
     {
         return [
             $this->config['user'],
-            $this->config['password']
+            $this->config['password'],
         ];
     }
 
@@ -294,7 +294,6 @@ class Client
 
         return $stack;
     }
-
 
     /**
      * Expand URL config into components.
