@@ -232,8 +232,8 @@ class Client
 
         // use same var name as laravel-bitcoinrpc
         if (
-            ! array_key_exists('password', $config) &&
-              array_key_exists('pass', $config)
+            !array_key_exists('password', $config) &&
+            array_key_exists('pass', $config)
         ) {
             $config['password'] = $config['pass'];
             unset($config['pass']);
