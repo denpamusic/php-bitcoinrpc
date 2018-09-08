@@ -222,9 +222,6 @@ class Client
      */
     protected function defaultConfig(array $config = [])
     {
-        // use same var name as laravel-bitcoinrpc
-        $config['password'] = isset($config['pass']) ? $config['pass'] : '';
-
         $defaults = [
             'scheme'     => 'http',
             'host'       => '127.0.0.1',
@@ -232,6 +229,15 @@ class Client
             'user'       => '',
             'password'   => '',
         ];
+
+        // use same var name as laravel-bitcoinrpc
+        if (
+            ! array_key_exists('password', $config) &&
+              array_key_exists('pass', $config)
+        ) {
+            $config['password'] = $config['pass'];
+            unset($config['pass']);
+        }
 
         return array_merge($defaults, $config);
     }
