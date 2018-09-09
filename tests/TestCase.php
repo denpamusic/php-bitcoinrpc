@@ -206,15 +206,16 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * Get request body.
      *
      * @param string $method
-     * @param mixed $params
+     * @param mixed  $params
      *
      * @return array
      */
-    protected function requestBody($method, ...$params)
+    protected function requestBody($method, $id, ...$params)
     {
         return [
             'method' => $method,
-            'params' => $params,
+            'params' => (array) $params,
+            'id'     => $id,
         ];
     }
 }

@@ -143,14 +143,17 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $json = $history[0]['request']->getBody()->getContents();
-        $body = $this->requestBody(
-            'getblockheader',
-            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        $json = json_decode(
+            $history[0]['request']->getBody()->getContents(),
+            true
         );
 
+        $this->assertEquals($this->requestBody(
+            'getblockheader',
+            $json['id'],
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        ), $json);
         $this->assertEquals(self::$getBlockResponse, $response->get());
-        $this->assertArraySubset($body, json_decode($json, true));
     }
 
     /**
@@ -233,13 +236,16 @@ class ClientTest extends TestCase
 
         $promise->wait();
 
-        $json = $history[0]['request']->getBody()->getContents();
-        $body = $this->requestBody(
-            'getblockheader',
-            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        $json = json_decode(
+            $history[0]['request']->getBody()->getContents(),
+            true
         );
 
-        $this->assertArraySubset($body, json_decode($json, true));
+        $this->assertEquals($this->requestBody(
+            'getblockheader',
+            $json['id'],
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        ), $json);
     }
 
     /**
@@ -261,13 +267,16 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
-        $json = $history[0]['request']->getBody()->getContents();
-        $body = $this->requestBody(
-            'getblockheader',
-            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        $json = json_decode(
+            $history[0]['request']->getBody()->getContents(),
+            true
         );
 
-        $this->assertArraySubset($body, json_decode($json, true));
+        $this->assertEquals($this->requestBody(
+            'getblockheader',
+            $json['id'],
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        ), $json);
         $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
@@ -301,13 +310,16 @@ class ClientTest extends TestCase
 
         $promise->wait();
 
-        $json = $history[0]['request']->getBody()->getContents();
-        $body = $this->requestBody(
-            'getblockheader',
-            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        $json = json_decode(
+            $history[0]['request']->getBody()->getContents(),
+            true
         );
 
-        $this->assertArraySubset($body, json_decode($json, true));
+        $this->assertEquals($this->requestBody(
+            'getblockheader',
+            $json['id'],
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        ), $json);
     }
 
     /**
