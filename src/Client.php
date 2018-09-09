@@ -205,7 +205,7 @@ class Client
             return $this->requestAsync($method, ...$params);
         }
 
-        return $this->request($method, $params);
+        return $this->request($method, ...$params);
     }
 
     /**
