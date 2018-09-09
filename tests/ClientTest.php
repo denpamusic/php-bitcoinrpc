@@ -130,9 +130,11 @@ class ClientTest extends TestCase
      */
     public function testRequest()
     {
+        $history = [];
+
         $guzzle = $this->mockGuzzle([
             $this->getBlockResponse(),
-        ]);
+        ], $history);
 
         $response = $this->bitcoind
             ->setClient($guzzle)
@@ -141,7 +143,14 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
+        $json = $history[0]['request']->getBody()->getContents();
+        $body = $this->requestBody(
+            'getblockheader',
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        );
+
         $this->assertEquals(self::$getBlockResponse, $response->get());
+        $this->assertArraySubset($body, json_decode($json, true));
     }
 
     /**
@@ -182,22 +191,10 @@ class ClientTest extends TestCase
             $this->getBalanceResponse(),
         ], $history);
 
-        $onFulfilled = $this->mockCallable([
-            $this->callback(function (Bitcoin\BitcoindResponse $response) {
-                return $response->get() == self::$balanceResponse;
-            }),
-        ]);
-
         $promise = $this->bitcoind
             ->setClient($guzzle)
             ->wallet($wallet)
-            ->requestAsync(
-                'getbalance',
-                [],
-                function ($response) use ($onFulfilled) {
-                    $onFulfilled($response);
-                }
-            );
+            ->requestAsync('getbalance', []);
 
         $promise->wait();
 
@@ -212,9 +209,11 @@ class ClientTest extends TestCase
      */
     public function testAsyncRequest()
     {
+        $history = [];
+
         $guzzle = $this->mockGuzzle([
             $this->getBlockResponse(),
-        ]);
+        ], $history);
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function (Bitcoin\BitcoindResponse $response) {
@@ -233,6 +232,14 @@ class ClientTest extends TestCase
             );
 
         $promise->wait();
+
+        $json = $history[0]['request']->getBody()->getContents();
+        $body = $this->requestBody(
+            'getblockheader',
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        );
+
+        $this->assertArraySubset($body, json_decode($json, true));
     }
 
     /**
@@ -242,9 +249,11 @@ class ClientTest extends TestCase
      */
     public function testMagic()
     {
+        $history = [];
+
         $guzzle = $this->mockGuzzle([
             $this->getBlockResponse(),
-        ]);
+        ], $history);
 
         $response = $this->bitcoind
             ->setClient($guzzle)
@@ -252,6 +261,13 @@ class ClientTest extends TestCase
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
 
+        $json = $history[0]['request']->getBody()->getContents();
+        $body = $this->requestBody(
+            'getblockheader',
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        );
+
+        $this->assertArraySubset($body, json_decode($json, true));
         $this->assertEquals(self::$getBlockResponse, $response->get());
     }
 
@@ -262,9 +278,11 @@ class ClientTest extends TestCase
      */
     public function testAsyncMagic()
     {
+        $history = [];
+
         $guzzle = $this->mockGuzzle([
             $this->getBlockResponse(),
-        ]);
+        ], $history);
 
         $onFulfilled = $this->mockCallable([
             $this->callback(function (Bitcoin\BitcoindResponse $response) {
@@ -282,6 +300,14 @@ class ClientTest extends TestCase
             );
 
         $promise->wait();
+
+        $json = $history[0]['request']->getBody()->getContents();
+        $body = $this->requestBody(
+            'getblockheader',
+            '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+        );
+
+        $this->assertArraySubset($body, json_decode($json, true));
     }
 
     /**

@@ -201,4 +201,20 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         return $exception;
     }
+
+    /**
+     * Get request body.
+     *
+     * @param string $method
+     * @param mixed $params
+     *
+     * @return array
+     */
+    protected function requestBody($method, ...$params)
+    {
+        return [
+            'method' => $method,
+            'params' => $params,
+        ];
+    }
 }
