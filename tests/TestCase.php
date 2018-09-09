@@ -8,6 +8,18 @@ use GuzzleHttp\Psr7\Response;
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
+     * Set up test.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->history = [];
+    }
+
+    /**
      * Block header response.
      *
      * @var array
@@ -101,13 +113,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \GuzzleHttp\Client
      */
-    protected function mockGuzzle(array $queue = [], &$container = [])
+    protected function mockGuzzle(array $queue = [])
     {
         $handler = $this->bitcoind->getConfig('handler');
 
         if ($handler) {
-            $history = \GuzzleHttp\Middleware::history($container);
-            $handler->push($history);
+            $middleware = \GuzzleHttp\Middleware::history($this->history);
+            $handler->push($middleware);
             $handler->setHandler(new MockHandler($queue));
         }
 
@@ -203,19 +215,50 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get request body.
+     * Make request body.
      *
      * @param string $method
      * @param mixed  $params
      *
      * @return array
      */
-    protected function requestBody($method, $id, ...$params)
+    protected function makeRequestBody($method, $id, ...$params)
     {
         return [
             'method' => $method,
             'params' => (array) $params,
             'id'     => $id,
         ];
+    }
+
+    /**
+     * Get request url from history.
+     *
+     * @param int $index
+     *
+     * @return string
+     */
+    protected function getHistoryRequestUri($index = 0)
+    {
+        if (isset($this->history[$index])) {
+            return $this->history[$index]['request']->getUri();
+        }
+    }
+
+    /**
+     * Get request body from history.
+     *
+     * @param int $index
+     *
+     * @return string
+     */
+    protected function getHistoryRequestBody($index = 0)
+    {
+        if (isset($this->history[$index])) {
+            return json_decode(
+                $this->history[$index]['request']->getBody()->getContents(),
+                true
+            );
+        }
     }
 }
