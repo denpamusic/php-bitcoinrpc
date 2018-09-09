@@ -124,13 +124,10 @@ class Client
     public function request($method, ...$params)
     {
         try {
-            $json = [
-                'method' => strtolower($method),
-                'params' => (array) $params,
-                'id'     => $this->rpcId++,
-            ];
-
-            $response = $this->client->request('POST', $this->path, ['json' => $json]);
+            $response = $this->client->request(
+                'POST',
+                $this->path,
+                ['json' => $this->makeJson($method, $params)]);
 
             if ($response->hasError()) {
                 // throw exception on error
@@ -169,14 +166,11 @@ class Client
         callable $onFullfiled = null,
         callable $onRejected = null)
     {
-        $json = [
-            'method' => strtolower($method),
-            'params' => (array) $params,
-            'id'     => $this->rpcId++,
-        ];
-
-        $promise = $this->client
-            ->requestAsync('POST', $this->path, ['json' => $json]);
+        $promise = $this->client->requestAsync(
+            'POST',
+            $this->path,
+            ['json' => $this->makeJson($method, $params)]
+        );
 
         $promise->then(
             function (ResponseInterface $response) use ($onFullfiled) {
@@ -319,6 +313,23 @@ class Client
         }
 
         return $config;
+    }
+
+    /**
+     * Construct json request.
+     *
+     * @param string $method
+     * @param mixed  $params
+     *
+     * @return array
+     */
+    protected function makeJson($method, $params = [])
+    {
+        return [
+            'method' => strtolower($method),
+            'params' => (array) $params,
+            'id'     => $this->rpcId++,
+        ];
     }
 
     /**
