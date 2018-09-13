@@ -1,8 +1,11 @@
 # Simple Bitcoin JSON-RPC client based on GuzzleHttp
 
+[![Latest Stable Version](https://poser.pugx.org/denpa/php-bitcoinrpc/v/stable)](https://packagist.org/packages/denpa/php-bitcoinrpc)
+[![License](https://poser.pugx.org/denpa/php-bitcoinrpc/license)](https://packagist.org/packages/denpa/php-bitcoinrpc)
+[![Build Status](https://travis-ci.org/denpamusic/php-bitcoinrpc.svg)](https://travis-ci.org/denpamusic/php-bitcoinrpc)
+[![Code Climate](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/gpa.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc)
+[![Code Coverage](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/coverage.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/coverage)
 [![Join the chat at https://gitter.im/php-bitcoinrpc/Lobby](https://badges.gitter.im/php-bitcoinrpc/Lobby.svg)](https://gitter.im/php-bitcoinrpc/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Latest Stable Version](https://poser.pugx.org/denpa/php-bitcoinrpc/v/stable)](https://packagist.org/packages/denpa/php-bitcoinrpc) [![License](https://poser.pugx.org/denpa/php-bitcoinrpc/license)](https://packagist.org/packages/denpa/php-bitcoinrpc) [![Build Status](https://travis-ci.org/denpamusic/php-bitcoinrpc.svg)](https://travis-ci.org/denpamusic/php-bitcoinrpc) [![Code Climate](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/gpa.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc) <a href="https://codeclimate.com/github/denpamusic/php-bitcoinrpc/coverage"><img src="https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/coverage.svg" /></a>
 
 ## Installation
 Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
@@ -11,10 +14,10 @@ Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directo
     "denpa/php-bitcoinrpc": "^2.0"
 }
 ```
-and run ```php composer.phar update```.
+and run ```php composer.phar install```.
 
 ## Requirements
-PHP 7.0 or higher (should also work on 5.6, but this is unsupported)
+PHP 7.0 or higher
 
 ## Usage
 Create new object with url as parameter
