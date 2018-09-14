@@ -142,6 +142,7 @@ class ClientTest extends TestCase
             );
 
         $request = $this->getHistoryRequestBody();
+
         $this->assertEquals($this->makeRequestBody(
             'getblockheader',
             $request['id'],
@@ -191,8 +192,9 @@ class ClientTest extends TestCase
         $this->bitcoind
             ->setClient($guzzle)
             ->wallet($wallet)
-            ->requestAsync('getbalance', [])
-            ->wait();
+            ->requestAsync('getbalance', []);
+
+        $this->bitcoind->__destruct();
 
         $this->assertEquals(
             $this->getHistoryRequestUri()->getPath(),
@@ -217,7 +219,7 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getblockheader',
@@ -225,8 +227,9 @@ class ClientTest extends TestCase
                 function ($response) use ($onFulfilled) {
                     $onFulfilled($response);
                 }
-            )
-            ->wait();
+            );
+
+        $this->bitcoind->__destruct();
 
         $request = $this->getHistoryRequestBody();
         $this->assertEquals($this->makeRequestBody(
@@ -278,15 +281,16 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->getBlockHeaderAsync(
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
                 function ($response) use ($onFulfilled) {
                     $onFulfilled($response);
                 }
-            )
-            ->wait();
+            );
+
+        $this->bitcoind->__destruct();
 
         $request = $this->getHistoryRequestBody();
         $this->assertEquals($this->makeRequestBody(
@@ -336,7 +340,7 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -344,8 +348,9 @@ class ClientTest extends TestCase
                 function ($response) use ($onFulfilled) {
                     $onFulfilled($response);
                 }
-            )
-            ->wait();
+            );
+
+        $this->bitcoind->__destruct();
     }
 
     /**
@@ -368,38 +373,6 @@ class ClientTest extends TestCase
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
-    }
-
-    /**
-     * Test async request exception with error code.
-     *
-     * @return void
-     */
-    public function testAsyncRequestExceptionWithServerErrorCode()
-    {
-        $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(500),
-        ]);
-
-        $onRejected = $this->mockCallable([
-            $this->callback(function (Exceptions\BitcoindException $exception) {
-                return $exception->getMessage() == self::$rawTransactionError['message'] &&
-                    $exception->getCode() == self::$rawTransactionError['code'];
-            }),
-        ]);
-
-        $promise = $this->bitcoind
-            ->setClient($guzzle)
-            ->requestAsync(
-                'getrawtransaction',
-                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-                null,
-                function ($exception) use ($onRejected) {
-                    $onRejected($exception);
-                }
-            );
-
-        $promise->wait(false);
     }
 
     /**
@@ -435,25 +408,25 @@ class ClientTest extends TestCase
             new Response(500),
         ]);
 
-        $onRejected = $this->mockCallable([
+        $rejected = $this->mockCallable([
             $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == $this->error500() &&
                     $exception->getCode() == 500;
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
                 null,
-                function ($exception) use ($onRejected) {
-                    $onRejected($exception);
+                function ($exception) use ($rejected) {
+                    $rejected($exception);
                 }
             );
 
-        $promise->wait(false);
+        $this->bitcoind->__destruct();
     }
 
     /**
@@ -481,8 +454,6 @@ class ClientTest extends TestCase
     /**
      * Test async request exception with response.
      *
-     * @expectedException GuzzleHttp\Exception\RequestException
-     *
      * @return void
      */
     public function testAsyncRequestExceptionWithResponseBody()
@@ -498,7 +469,7 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -507,8 +478,9 @@ class ClientTest extends TestCase
                 function ($exception) use ($onRejected) {
                     $onRejected($exception);
                 }
-            )
-            ->wait();
+            );
+
+        $this->bitcoind->__destruct();
     }
 
     /**
@@ -536,8 +508,6 @@ class ClientTest extends TestCase
     /**
      * Test async request exception with no response.
      *
-     * @expectedException GuzzleHttp\Exception\RequestException
-     *
      * @return void
      */
     public function testAsyncRequestExceptionWithNoResponseBody()
@@ -546,23 +516,24 @@ class ClientTest extends TestCase
             $this->requestExceptionWithoutResponse(),
         ]);
 
-        $onRejected = $this->mockCallable([
+        $rejected = $this->mockCallable([
             $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == 'test' &&
                     $exception->getCode() == 0;
             }),
         ]);
 
-        $promise = $this->bitcoind
+        $this->bitcoind
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
                 null,
-                function ($exception) use ($onRejected) {
-                    $onRejected($exception);
+                function ($exception) use ($rejected) {
+                    $rejected($exception);
                 }
-            )
-            ->wait();
+            );
+
+        $this->bitcoind->__destruct();
     }
 }
