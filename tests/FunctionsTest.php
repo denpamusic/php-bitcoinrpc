@@ -7,7 +7,7 @@ class FunctionsTest extends TestCase
     /**
      * Test satoshi to btc converter.
      *
-     * @param int $satoshi
+     * @param int    $satoshi
      * @param string $bitcoin
      *
      * @return void
@@ -22,7 +22,7 @@ class FunctionsTest extends TestCase
     /**
      * Test btc to satoshi converter.
      *
-     * @param int $satoshi
+     * @param int    $satoshi
      * @param string $bitcoin
      *
      * @return void
@@ -37,8 +37,8 @@ class FunctionsTest extends TestCase
     /**
      * Test float to fixed converter.
      *
-     * @param float $float
-     * @param int $precision
+     * @param float  $float
+     * @param int    $precision
      * @param string $expected
      *
      * @return void
