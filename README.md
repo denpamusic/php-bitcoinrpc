@@ -87,19 +87,15 @@ $satoshi = \Denpa\Bitcoin\to_satoshi($bitcoin);
 ```
 To send asynchronous request, add Async to method name:
 ```php
-use Denpa\Bitcoin\BitcoindResponse;
-
-$promise = $bitcoind->getBlockAsync(
+$bitcoind->getBlockAsync(
     '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-    function (BitcoindResponse $success) {
+    function ($response) {
         //
     },
-    function (\Exception $exception) {
+    function ($exception) {
         //
     }
 );
-
-$promise->wait();
 ```
 
 You can also send requests using request method:
@@ -131,20 +127,16 @@ $txid = $result->get();
 ```
 or requestAsync method for asynchronous calls:
 ```php
-use Denpa\Bitcoin\BitcoindResponse;
-
-$promise = $bitcoind->requestAsync(
+$bitcoind->requestAsync(
     'getBlock',
     '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
-    function (BitcoindResponse $success) {
+    function ($response) {
         //
     },
-    function (\Exception $exception) {
+    function ($error) {
         //
     }
 );
-
-$promise->wait();
 ```
 
 ## Multi-Wallet RPC

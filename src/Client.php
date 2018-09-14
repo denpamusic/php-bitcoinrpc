@@ -376,7 +376,7 @@ class Client
     /**
      * Handles exceptions.
      *
-     * @param  \Exception  $exception
+     * @param \Exception $exception
      *
      * @return \Exception
      */
