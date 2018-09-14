@@ -565,37 +565,4 @@ class ClientTest extends TestCase
             )
             ->wait();
     }
-
-    /**
-     * Test satoshi to btc converter.
-     *
-     * @return void
-     */
-    public function testToBtc()
-    {
-        $this->assertEquals(0.00005849, Bitcoin\Client::toBtc(310000 / 53));
-    }
-
-    /**
-     * Test btc to satoshi converter.
-     *
-     * @return void
-     */
-    public function testToSatoshi()
-    {
-        $this->assertEquals(5849, Bitcoin\Client::toSatoshi(0.00005849));
-    }
-
-    /**
-     * Test float to fixed converter.
-     *
-     * @return void
-     */
-    public function testToFixed()
-    {
-        $this->assertSame('1', Bitcoin\Client::toFixed(1.2345678910, 0));
-        $this->assertSame('1.23', Bitcoin\Client::toFixed(1.2345678910, 2));
-        $this->assertSame('1.2345', Bitcoin\Client::toFixed(1.2345678910, 4));
-        $this->assertSame('1.23456789', Bitcoin\Client::toFixed(1.2345678910, 8));
-    }
 }

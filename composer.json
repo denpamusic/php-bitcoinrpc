@@ -25,6 +25,9 @@
         },
         "classmap" : [
             "tests"
+        ],
+        "files" : [
+            "src/functions.php"
         ]
     }
 }

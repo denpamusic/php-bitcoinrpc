@@ -382,43 +382,4 @@ class Client
             $callback($exception);
         }
     }
-
-    /**
-     * Converts amount from satoshi to bitcoin.
-     *
-     * @param int $amount
-     *
-     * @return float
-     */
-    public static function toBtc($amount)
-    {
-        return bcdiv((int) $amount, 1e8, 8);
-    }
-
-    /**
-     * Converts amount from bitcoin to satoshi.
-     *
-     * @param float $amount
-     *
-     * @return int
-     */
-    public static function toSatoshi($amount)
-    {
-        return bcmul(static::toFixed($amount, 8), 1e8);
-    }
-
-    /**
-     * Brings number to fixed pricision without rounding.
-     *
-     * @param float $number
-     * @param int   $precision
-     *
-     * @return string
-     */
-    public static function toFixed($number, $precision = 8)
-    {
-        $number = $number * pow(10, $precision);
-
-        return bcdiv($number, pow(10, $precision), $precision);
-    }
 }

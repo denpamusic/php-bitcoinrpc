@@ -82,8 +82,8 @@ $txid = $result->get();
  * Get transaction amount.
  */
 $result = $bitcoind->listSinceBlock();
-$totalAmount = $result->sum('transactions.*.amount');
-$totalSatoshi = BitcoinClient::toSatoshi($totalAmount);
+$bitcoin = $result->sum('transactions.*.amount');
+$satoshi = \Denpa\Bitcoin\to_satoshi($bitcoin);
 ```
 To send asynchronous request, add Async to method name:
 ```php
