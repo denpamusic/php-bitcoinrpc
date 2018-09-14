@@ -30,6 +30,34 @@ if (!function_exists('to_satoshi')) {
     }
 }
 
+if (!function_exists('to_ubtc')) {
+    /**
+     * Converts from bitcoin to ubtc/bits.
+     *
+     * @param float $bitcoin
+     *
+     * @return string
+     */
+    function to_ubtc($bitcoin)
+    {
+        return bcmul(to_fixed($bitcoin, 8), 1e6, 4);
+    }
+}
+
+if (!function_exists('to_mbtc')) {
+    /**
+     * Converts from bitcoin to mbtc.
+     *
+     * @param float $bitcoin
+     *
+     * @return string
+     */
+    function to_mbtc($bitcoin)
+    {
+        return bcmul(to_fixed($bitcoin, 8), 1e3, 4);
+    }
+}
+
 if (!function_exists('to_fixed')) {
     /**
      * Brings number to fixed precision without rounding.

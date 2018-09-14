@@ -12,7 +12,7 @@ class FunctionsTest extends TestCase
      *
      * @return void
      *
-     * @dataProvider valueProvider
+     * @dataProvider satoshiBtcProvider
      */
     public function testToBtc($satoshi, $bitcoin)
     {
@@ -20,18 +20,48 @@ class FunctionsTest extends TestCase
     }
 
     /**
-     * Test btc to satoshi converter.
+     * Test bitcoin to satoshi converter.
      *
      * @param int    $satoshi
      * @param string $bitcoin
      *
      * @return void
      *
-     * @dataProvider valueProvider
+     * @dataProvider satoshiBtcProvider
      */
     public function testToSatoshi($satoshi, $bitcoin)
     {
         $this->assertEquals($satoshi, Bitcoin\to_satoshi($bitcoin));
+    }
+
+    /**
+     * Test bitcoin to ubtc/bits converter.
+     *
+     * @param int    $ubtc
+     * @param string $bitcoin
+     *
+     * @return void
+     *
+     * @dataProvider bitsBtcProvider
+     */
+    public function testToBits($ubtc, $bitcoin)
+    {
+        $this->assertEquals($ubtc, Bitcoin\to_ubtc($bitcoin));
+    }
+
+    /**
+     * Test bitcoin to mbtc converter.
+     *
+     * @param float  $mbtc
+     * @param string $bitcoin
+     *
+     * @return void
+     *
+     * @dataProvider mbtcBtcProvider
+     */
+    public function testToMbtc($mbtc, $bitcoin)
+    {
+        $this->assertEquals($mbtc, Bitcoin\to_mbtc($bitcoin));
     }
 
     /**
@@ -55,7 +85,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function valueProvider()
+    public function satoshiBtcProvider()
     {
         return [
             [1000, '0.00001000'],
@@ -63,6 +93,38 @@ class FunctionsTest extends TestCase
             [-1000, '-0.00001000'],
             [100000000, '1.00000000'],
             [150000000, '1.50000000'],
+        ];
+    }
+
+    /**
+     * Provides satoshi and ubtc/bits values.
+     *
+     * @return array
+     */
+    public function bitsBtcProvider()
+    {
+        return [
+            [10, '0.00001000'],
+            [25, '0.00002500'],
+            [-10, '-0.00001000'],
+            [1000000, '1.00000000'],
+            [1500000, '1.50000000'],
+        ];
+    }
+
+    /**
+     * Provides satoshi and mbtc values.
+     *
+     * @return array
+     */
+    public function mbtcBtcProvider()
+    {
+        return [
+            [0.01, '0.00001000'],
+            [0.025, '0.00002500'],
+            [-0.01, '-0.00001000'],
+            [1000, '1.00000000'],
+            [1500, '1.50000000'],
         ];
     }
 
