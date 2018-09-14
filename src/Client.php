@@ -7,6 +7,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
 
 class Client
@@ -24,6 +25,13 @@ class Client
      * @var array
      */
     protected $config;
+
+    /**
+     * Array of GuzzleHttp promises.
+     *
+     * @var array
+     */
+    protected $promises = [];
 
     /**
      * URL path.
@@ -58,6 +66,18 @@ class Client
             'verify'   => $this->getCa(),
             'handler'  => $this->getHandler(),
         ]);
+    }
+
+    /**
+     * Wait for all promises on object destruction.
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        if (!empty($this->promises)) {
+            Promise\settle($this->promises)->wait();
+        }
     }
 
     /**
@@ -124,10 +144,8 @@ class Client
     public function request($method, ...$params)
     {
         try {
-            $response = $this->client->request(
-                'POST',
-                $this->path,
-                ['json' => $this->makeJson($method, $params)]);
+            $response = $this->client
+                ->post($this->path, $this->makeJson($method, $params));
 
             if ($response->hasError()) {
                 // throw exception on error
@@ -136,17 +154,7 @@ class Client
 
             return $response;
         } catch (RequestException $exception) {
-            if (
-                $exception->hasResponse() &&
-                $exception->getResponse()->hasError()
-            ) {
-                throw new Exceptions\BitcoindException($exception->getResponse()->error());
-            }
-
-            throw new Exceptions\ClientException(
-                $exception->getMessage(),
-                $exception->getCode()
-            );
+            throw $this->handleException($exception);
         }
     }
 
@@ -155,31 +163,29 @@ class Client
      *
      * @param string        $method
      * @param mixed         $params
-     * @param callable|null $onFullfiled
-     * @param callable|null $onRejected
+     * @param callable|null $fulfilled
+     * @param callable|null $rejected
      *
      * @return \GuzzleHttp\Promise\Promise
      */
     public function requestAsync(
         $method,
         $params = [],
-        callable $onFullfiled = null,
-        callable $onRejected = null)
+        callable $fulfilled = null,
+        callable $rejected = null)
     {
-        $promise = $this->client->requestAsync(
-            'POST',
-            $this->path,
-            ['json' => $this->makeJson($method, $params)]
-        );
+        $promise = $this->client
+            ->postAsync($this->path, $this->makeJson($method, $params));
 
-        $promise->then(
-            function (ResponseInterface $response) use ($onFullfiled) {
-                $this->asyncFulfilled($response, $onFullfiled);
-            },
-            function (RequestException $exception) use ($onRejected) {
-                $this->asyncRejected($exception, $onRejected);
-            }
-        );
+        $promise->then(function ($response) use ($fulfilled) {
+            $this->onSuccess($response, $fulfilled);
+        });
+
+        $promise->otherwise(function ($exception) use ($rejected) {
+            $this->onError($exception, $rejected);
+        });
+
+        $this->promises[] = $promise;
 
         return $promise;
     }
@@ -194,9 +200,8 @@ class Client
      */
     public function __call($method, array $params = [])
     {
-        $method = str_ireplace('async', '', $method, $count);
-        if ($count > 0) {
-            return $this->requestAsync($method, ...$params);
+        if (strtolower(substr($method, -5)) == 'async') {
+            return $this->requestAsync(substr($method, 0, -5), ...$params);
         }
 
         return $this->request($method, ...$params);
@@ -326,9 +331,11 @@ class Client
     protected function makeJson($method, $params = [])
     {
         return [
-            'method' => strtolower($method),
-            'params' => (array) $params,
-            'id'     => $this->rpcId++,
+            'json' => [
+                'method' => strtolower($method),
+                'params' => (array) $params,
+                'id'     => $this->rpcId++,
+            ],
         ];
     }
 
@@ -340,15 +347,14 @@ class Client
      *
      * @return void
      */
-    protected function asyncFulfilled(ResponseInterface $response, callable $callback = null)
+    protected function onSuccess(ResponseInterface $response, callable $callback = null)
     {
-        $error = null;
-        if ($response->hasError()) {
-            $error = new Exceptions\BitcoindException($response->error());
-        }
+        if (!is_null($callback)) {
+            if ($response->hasError()) {
+                $response = new Exceptions\BitcoindException($response->error());
+            }
 
-        if (is_callable($callback)) {
-            $callback($error ?: $response);
+            $callback($response);
         }
     }
 
@@ -360,26 +366,33 @@ class Client
      *
      * @return void
      */
-    protected function asyncRejected(RequestException $exception, callable $callback = null)
+    protected function onError(RequestException $exception, callable $callback = null)
     {
-        if (
-            $exception->hasResponse() &&
-            $exception->getResponse()->hasError()
-        ) {
-            $exception = new Exceptions\BitcoindException(
-                $exception->getResponse()->error()
-            );
+        if (!is_null($callback)) {
+            $callback($this->handleException($exception));
+        }
+    }
+
+    /**
+     * Handles exceptions.
+     *
+     * @param \Exception $exception
+     *
+     * @return \Exception
+     */
+    protected function handleException($exception)
+    {
+        if ($exception->hasResponse()) {
+            $response = $exception->getResponse();
+
+            if ($response->hasError()) {
+                return new Exceptions\BitcoindException($response->error());
+            }
         }
 
-        if ($exception instanceof RequestException) {
-            $exception = new Exceptions\ClientException(
-                $exception->getMessage(),
-                $exception->getCode()
-            );
-        }
-
-        if (is_callable($callback)) {
-            $callback($exception);
-        }
+        return new Exceptions\ClientException(
+            $exception->getMessage(),
+            $exception->getCode()
+        );
     }
 }
