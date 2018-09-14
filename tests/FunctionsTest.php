@@ -48,7 +48,7 @@ class FunctionsTest extends TestCase
     public function valueProvider()
     {
         return [
-            [1000, '0.00001'],
+            [1000, '0.00001000'],
             [2500, '0.00002500'],
             [-1000, '-0.0000100'],
             [100000000, '1.00000000'],

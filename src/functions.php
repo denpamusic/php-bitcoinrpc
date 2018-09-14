@@ -2,7 +2,7 @@
 
 namespace Denpa\Bitcoin;
 
-if (! function_exists('to_bitcoin')) {
+if (!function_exists('to_bitcoin')) {
     /**
      * Converts from satoshi to bitcoin.
      *
@@ -16,7 +16,7 @@ if (! function_exists('to_bitcoin')) {
     }
 }
 
-if (! function_exists('to_satoshi')) {
+if (!function_exists('to_satoshi')) {
     /**
      * Converts from bitcoin to satoshi.
      *
@@ -30,7 +30,7 @@ if (! function_exists('to_satoshi')) {
     }
 }
 
-if (! function_exists('to_fixed')) {
+if (!function_exists('to_fixed')) {
     /**
      * Brings number to fixed precision without rounding.
      *
