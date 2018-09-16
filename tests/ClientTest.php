@@ -26,13 +26,13 @@ class ClientTest extends TestCase
      * @param string $host
      * @param int    $port
      * @param string $user
-     * @param string $pass
+     * @param string $password
      *
      * @return void
      *
      * @dataProvider urlProvider
      */
-    public function testUrlParser($url, $scheme, $host, $port, $user, $pass)
+    public function testUrlParser($url, $scheme, $host, $port, $user, $password)
     {
         $bitcoind = new Bitcoin\Client($url);
 
@@ -46,7 +46,7 @@ class ClientTest extends TestCase
 
         $auth = $bitcoind->getConfig('auth');
         $this->assertEquals($auth[0], $user);
-        $this->assertEquals($auth[1], $pass);
+        $this->assertEquals($auth[1], $password);
     }
 
     /**

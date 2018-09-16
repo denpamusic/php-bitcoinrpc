@@ -20,6 +20,11 @@ class BitcoindResponseTest extends TestCase
         $this->response = $this->response->withHeader('X-Test', 'test');
     }
 
+    /**
+     * Test response with result.
+     *
+     * @return void
+     */
     public function testResult()
     {
         $this->assertTrue($this->response->hasResult());
@@ -33,6 +38,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test response without result.
+     *
+     * @return void
+     */
     public function testNoResult()
     {
         $response = Bitcoin\BitcoindResponse::createFrom(
@@ -42,16 +52,31 @@ class BitcoindResponseTest extends TestCase
         $this->assertFalse($response->hasResult());
     }
 
+    /**
+     * Test getter for status code.
+     *
+     * @return void
+     */
     public function testStatusCode()
     {
         $this->assertEquals(200, $this->response->getStatusCode());
     }
 
+    /**
+     * Test getter for reason phrase.
+     *
+     * @return void
+     */
     public function testReasonPhrase()
     {
         $this->assertEquals('OK', $this->response->getReasonPhrase());
     }
 
+    /**
+     * Test changing status for response.
+     *
+     * @return void
+     */
     public function testWithStatus()
     {
         $response = $this->response->withStatus(444, 'test');
@@ -60,6 +85,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals('test', $response->getReasonPhrase());
     }
 
+    /**
+     * Test creating BitcoindResponse from Guzzle.
+     *
+     * @return void
+     */
     public function testCreateFrom()
     {
         $guzzleResponse = $this->getBlockResponse();
@@ -70,6 +100,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals($response->response(), $guzzleResponse);
     }
 
+    /**
+     * Test error in response.
+     *
+     * @return void
+     */
     public function testError()
     {
         $response = Bitcoin\BitcoindResponse::createFrom(
@@ -87,11 +122,21 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test no error in response.
+     *
+     * @return void
+     */
     public function testNoError()
     {
         $this->assertFalse($this->response->hasError());
     }
 
+    /**
+     * Test getting values through ArrayAccess.
+     *
+     * @return void
+     */
     public function testArrayAccessGet()
     {
         $this->assertEquals(
@@ -100,38 +145,46 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test setting values through ArrayAccess.
+     *
+     * @return void
+     */
     public function testArrayAccessSet()
     {
-        try {
-            $this->response['hash'] = 'test';
-            $this->expectException(Exceptions\ClientException::class);
-        } catch (Exceptions\ClientException $e) {
-            $this->assertEquals(
-                'Cannot modify readonly object',
-                $e->getMessage()
-            );
-        }
+        $this->expectException(Exceptions\ClientException::class);
+        $this->expectExceptionMessage('Cannot modify readonly object');
+        $this->response['hash'] = 'test';
     }
 
+    /**
+     * Test unsetting values through ArrayAccess.
+     *
+     * @return void
+     */
     public function testArrayAccessUnset()
     {
-        try {
-            unset($this->response['hash']);
-            $this->expectException(Exceptions\ClientException::class);
-        } catch (Exceptions\ClientException $e) {
-            $this->assertEquals(
-                'Cannot modify readonly object',
-                $e->getMessage()
-            );
-        }
+        $this->expectException(Exceptions\ClientException::class);
+        $this->expectExceptionMessage('Cannot modify readonly object');
+        unset($this->response['hash']);
     }
 
+    /**
+     * Test checking value through ArrayAccess.
+     *
+     * @return void
+     */
     public function testArrayAccessIsset()
     {
         $this->assertTrue(isset($this->response['hash']));
         $this->assertFalse(isset($this->response['cookie']));
     }
 
+    /**
+     * Test setting key through invokation.
+     *
+     * @return void
+     */
     public function testInvoke()
     {
         $response = $this->response;
@@ -142,6 +195,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting value by key.
+     *
+     * @return void
+     */
     public function testGet()
     {
         $this->assertEquals(
@@ -155,6 +213,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting first element of array.
+     *
+     * @return void
+     */
     public function testFirst()
     {
         $this->assertEquals(
@@ -178,6 +241,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting last element of array.
+     *
+     * @return void
+     */
     public function testLast()
     {
         $this->assertEquals(
@@ -201,6 +269,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test method used to check if array has key.
+     *
+     * @return void
+     */
     public function testHas()
     {
         $response = $this->response;
@@ -213,6 +286,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertFalse($response->has('height'));
     }
 
+    /**
+     * Test method used to check if array has key pointing to non-null value.
+     *
+     * @return void
+     */
     public function testExists()
     {
         $this->assertTrue($this->response->exists('hash'));
@@ -222,6 +300,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertFalse($this->response->exists('cookies'));
     }
 
+    /**
+     * Test method used to check if array has value.
+     *
+     * @return void
+     */
     public function testContains()
     {
         $this->assertTrue($this->response->contains('00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048'));
@@ -229,6 +312,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertFalse($this->response->contains('cookies'));
     }
 
+    /**
+     * Test method used to check if array has value on non-array.
+     *
+     * @return void
+     */
     public function testContainsOnNonArray()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -236,6 +324,11 @@ class BitcoindResponseTest extends TestCase
         $this->response->key('version')->contains('test');
     }
 
+    /**
+     * Test getting array keys.
+     *
+     * @return void
+     */
     public function testKeys()
     {
         $this->assertEquals(
@@ -248,6 +341,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting array keys on non array.
+     *
+     * @return void
+     */
     public function testKeysOnNonArray()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -255,6 +353,11 @@ class BitcoindResponseTest extends TestCase
         $this->response->keys('version');
     }
 
+    /**
+     * Test getting array values.
+     *
+     * @return void
+     */
     public function testValues()
     {
         $this->assertEquals(
@@ -267,6 +370,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting array values on non array.
+     *
+     * @return void
+     */
     public function testValuesOnNonArray()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -274,6 +382,11 @@ class BitcoindResponseTest extends TestCase
         $this->response->values('version');
     }
 
+    /**
+     * Test getting random elements from array.
+     *
+     * @return void
+     */
     public function testRandom()
     {
         $tx1 = $this->response->random(1, 'tx');
@@ -299,6 +412,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals(self::$getBlockResponse['tx'], $random5);
     }
 
+    /**
+     * Test counting number of elements in array.
+     *
+     * @return void
+     */
     public function testCount()
     {
         $this->assertEquals(
@@ -332,6 +450,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test getting protocol version.
+     *
+     * @return void
+     */
     public function testProtocolVersion()
     {
         $response = $this->response->withProtocolVersion(1.0);
@@ -340,6 +463,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals('1.0', $protocolVersion);
     }
 
+    /**
+     * Test setting response header.
+     *
+     * @return void
+     */
     public function testWithHeader()
     {
         $response = $this->response->withHeader('X-Test', 'bar');
@@ -348,6 +476,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals('bar', $response->getHeaderLine('X-Test'));
     }
 
+    /**
+     * Test adding header to response.
+     *
+     * @return void
+     */
     public function testWithAddedHeader()
     {
         $response = $this->response->withAddedHeader('X-Bar', 'baz');
@@ -356,6 +489,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertTrue($response->hasHeader('X-Bar'));
     }
 
+    /**
+     * Test removing headers from response.
+     *
+     * @return void
+     */
     public function testWithoutHeader()
     {
         $response = $this->response->withoutHeader('X-Test');
@@ -363,6 +501,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('X-Test'));
     }
 
+    /**
+     * Test getting response header.
+     *
+     * @return void
+     */
     public function testGetHeader()
     {
         $response = $this->response->withHeader('X-Bar', 'baz');
@@ -379,6 +522,11 @@ class BitcoindResponseTest extends TestCase
         }
     }
 
+    /**
+     * Test setting response body.
+     *
+     * @return void
+     */
     public function testBody()
     {
         $stream = new BufferStream();
@@ -389,6 +537,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals('cookies', $response->getBody()->__toString());
     }
 
+    /**
+     * Test serialization.
+     *
+     * @return void
+     */
     public function testSerialize()
     {
         $serializedContainer = serialize($this->response->getContainer());
@@ -408,6 +561,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test unserialization.
+     *
+     * @return void
+     */
     public function testUnserialize()
     {
         $container = $this->response->getContainer();
@@ -418,6 +576,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test serialization to JSON.
+     *
+     * @return void
+     */
     public function testJsonSerialize()
     {
         $this->assertEquals(
@@ -426,6 +589,11 @@ class BitcoindResponseTest extends TestCase
         );
     }
 
+    /**
+     * Test sum of array values.
+     *
+     * @return void
+     */
     public function testSum()
     {
         $response = $this->response;
@@ -435,6 +603,11 @@ class BitcoindResponseTest extends TestCase
         $this->assertEquals(7, $response->sum('test1.*.*.amount'));
     }
 
+    /**
+     * Test array flattening.
+     *
+     * @return void
+     */
     public function testFlatten()
     {
         $response = $this->response;
