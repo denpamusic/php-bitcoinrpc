@@ -99,7 +99,7 @@ trait ResponseArrayTrait
     /**
      * Checks if response contains value.
      *
-     * @param mixed $needle
+     * @param mixed       $needle
      * @param string|null $key
      *
      * @return bool
