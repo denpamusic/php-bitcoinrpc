@@ -225,7 +225,15 @@ class BitcoindResponseTest extends TestCase
     public function testContains()
     {
         $this->assertTrue($this->response->contains('00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048'));
+        $this->assertTrue($this->response->contains('bedb088c480e5f7424a958350f2389c839d17e27dae13643632159b9e7c05482', 'tx'));
         $this->assertFalse($this->response->contains('cookies'));
+    }
+
+    public function testContainsOnNonArray()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('method contains() should be called on array');
+        $this->response->key('version')->contains('test');
     }
 
     public function testKeys()
@@ -234,14 +242,36 @@ class BitcoindResponseTest extends TestCase
             array_keys(self::$getBlockResponse),
             $this->response->keys()
         );
+        $this->assertEquals(
+            array_keys(self::$getBlockResponse['tx']),
+            $this->response->keys('tx')
+        );
     }
 
-    public function testValue()
+    public function testKeysOnNonArray()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('method keys() should be called on array');
+        $this->response->keys('version');
+    }
+
+    public function testValues()
     {
         $this->assertEquals(
             array_values(self::$getBlockResponse),
             $this->response->values()
         );
+        $this->assertEquals(
+            array_values(self::$getBlockResponse['tx']),
+            $this->response->values('tx')
+        );
+    }
+
+    public function testValuesOnNonArray()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('method values() should be called on array');
+        $this->response->values('version');
     }
 
     public function testRandom()

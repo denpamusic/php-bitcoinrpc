@@ -2,6 +2,8 @@
 
 namespace Denpa\Bitcoin;
 
+use InvalidArgumentException;
+
 trait ResponseArrayTrait
 {
     /**
@@ -97,13 +99,22 @@ trait ResponseArrayTrait
     /**
      * Checks if response contains value.
      *
-     * @param mixed $value
+     * @param mixed $needle
+     * @param string|null $key
      *
      * @return bool
      */
-    public function contains($value)
+    public function contains($needle, $key = null)
     {
-        return in_array($value, $this->result());
+        $value = $this->get($key);
+
+        if (!is_array($value)) {
+            throw new InvalidArgumentException(
+                'method contains() should be called on array'
+            );
+        }
+
+        return in_array($needle, $value);
     }
 
     /**
@@ -124,21 +135,41 @@ trait ResponseArrayTrait
     /**
      * Gets response keys.
      *
+     * @param string|null $key
+     *
      * @return array
      */
-    public function keys()
+    public function keys($key = null)
     {
-        return array_keys($this->result());
+        $value = $this->get($key);
+
+        if (!is_array($value)) {
+            throw new InvalidArgumentException(
+                'method keys() should be called on array'
+            );
+        }
+
+        return array_keys($value);
     }
 
     /**
      * Gets response values.
      *
+     * @param string|null $key
+     *
      * @return array
      */
-    public function values()
+    public function values($key = null)
     {
-        return array_values($this->result());
+        $value = $this->get($key);
+
+        if (!is_array($value)) {
+            throw new InvalidArgumentException(
+                'method values() should be called on array'
+            );
+        }
+
+        return array_values($value);
     }
 
     /**
@@ -233,7 +264,7 @@ trait ResponseArrayTrait
      *
      * @param string|null $key
      *
-     * @return mixed
+     * @return static
      */
     public function __invoke($key = null)
     {
