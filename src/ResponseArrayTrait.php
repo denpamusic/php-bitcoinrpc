@@ -272,6 +272,22 @@ trait ResponseArrayTrait
     }
 
     /**
+     * Converts response to string on current key.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $value = $this->get();
+
+        if (is_array($value) || is_object($value)) {
+            return json_encode($value);
+        }
+
+        return (string) $value;
+    }
+
+    /**
      * Constructs full key.
      *
      * @param string|null $key

@@ -21,6 +21,22 @@ class BitcoindResponseTest extends TestCase
     }
 
     /**
+     * Test casting response to string.
+     *
+     * @return void
+     */
+    public function testResponseToString()
+    {
+        $response = $this->response;
+        $this->assertSame((string) $response('difficulty'), '1');
+        $this->assertSame((string) $response('confirmations'), '449162');
+        $this->assertSame(
+            (string) $response('tx'),
+            json_encode(self::$getBlockResponse['tx'])
+        );
+    }
+
+    /**
      * Test response with result.
      *
      * @return void
