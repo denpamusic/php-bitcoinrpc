@@ -1,17 +1,14 @@
-engines:
+version: "2"
+plugins:
   duplication:
     enabled: true
     config:
       languages:
-      - php
+        - php
   fixme:
     enabled: true
   phpmd:
     enabled: true
-
-ratings:
-  paths:
-  - "**.php"
-
-exclude_paths:
-- tests/
+exclude_patterns:
+- "tests/"
+- "src/Exceptions/ClientException.php" # empty exception
