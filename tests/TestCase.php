@@ -1,6 +1,5 @@
 <?php
 
-use Denpa\Bitcoin;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;

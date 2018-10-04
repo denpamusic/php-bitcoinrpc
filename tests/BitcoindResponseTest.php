@@ -1,6 +1,5 @@
 <?php
 
-use Denpa\Bitcoin;
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Psr7\BufferStream;
