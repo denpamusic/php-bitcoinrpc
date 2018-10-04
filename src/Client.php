@@ -277,6 +277,16 @@ class Client
     }
 
     /**
+     * Gets response handler class name.
+     *
+     * @return string
+     */
+    protected function getResponseHandler()
+    {
+        return 'Denpa\\Bitcoin\\Responses\\BitcoindResponse';
+    }
+
+    /**
      * Gets Guzzle handler stack.
      *
      * @return \GuzzleHttp\HandlerStack
@@ -287,7 +297,9 @@ class Client
 
         $stack->push(
             Middleware::mapResponse(function (ResponseInterface $response) {
-                return BitcoindResponse::createFrom($response);
+                $handler = $this->getResponseHandler();
+
+                return new $handler($response);
             }),
             'json_response'
         );

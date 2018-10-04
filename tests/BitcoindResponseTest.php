@@ -1,7 +1,9 @@
 <?php
 
-use Denpa\Bitcoin;
 use Denpa\Bitcoin\Exceptions;
+use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\BufferStream;
 
 class BitcoindResponseTest extends TestCase
@@ -16,7 +18,7 @@ class BitcoindResponseTest extends TestCase
         parent::setUp();
 
         $this->guzzleResponse = $this->getBlockResponse();
-        $this->response = Bitcoin\BitcoindResponse::createFrom($this->guzzleResponse);
+        $this->response = new BitcoindResponse($this->guzzleResponse);
         $this->response = $this->response->withHeader('X-Test', 'test');
     }
 
@@ -61,11 +63,20 @@ class BitcoindResponseTest extends TestCase
      */
     public function testNoResult()
     {
-        $response = Bitcoin\BitcoindResponse::createFrom(
-            $this->rawTransactionError()
-        );
-
+        $response = new BitcoindResponse($this->rawTransactionError());
         $this->assertFalse($response->hasResult());
+    }
+
+    /**
+     * Test raw response getter.
+     *
+     * @return void
+     */
+    public function testRawResponse()
+    {
+        $response = $this->response->response();
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(Response::class, $response);
     }
 
     /**
@@ -102,30 +113,13 @@ class BitcoindResponseTest extends TestCase
     }
 
     /**
-     * Test creating BitcoindResponse from Guzzle.
-     *
-     * @return void
-     */
-    public function testCreateFrom()
-    {
-        $guzzleResponse = $this->getBlockResponse();
-
-        $response = Bitcoin\BitcoindResponse::createFrom($guzzleResponse);
-
-        $this->assertInstanceOf(Bitcoin\BitcoindResponse::class, $response);
-        $this->assertEquals($response->response(), $guzzleResponse);
-    }
-
-    /**
      * Test error in response.
      *
      * @return void
      */
     public function testError()
     {
-        $response = Bitcoin\BitcoindResponse::createFrom(
-            $this->rawTransactionError()
-        );
+        $response = new BitcoindResponse($this->rawTransactionError());
 
         $this->assertTrue($response->hasError());
 
@@ -561,12 +555,11 @@ class BitcoindResponseTest extends TestCase
     public function testSerialize()
     {
         $serializedContainer = serialize($this->response->getContainer());
-        $class = Bitcoin\BitcoindResponse::class;
 
         $serialized = sprintf(
             'C:%u:"%s":%u:{%s}',
-            strlen($class),
-            $class,
+            strlen(BitcoindResponse::class),
+            BitcoindResponse::class,
             strlen($serializedContainer),
             $serializedContainer
         );

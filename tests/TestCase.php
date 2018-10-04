@@ -1,6 +1,6 @@
 <?php
 
-use Denpa\Bitcoin;
+use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -109,13 +109,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Get Guzzle mock client.
      *
-     * @param array $queue
+     * @param array                    $queue
+     * @param \GuzzleHttp\HandlerStack $handler
      *
      * @return \GuzzleHttp\Client
      */
-    protected function mockGuzzle(array $queue = [])
+    protected function mockGuzzle(array $queue = [], $handler = null)
     {
-        $handler = $this->bitcoind->getConfig('handler');
+        $handler = $handler ?: $this->bitcoind->getConfig('handler');
 
         if ($handler) {
             $middleware = \GuzzleHttp\Middleware::history($this->history);
@@ -193,7 +194,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             return new RequestException(
                 'test',
                 $request,
-                Bitcoin\BitcoindResponse::createFrom($this->rawTransactionError())
+                new BitcoindResponse($this->rawTransactionError())
             );
         };
 

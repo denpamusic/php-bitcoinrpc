@@ -1,10 +1,10 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Traits;
 
 use Psr\Http\Message\StreamInterface;
 
-trait MessageTrait
+trait Message
 {
     /**
      * Retrieves the HTTP protocol version as a string.
