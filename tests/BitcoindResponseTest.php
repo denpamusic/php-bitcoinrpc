@@ -2,9 +2,9 @@
 
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\BufferStream;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class BitcoindResponseTest extends TestCase
 {
