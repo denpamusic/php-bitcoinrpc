@@ -2,6 +2,8 @@
 
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\BufferStream;
 
 class BitcoindResponseTest extends TestCase
@@ -63,6 +65,18 @@ class BitcoindResponseTest extends TestCase
     {
         $response = new BitcoindResponse($this->rawTransactionError());
         $this->assertFalse($response->hasResult());
+    }
+
+    /**
+     * Test raw response getter.
+     *
+     * @return void
+     */
+    public function testRawResponse()
+    {
+        $response = $this->response->response();
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertInstanceOf(Response::class, $response);
     }
 
     /**
