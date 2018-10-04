@@ -298,6 +298,7 @@ class Client
         $stack->push(
             Middleware::mapResponse(function (ResponseInterface $response) {
                 $handler = $this->getResponseHandler();
+
                 return new $handler($response);
             }),
             'json_response'
