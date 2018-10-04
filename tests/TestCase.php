@@ -110,12 +110,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * Get Guzzle mock client.
      *
      * @param array $queue
+     * @param \GuzzleHttp\HandlerStack $handler
      *
      * @return \GuzzleHttp\Client
      */
-    protected function mockGuzzle(array $queue = [])
+    protected function mockGuzzle(array $queue = [], $handler = null)
     {
-        $handler = $this->bitcoind->getConfig('handler');
+        $handler = $handler ?: $this->bitcoind->getConfig('handler');
 
         if ($handler) {
             $middleware = \GuzzleHttp\Middleware::history($this->history);

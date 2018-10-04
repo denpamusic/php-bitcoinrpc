@@ -537,4 +537,43 @@ class ClientTest extends TestCase
 
         $this->bitcoind->__destruct();
     }
+
+    /**
+     * Test setting different response handler class.
+     *
+     * @return void
+     */
+    public function testSetResponseHandler()
+    {
+        $fake = new FakeClient();
+
+        $guzzle = $this->mockGuzzle([
+            $this->getBlockResponse(),
+        ], $fake->getConfig('handler'));
+
+        $response = $fake
+            ->setClient($guzzle)
+            ->request(
+                'getblockheader',
+                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
+            );
+
+        $this->assertInstanceOf(FakeResponse::class, $response);
+    }
+}
+
+class FakeClient extends Bitcoin\Client {
+    /**
+     * Gets response handler class name.
+     *
+     * @return string
+     */
+    protected function getResponseHandler()
+    {
+        return 'FakeResponse';
+    }
+}
+
+class FakeResponse extends Bitcoin\Responses\Response {
+    //
 }
