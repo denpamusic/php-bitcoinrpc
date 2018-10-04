@@ -1,11 +1,18 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Traits;
 
 use InvalidArgumentException;
 
-trait ResponseArrayTrait
+trait Collection
 {
+    /**
+     * Current key.
+     *
+     * @var string
+     */
+    protected $current;
+
     /**
      * Gets data by using key with dotted notation.
      *

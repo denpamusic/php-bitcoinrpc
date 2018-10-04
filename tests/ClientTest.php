@@ -2,6 +2,7 @@
 
 use Denpa\Bitcoin;
 use Denpa\Bitcoin\Exceptions;
+use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Psr7\Response;
 
 class ClientTest extends TestCase
@@ -214,7 +215,7 @@ class ClientTest extends TestCase
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (Bitcoin\BitcoindResponse $response) {
+            $this->callback(function (BitcoindResponse $response) {
                 return $response->get() == self::$getBlockResponse;
             }),
         ]);
@@ -276,7 +277,7 @@ class ClientTest extends TestCase
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (Bitcoin\BitcoindResponse $response) {
+            $this->callback(function (BitcoindResponse $response) {
                 return $response->get() == self::$getBlockResponse;
             }),
         ]);

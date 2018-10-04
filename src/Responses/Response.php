@@ -1,20 +1,13 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Responses;
 
+use Denpa\Bitcoin\Traits\Message;
 use Psr\Http\Message\ResponseInterface;
 
-class BitcoindResponse implements
-    ResponseInterface,
-    \ArrayAccess,
-    \Countable,
-    \Serializable,
-    \JsonSerializable
+abstract class Response implements ResponseInterface
 {
-    use MessageTrait,
-        ResponseArrayTrait,
-        ReadOnlyArrayTrait,
-        SerializableContainerTrait;
+    use Message;
 
     /**
      * Response instance.
@@ -29,13 +22,6 @@ class BitcoindResponse implements
      * @var array
      */
     protected $container = [];
-
-    /**
-     * Current key.
-     *
-     * @var string
-     */
-    protected $current;
 
     /**
      * Constructs new json response.
@@ -153,17 +139,5 @@ class BitcoindResponse implements
     public function getReasonPhrase()
     {
         return $this->response->getReasonPhrase();
-    }
-
-    /**
-     * Creates new json response from response interface object.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     *
-     * @return \Denpa\Bitcoin\BitcoindResponse
-     */
-    public static function createFrom(ResponseInterface $response)
-    {
-        return new self($response);
     }
 }

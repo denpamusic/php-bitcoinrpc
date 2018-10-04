@@ -1,6 +1,7 @@
 <?php
 
 use Denpa\Bitcoin;
+use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -193,7 +194,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             return new RequestException(
                 'test',
                 $request,
-                Bitcoin\BitcoindResponse::createFrom($this->rawTransactionError())
+                new BitcoindResponse($this->rawTransactionError())
             );
         };
 

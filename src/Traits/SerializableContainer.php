@@ -1,8 +1,8 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Traits;
 
-trait SerializableContainerTrait
+trait SerializableContainer
 {
     /**
      * Gets container.

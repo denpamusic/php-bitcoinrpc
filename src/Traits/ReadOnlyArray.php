@@ -1,8 +1,10 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Traits;
 
-trait ReadOnlyArrayTrait
+use Denpa\Bitcoin\Exceptions;
+
+trait ReadOnlyArray
 {
     /**
      * Assigns a value to the specified offset.
