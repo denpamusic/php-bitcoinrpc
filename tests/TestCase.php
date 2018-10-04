@@ -109,7 +109,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Get Guzzle mock client.
      *
-     * @param array $queue
+     * @param array                    $queue
      * @param \GuzzleHttp\HandlerStack $handler
      *
      * @return \GuzzleHttp\Client
