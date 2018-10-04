@@ -562,7 +562,8 @@ class ClientTest extends TestCase
     }
 }
 
-class FakeClient extends Bitcoin\Client {
+class FakeClient extends Bitcoin\Client
+{
     /**
      * Gets response handler class name.
      *
@@ -574,6 +575,7 @@ class FakeClient extends Bitcoin\Client {
     }
 }
 
-class FakeResponse extends Bitcoin\Responses\Response {
+class FakeResponse extends Bitcoin\Responses\Response
+{
     //
 }
