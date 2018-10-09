@@ -1,8 +1,9 @@
 <?php
 
-namespace Denpa\Bitcoin\Exception;
+namespace Denpa\Bitcoin\Exceptions;
 
 use Exception;
+use GuzzleHttp\Exception\RequestException;
 
 class Handler
 {
@@ -19,6 +20,41 @@ class Handler
      * @var array
      */
     protected $handlers = [];
+
+    /**
+     * Constructs exception handler.
+     *
+     * @return void
+     */
+    protected function __construct()
+    {
+        $this->registerHandler([$this, 'defaultHandler']);
+    }
+
+    /**
+     * Default handler function.
+     *
+     * @param \Exception $exception
+     *
+     * @return void
+     */
+    protected function defaultHandler(Exception $exception)
+    {
+        if ($exception instanceof RequestException) {
+            if ($exception->hasResponse()) {
+                $response = $exception->getResponse();
+
+                if ($response->hasError()) {
+                    return new BitcoindException($response->error());
+                }
+            }
+
+            return new ClientException(
+                $exception->getMessage(),
+                $exception->getCode()
+            );
+        }
+    }
 
     /**
      * Registers new handler function.
@@ -38,24 +74,26 @@ class Handler
      * Handles exception.
      *
      * @param \Exception $exception
-     * @param bool       $return
+     * @param bool       $throw
      *
      * @return void
      */
-    public function handle(Exception $exception, $return = false)
+    public function handle(Exception $exception, $throw = true)
     {
         try {
-            $handlers = array_reverse($this->handlers);
+            foreach ($this->handlers as $handler) {
+                $result = $handler($exception);
 
-            foreach ($handlers as $handler) {
-                if ($handler($exception) === false) {
+                if ($result instanceof Exception) {
+                    $exception = $result;
+                } else if ($result === false) {
                     return;
                 }
             }
 
             throw $exception;
         } catch (Exception $exception) {
-            if ($return) {
+            if (!$throw) {
                 return $exception;
             }
 

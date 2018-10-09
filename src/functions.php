@@ -79,10 +79,10 @@ if (!function_exists('exception')) {
     /**
      * Gets exception handler instance.
      *
-     * @return \Denpa\Bitcoin\Exception\Handler
+     * @return \Denpa\Bitcoin\Exceptions\Handler
      */
     function exception()
     {
-        return \Denpa\Bitcoin\Exception\Handler::getInstance();
+        return \Denpa\Bitcoin\Exceptions\Handler::getInstance();
     }
 }

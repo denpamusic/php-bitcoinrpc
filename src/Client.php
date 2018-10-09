@@ -11,6 +11,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
+use function Denpa\Bitcoin\exception;
 
 class Client
 {
@@ -156,7 +157,7 @@ class Client
 
             return $response;
         } catch (RequestException $exception) {
-            exception()->handle($this->handleException($exception));
+            exception()->handle($exception);
         }
     }
 
@@ -366,7 +367,7 @@ class Client
         if (!is_null($callback)) {
             if ($response->hasError()) {
                 $exception = new BitcoindException($response->error());
-                $response = exception()->handle($exception, /* return */ true);
+                $response = exception()->handle($exception, /* throw */ false);
             }
 
             $callback($response);
@@ -384,32 +385,7 @@ class Client
     protected function onError(RequestException $exception, callable $callback = null)
     {
         if (!is_null($callback)) {
-            $callback(
-                exception()->handle($this->handleException($exception), true)
-            );
+            $callback(exception()->handle($exception, /* throw */ false));
         }
-    }
-
-    /**
-     * Handles exceptions.
-     *
-     * @param \Exception $exception
-     *
-     * @return \Exception
-     */
-    protected function handleException($exception)
-    {
-        if ($exception->hasResponse()) {
-            $response = $exception->getResponse();
-
-            if ($response->hasError()) {
-                return new BitcoindException($response->error());
-            }
-        }
-
-        return new ClientException(
-            $exception->getMessage(),
-            $exception->getCode()
-        );
     }
 }
