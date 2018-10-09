@@ -17,7 +17,7 @@ trait ReadOnlyArray
      */
     public function offsetSet($offset, $value)
     {
-        exception()->handle(
+        throw exception()->handle(
             new ClientException('Cannot modify readonly object')
         );
     }
@@ -43,7 +43,7 @@ trait ReadOnlyArray
      */
     public function offsetUnset($offset)
     {
-        exception()->handle(
+        throw exception()->handle(
             new ClientException('Cannot modify readonly object')
         );
     }

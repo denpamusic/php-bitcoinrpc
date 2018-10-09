@@ -156,7 +156,7 @@ class Client
 
             return $response;
         } catch (RequestException $exception) {
-            exception()->handle($exception);
+            throw exception()->handle($exception);
         }
     }
 
