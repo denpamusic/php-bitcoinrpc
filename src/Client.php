@@ -59,7 +59,7 @@ class Client
     public function __construct($config = [])
     {
         // init defaults
-        $this->config = $this->defaultConfig($this->parseUrl($config));
+        $this->config = $this->mergeDefaultConfig($this->parseUrl($config));
 
         // construct client
         $this->client = new GuzzleHttp([
@@ -210,22 +210,31 @@ class Client
     }
 
     /**
-     * Set default config values.
+     * Gets default configuration.
+     *
+     * @return array
+     */
+    protected function getDefaultConfig()
+    {
+        return [
+            'scheme'   => 'http',
+            'host'     => '127.0.0.1',
+            'port'     => 8332,
+            'user'     => '',
+            'password' => '',
+            'ca'       => null,
+        ];
+    }
+
+    /**
+     * Merge config with default values.
      *
      * @param array $config
      *
      * @return array
      */
-    protected function defaultConfig(array $config = [])
+    protected function mergeDefaultConfig(array $config = [])
     {
-        $defaults = [
-            'scheme'     => 'http',
-            'host'       => '127.0.0.1',
-            'port'       => 8332,
-            'user'       => '',
-            'password'   => '',
-        ];
-
         // use same var name as laravel-bitcoinrpc
         if (
             !array_key_exists('password', $config) &&
@@ -235,7 +244,7 @@ class Client
             unset($config['pass']);
         }
 
-        return array_merge($defaults, $config);
+        return array_merge($this->getDefaultConfig(), $config);
     }
 
     /**
