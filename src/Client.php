@@ -2,6 +2,8 @@
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Exceptions\BitcoindException;
+use Denpa\Bitcoin\Exceptions\ClientException;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -9,9 +11,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
-use Denpa\Bitcoin\Exceptions\ClientException;
-use Denpa\Bitcoin\Exceptions\BitcoindException;
-use function Denpa\Bitcoin\exception;
 
 class Client
 {
