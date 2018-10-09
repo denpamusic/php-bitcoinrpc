@@ -11,7 +11,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
-use function Denpa\Bitcoin\exception;
 
 class Client
 {

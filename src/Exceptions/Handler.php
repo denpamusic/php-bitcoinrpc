@@ -86,7 +86,7 @@ class Handler
 
                 if ($result instanceof Exception) {
                     $exception = $result;
-                } else if ($result === false) {
+                } elseif ($result === false) {
                     return;
                 }
             }
