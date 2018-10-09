@@ -9,6 +9,9 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
+use Denpa\Bitcoin\Exceptions\ClientException;
+use Denpa\Bitcoin\Exceptions\BitcoindException;
+use function Denpa\Bitcoin\exception;
 
 class Client
 {
@@ -149,12 +152,12 @@ class Client
 
             if ($response->hasError()) {
                 // throw exception on error
-                throw new Exceptions\BitcoindException($response->error());
+                exception()->handle(new BitcoindException($response->error()));
             }
 
             return $response;
         } catch (RequestException $exception) {
-            throw $this->handleException($exception);
+            exception()->handle($this->handleException($exception));
         }
     }
 
@@ -323,7 +326,7 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                throw new Exceptions\ClientException('Invalid url');
+                exception()->handle(new ClientException('Invalid url'));
             }
 
             return $parts;
@@ -363,7 +366,8 @@ class Client
     {
         if (!is_null($callback)) {
             if ($response->hasError()) {
-                $response = new Exceptions\BitcoindException($response->error());
+                $exception = new BitcoindException($response->error());
+                $response = exception()->handle($exception, /* return */ true);
             }
 
             $callback($response);
@@ -381,7 +385,9 @@ class Client
     protected function onError(RequestException $exception, callable $callback = null)
     {
         if (!is_null($callback)) {
-            $callback($this->handleException($exception));
+            $callback(
+                exception()->handle($this->handleException($exception), true)
+            );
         }
     }
 
@@ -398,11 +404,11 @@ class Client
             $response = $exception->getResponse();
 
             if ($response->hasError()) {
-                return new Exceptions\BitcoindException($response->error());
+                return new BitcoindException($response->error());
             }
         }
 
-        return new Exceptions\ClientException(
+        return new ClientException(
             $exception->getMessage(),
             $exception->getCode()
         );

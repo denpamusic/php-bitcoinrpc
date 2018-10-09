@@ -2,7 +2,8 @@
 
 namespace Denpa\Bitcoin\Traits;
 
-use Denpa\Bitcoin\Exceptions;
+use Denpa\Bitcoin\Exceptions\ClientException;
+use function Denpa\Bitcoin\exception;
 
 trait ReadOnlyArray
 {
@@ -16,7 +17,9 @@ trait ReadOnlyArray
      */
     public function offsetSet($offset, $value)
     {
-        throw new Exceptions\ClientException('Cannot modify readonly object');
+        exception()->handle(
+            new ClientException('Cannot modify readonly object')
+        );
     }
 
     /**
@@ -40,7 +43,9 @@ trait ReadOnlyArray
      */
     public function offsetUnset($offset)
     {
-        throw new Exceptions\ClientException('Cannot modify readonly object');
+        exception()->handle(
+            new ClientException('Cannot modify readonly object')
+        );
     }
 
     /**
