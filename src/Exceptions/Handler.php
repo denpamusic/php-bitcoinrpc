@@ -64,7 +64,7 @@ class Handler
         }
 
         if ($this->namespace && $exception instanceof ClientException) {
-            return $exception->withNamespace($this->ns);
+            return $exception->withNamespace($this->namespace);
         }
     }
 
