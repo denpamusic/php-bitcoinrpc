@@ -17,7 +17,7 @@ abstract class ClientException extends Exception
     {
         $classname = basename(static::class);
 
-        $class = $namespace . "\\$classname";
+        $class = $namespace."\\$classname";
 
         if (!class_exists($class)) {
             class_alias(static::class, $class);

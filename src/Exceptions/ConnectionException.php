@@ -17,7 +17,7 @@ class ConnectionException extends ClientException
      * Constructs new connection exception.
      *
      * @param \GuzzleHttp\Psr7\Request $request
-     * @param mixed $args,...
+     * @param mixed                    $args,...
      *
      * @return void
      */
@@ -43,7 +43,8 @@ class ConnectionException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters() {
+    protected function getConstructorParameters()
+    {
         return [
             $this->getRequest(),
             $this->getMessage(),

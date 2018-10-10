@@ -2,9 +2,9 @@
 
 namespace Denpa\Bitcoin;
 
-use Exception;
-use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
+use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
+use Exception;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
@@ -227,8 +227,8 @@ class Client
     /**
      * Handles async request failure.
      *
-     * @param \Exception     $exception
-     * @param callable|null  $callback
+     * @param \Exception    $exception
+     * @param callable|null $callback
      *
      * @return void
      */

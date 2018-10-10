@@ -3,9 +3,6 @@
 namespace Denpa\Bitcoin\Exceptions;
 
 use Exception;
-use Denpa\Bitcoin\Exceptions\ClientException;
-use Denpa\Bitcoin\Exceptions\ConnectionException;
-use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
 use GuzzleHttp\Exception\RequestException;
 
 class Handler
