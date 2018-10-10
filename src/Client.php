@@ -2,11 +2,11 @@
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Exceptions\BitcoindException;
-use Denpa\Bitcoin\Exceptions\ClientException;
+use Exception;
+use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
+use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
@@ -151,11 +151,11 @@ class Client
 
             if ($response->hasError()) {
                 // throw exception on error
-                exception()->handle(new BitcoindException($response->error()));
+                throw new BadRemoteCallException($response);
             }
 
             return $response;
-        } catch (RequestException $exception) {
+        } catch (Exception $exception) {
             throw exception()->handle($exception);
         }
     }
@@ -207,6 +207,36 @@ class Client
         }
 
         return $this->request($method, ...$params);
+    }
+
+    /**
+     * Handles async request success.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param callable|null                       $callback
+     *
+     * @return void
+     */
+    protected function onSuccess(ResponseInterface $response, callable $callback = null)
+    {
+        if (!is_null($callback)) {
+            $callback($response);
+        }
+    }
+
+    /**
+     * Handles async request failure.
+     *
+     * @param \Exception     $exception
+     * @param callable|null  $callback
+     *
+     * @return void
+     */
+    protected function onError(Exception $exception, callable $callback = null)
+    {
+        if (!is_null($callback)) {
+            $callback(exception()->handle($exception, /* throw */ false));
+        }
     }
 
     /**
@@ -334,7 +364,7 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                exception()->handle(new ClientException('Invalid url'));
+                exception()->handle(new BadConfigurationException($config, 'Invalid url'));
             }
 
             return $parts;
@@ -360,40 +390,5 @@ class Client
                 'id'     => $this->rpcId++,
             ],
         ];
-    }
-
-    /**
-     * Handles async request success.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|null                       $callback
-     *
-     * @return void
-     */
-    protected function onSuccess(ResponseInterface $response, callable $callback = null)
-    {
-        if (!is_null($callback)) {
-            if ($response->hasError()) {
-                $exception = new BitcoindException($response->error());
-                $response = exception()->handle($exception, /* throw */ false);
-            }
-
-            $callback($response);
-        }
-    }
-
-    /**
-     * Handles async request failure.
-     *
-     * @param \GuzzleHttp\Exception\RequestException $exception
-     * @param callable|null                          $callback
-     *
-     * @return void
-     */
-    protected function onError(RequestException $exception, callable $callback = null)
-    {
-        if (!is_null($callback)) {
-            $callback(exception()->handle($exception, /* throw */ false));
-        }
     }
 }

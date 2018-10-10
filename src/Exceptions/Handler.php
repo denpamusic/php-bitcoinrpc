@@ -3,10 +3,20 @@
 namespace Denpa\Bitcoin\Exceptions;
 
 use Exception;
+use Denpa\Bitcoin\Exceptions\ClientException;
+use Denpa\Bitcoin\Exceptions\ConnectionException;
+use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
 use GuzzleHttp\Exception\RequestException;
 
 class Handler
 {
+    /**
+     * Exception namespace.
+     *
+     * @var string
+     */
+    protected $namespace = null;
+
     /**
      * Handler instance.
      *
@@ -45,14 +55,19 @@ class Handler
                 $response = $exception->getResponse();
 
                 if ($response->hasError()) {
-                    return new BitcoindException($response->error());
+                    return new BadRemoteCallException($response);
                 }
             }
 
-            return new ClientException(
+            return new ConnectionException(
+                $exception->getRequest(),
                 $exception->getMessage(),
                 $exception->getCode()
             );
+        }
+
+        if ($this->namespace && $exception instanceof ClientException) {
+            return $exception->withNamespace($this->ns);
         }
     }
 
@@ -99,6 +114,20 @@ class Handler
 
             throw $exception;
         }
+    }
+
+    /**
+     * Sets exception namespace.
+     *
+     * @param string $namespace
+     *
+     * @return static
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
     }
 
     /**
