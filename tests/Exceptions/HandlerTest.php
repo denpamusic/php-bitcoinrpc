@@ -2,10 +2,10 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use Exception;
-use Denpa\Bitcoin\Tests\TestCase;
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
+use Denpa\Bitcoin\Tests\TestCase;
+use Exception;
 
 class HandlerTest extends TestCase
 {

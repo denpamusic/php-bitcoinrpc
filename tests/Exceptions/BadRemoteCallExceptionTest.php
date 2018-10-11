@@ -2,9 +2,9 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use Denpa\Bitcoin\Tests\TestCase;
-use Denpa\Bitcoin\Responses\Response;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
+use Denpa\Bitcoin\Responses\Response;
+use Denpa\Bitcoin\Tests\TestCase;
 
 class BadRemoteCallExceptionTest extends TestCase
 {
