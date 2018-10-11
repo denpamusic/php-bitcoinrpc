@@ -3,7 +3,6 @@
 namespace Denpa\Bitcoin\Traits;
 
 use BadMethodCallException;
-use function Denpa\Bitcoin\exception;
 
 trait ReadOnlyArray
 {
