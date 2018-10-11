@@ -1,6 +1,9 @@
 <?php
 
+namespace Denpa\Bitcoin\Tests;
+
 use Denpa\Bitcoin;
+use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 
 class FunctionsTest extends TestCase
 {
@@ -78,6 +81,16 @@ class FunctionsTest extends TestCase
     public function testToFixed($float, $precision, $expected)
     {
         $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
+    }
+
+    /**
+     * Test exception handler helper.
+     *
+     * @return void
+     */
+    public function testExceptionHandlerHelper()
+    {
+        $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
     }
 
     /**

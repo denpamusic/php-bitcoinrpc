@@ -1,7 +1,9 @@
 <?php
 
-use Denpa\Bitcoin\Exceptions;
+namespace Denpa\Bitcoin\Tests\Responses;
+
 use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Denpa\Bitcoin\Tests\TestCase;
 use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -162,7 +164,7 @@ class BitcoindResponseTest extends TestCase
      */
     public function testArrayAccessSet()
     {
-        $this->expectException(Exceptions\ClientException::class);
+        $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot modify readonly object');
         $this->response['hash'] = 'test';
     }
@@ -174,7 +176,7 @@ class BitcoindResponseTest extends TestCase
      */
     public function testArrayAccessUnset()
     {
-        $this->expectException(Exceptions\ClientException::class);
+        $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot modify readonly object');
         unset($this->response['hash']);
     }

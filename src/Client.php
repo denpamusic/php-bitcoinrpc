@@ -2,9 +2,11 @@
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Exceptions\BadConfigurationException;
+use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
+use Exception;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
@@ -57,7 +59,7 @@ class Client
     public function __construct($config = [])
     {
         // init defaults
-        $this->config = $this->defaultConfig($this->parseUrl($config));
+        $this->config = $this->mergeDefaultConfig($this->parseUrl($config));
 
         // construct client
         $this->client = new GuzzleHttp([
@@ -149,12 +151,12 @@ class Client
 
             if ($response->hasError()) {
                 // throw exception on error
-                throw new Exceptions\BitcoindException($response->error());
+                throw new BadRemoteCallException($response);
             }
 
             return $response;
-        } catch (RequestException $exception) {
-            throw $this->handleException($exception);
+        } catch (Exception $exception) {
+            throw exception()->handle($exception);
         }
     }
 
@@ -208,22 +210,65 @@ class Client
     }
 
     /**
-     * Set default config values.
+     * Handles async request success.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response
+     * @param callable|null                       $callback
+     *
+     * @return void
+     */
+    protected function onSuccess(ResponseInterface $response, callable $callback = null)
+    {
+        if (!is_null($callback)) {
+            $callback($response);
+        }
+    }
+
+    /**
+     * Handles async request failure.
+     *
+     * @param \Exception    $exception
+     * @param callable|null $callback
+     *
+     * @return void
+     */
+    protected function onError(Exception $exception, callable $callback = null)
+    {
+        if (!is_null($callback)) {
+            try {
+                exception()->handle($exception);
+            } catch (Exception $exception) {
+                $callback($exception);
+            }
+        }
+    }
+
+    /**
+     * Gets default configuration.
+     *
+     * @return array
+     */
+    protected function getDefaultConfig()
+    {
+        return [
+            'scheme'   => 'http',
+            'host'     => '127.0.0.1',
+            'port'     => 8332,
+            'user'     => '',
+            'password' => '',
+            'ca'       => null,
+        ];
+    }
+
+    /**
+     * Merge config with default values.
      *
      * @param array $config
      *
      * @return array
      */
-    protected function defaultConfig(array $config = [])
+    protected function mergeDefaultConfig(array $config = [])
     {
-        $defaults = [
-            'scheme'     => 'http',
-            'host'       => '127.0.0.1',
-            'port'       => 8332,
-            'user'       => '',
-            'password'   => '',
-        ];
-
         // use same var name as laravel-bitcoinrpc
         if (
             !array_key_exists('password', $config) &&
@@ -233,7 +278,7 @@ class Client
             unset($config['pass']);
         }
 
-        return array_merge($defaults, $config);
+        return array_merge($this->getDefaultConfig(), $config);
     }
 
     /**
@@ -323,7 +368,10 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                throw new Exceptions\ClientException('Invalid url');
+                throw new BadConfigurationException(
+                    ['url' => $config],
+                    'Invalid url'
+                );
             }
 
             return $parts;
@@ -349,62 +397,5 @@ class Client
                 'id'     => $this->rpcId++,
             ],
         ];
-    }
-
-    /**
-     * Handles async request success.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|null                       $callback
-     *
-     * @return void
-     */
-    protected function onSuccess(ResponseInterface $response, callable $callback = null)
-    {
-        if (!is_null($callback)) {
-            if ($response->hasError()) {
-                $response = new Exceptions\BitcoindException($response->error());
-            }
-
-            $callback($response);
-        }
-    }
-
-    /**
-     * Handles async request failure.
-     *
-     * @param \GuzzleHttp\Exception\RequestException $exception
-     * @param callable|null                          $callback
-     *
-     * @return void
-     */
-    protected function onError(RequestException $exception, callable $callback = null)
-    {
-        if (!is_null($callback)) {
-            $callback($this->handleException($exception));
-        }
-    }
-
-    /**
-     * Handles exceptions.
-     *
-     * @param \Exception $exception
-     *
-     * @return \Exception
-     */
-    protected function handleException($exception)
-    {
-        if ($exception->hasResponse()) {
-            $response = $exception->getResponse();
-
-            if ($response->hasError()) {
-                return new Exceptions\BitcoindException($response->error());
-            }
-        }
-
-        return new Exceptions\ClientException(
-            $exception->getMessage(),
-            $exception->getCode()
-        );
     }
 }

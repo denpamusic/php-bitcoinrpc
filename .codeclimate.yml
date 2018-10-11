@@ -11,4 +11,3 @@ plugins:
     enabled: true
 exclude_patterns:
 - "tests/"
-- "src/Exceptions/ClientException.php" # empty exception

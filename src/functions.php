@@ -74,3 +74,17 @@ if (!function_exists('to_fixed')) {
         return bcdiv($number, pow(10, $precision), $precision);
     }
 }
+
+if (!function_exists('exception')) {
+    /**
+     * Gets exception handler instance.
+     *
+     * @return \Denpa\Bitcoin\Exceptions\Handler
+     */
+    function exception()
+    {
+        return Exceptions\Handler::getInstance();
+    }
+}
+
+set_exception_handler([Exceptions\Handler::getInstance(), 'handle']);

@@ -1,5 +1,7 @@
 <?php
 
+namespace Denpa\Bitcoin\Tests;
+
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -8,11 +10,11 @@ use GuzzleHttp\Psr7\Response;
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Set up test.
+     * Set-up test environment.
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
