@@ -23,11 +23,13 @@
         "psr-4" : {
             "Denpa\\Bitcoin\\": "src"
         },
-        "classmap" : [
-            "tests"
-        ],
         "files" : [
             "src/functions.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4" : {
+            "Denpa\\Bitcoin\\Tests\\": "tests"
+        }
     }
 }

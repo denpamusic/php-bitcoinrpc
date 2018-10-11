@@ -140,4 +140,14 @@ class Handler
 
         return self::$instance;
     }
+
+    /**
+     * Clears instance.
+     *
+     * @return void
+     */
+    public static function clearInstance()
+    {
+        self::$instance = null;
+    }
 }
