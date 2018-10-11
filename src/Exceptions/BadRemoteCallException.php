@@ -47,8 +47,6 @@ class BadRemoteCallException extends ClientException
     {
         return [
             $this->getResponse(),
-            $this->getMessage(),
-            $this->getCode(),
         ];
     }
 }
