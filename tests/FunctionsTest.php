@@ -79,6 +79,16 @@ class FunctionsTest extends TestCase
     {
         $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
     }
+    
+    /**
+     * Test exception handler helper.
+     *
+     * @return void
+     */
+    public function testExceptionHandlerHelper()
+    {
+        $this->assertInstanceOf(Bitcoin\Exceptions\Handler::class, exception());
+    }
 
     /**
      * Provides satoshi and bitcoin values.
