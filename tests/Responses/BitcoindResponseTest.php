@@ -2,8 +2,8 @@
 
 namespace Denpa\Bitcoin\Tests\Responses;
 
-use Denpa\Bitcoin\Tests\TestCase;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Denpa\Bitcoin\Tests\TestCase;
 use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;

@@ -2,8 +2,8 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use Denpa\Bitcoin\Tests\TestCase;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
+use Denpa\Bitcoin\Tests\TestCase;
 
 class BadConfigurationExceptionTest extends TestCase
 {

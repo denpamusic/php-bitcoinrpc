@@ -34,6 +34,7 @@ abstract class ClientException extends Exception
     protected function getBasename()
     {
         $pos = ($pos = strrpos(static::class, '\\')) !== false ? $pos + 1 : 0;
+
         return substr(static::class, $pos);
     }
 
