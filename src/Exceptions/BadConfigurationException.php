@@ -14,12 +14,12 @@ class BadConfigurationException extends ClientException
     /**
      * Constructs new bad configuration exception.
      *
-     * @param mixed $config
+     * @param array $config
      * @param mixed $args,...
      *
      * @return void
      */
-    public function __construct($config, ...$args)
+    public function __construct(array $config, ...$args)
     {
         $this->config = $config;
 
@@ -27,9 +27,9 @@ class BadConfigurationException extends ClientException
     }
 
     /**
-     * Gets response object.
+     * Gets config data.
      *
-     * @return mixed
+     * @return array
      */
     public function getConfig()
     {

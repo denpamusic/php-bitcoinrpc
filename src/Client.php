@@ -364,7 +364,9 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                exception()->handle(new BadConfigurationException($config, 'Invalid url'));
+                exception()->handle(
+                    new BadConfigurationException(['dsn' => $config], 'Invalid url')
+                );
             }
 
             return $parts;
