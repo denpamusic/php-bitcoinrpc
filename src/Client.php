@@ -235,7 +235,11 @@ class Client
     protected function onError(Exception $exception, callable $callback = null)
     {
         if (!is_null($callback)) {
-            $callback(exception()->handle($exception, /* throw */ false));
+            try {
+                exception()->handle($exception);
+            } catch (Exception $exception) {
+                $callback($exception);
+            }
         }
     }
 
@@ -364,8 +368,9 @@ class Client
             $parts = array_intersect_key($parts, array_flip($allowed));
 
             if (!$parts || empty($parts)) {
-                exception()->handle(
-                    new BadConfigurationException(['dsn' => $config], 'Invalid url')
+                throw new BadConfigurationException(
+                    ['url' => $config],
+                    'Invalid url'
                 );
             }
 

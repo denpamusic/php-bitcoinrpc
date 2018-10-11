@@ -83,6 +83,8 @@ if (!function_exists('exception')) {
      */
     function exception()
     {
-        return \Denpa\Bitcoin\Exceptions\Handler::getInstance();
+        return Exceptions\Handler::getInstance();
     }
 }
+
+set_exception_handler([Exceptions\Handler::getInstance(), 'handle']);

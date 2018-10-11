@@ -17,9 +17,7 @@ trait ReadOnlyArray
      */
     public function offsetSet($offset, $value)
     {
-        throw exception()->handle(
-            new BadMethodCallException('Cannot modify readonly object')
-        );
+        throw new BadMethodCallException('Cannot modify readonly object');
     }
 
     /**
@@ -43,9 +41,7 @@ trait ReadOnlyArray
      */
     public function offsetUnset($offset)
     {
-        throw exception()->handle(
-            new BadMethodCallException('Cannot modify readonly object')
-        );
+        throw new BadMethodCallException('Cannot modify readonly object');
     }
 
     /**

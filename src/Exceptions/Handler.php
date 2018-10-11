@@ -35,25 +35,39 @@ class Handler
      */
     protected function __construct()
     {
-        $this->registerHandler([$this, 'defaultHandler']);
+        $this->registerHandler([$this, 'namespaceHandler']);
+        $this->registerHandler([$this, 'requestExceptionHandler']);
     }
 
     /**
-     * Default handler function.
+     * Handle namespace change.
      *
      * @param \Exception $exception
      *
      * @return void
      */
-    protected function defaultHandler(Exception $exception)
+    protected function namespaceHandler(Exception $exception)
+    {
+        if ($this->namespace && $exception instanceof ClientException) {
+            return $exception->withNamespace($this->namespace);
+        }
+    }
+
+    /**
+     * Handle request exception.
+     *
+     * @param \Exception $exception
+     *
+     * @return void
+     */
+    protected function requestExceptionHandler(Exception $exception)
     {
         if ($exception instanceof RequestException) {
-            if ($exception->hasResponse()) {
-                $response = $exception->getResponse();
-
-                if ($response->hasError()) {
-                    return new BadRemoteCallException($response);
-                }
+            if (
+                $exception->hasResponse() &&
+                $exception->getResponse()->hasError()
+            ) {
+                return new BadRemoteCallException($exception->getResponse());
             }
 
             return new ConnectionException(
@@ -61,10 +75,6 @@ class Handler
                 $exception->getMessage(),
                 $exception->getCode()
             );
-        }
-
-        if ($this->namespace && $exception instanceof ClientException) {
-            return $exception->withNamespace($this->namespace);
         }
     }
 
@@ -90,27 +100,17 @@ class Handler
      *
      * @return void
      */
-    public function handle(Exception $exception, $throw = true)
+    public function handle(Exception $exception)
     {
-        try {
-            foreach ($this->handlers as $handler) {
-                $result = $handler($exception);
+        foreach ($this->handlers as $handler) {
+            $result = $handler($exception);
 
-                if ($result instanceof Exception) {
-                    $exception = $result;
-                } elseif ($result === false) {
-                    return;
-                }
+            if ($result instanceof Exception) {
+                $exception = $result;
             }
-
-            throw $exception;
-        } catch (Exception $exception) {
-            if (!$throw) {
-                return $exception;
-            }
-
-            throw $exception;
         }
+
+        throw $exception;
     }
 
     /**
