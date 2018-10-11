@@ -53,4 +53,29 @@ class BadRemoteCallExceptionTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $exception->getResponse());
     }
+
+    /**
+     * Test constructor parameters getter.
+     *
+     * @return void
+     */
+    public function testGetConstructionParameters()
+    {
+        $exception = new FakeBadRemoteCallException($this->response);
+
+        $this->assertEquals(
+            [
+                $exception->getResponse(),
+            ],
+            $exception->getConstructorParameters()
+        );
+    }
+}
+
+class FakeBadRemoteCallException extends BadRemoteCallException
+{
+    public function getConstructorParameters()
+    {
+        return parent::getConstructorParameters();
+    }
 }

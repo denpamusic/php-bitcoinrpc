@@ -2,10 +2,11 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use Denpa\Bitcoin\Exceptions\BadConfigurationException;
+use GuzzleHttp\Psr7\Request;
 use Denpa\Bitcoin\Tests\TestCase;
+use Denpa\Bitcoin\Exceptions\ConnectionException;
 
-class BadConfigurationExceptionTest extends TestCase
+class ConnectionExceptionTest extends TestCase
 {
     /**
      * Set-up test environment.
@@ -16,7 +17,10 @@ class BadConfigurationExceptionTest extends TestCase
     {
         parent::setUp();
 
-        $this->config = ['test' => 'value'];
+        $this->request = $this
+            ->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -26,23 +30,23 @@ class BadConfigurationExceptionTest extends TestCase
      */
     public function testThrow()
     {
-        $this->expectException(BadConfigurationException::class);
+        $this->expectException(ConnectionException::class);
         $this->expectExceptionMessage('Test message');
         $this->expectExceptionCode(1);
 
-        throw new BadConfigurationException($this->config, 'Test message', 1);
+        throw new ConnectionException($this->request, 'Test message', 1);
     }
 
     /**
-     * Test config getter.
+     * Test request getter.
      *
      * @return void
      */
-    public function testGetConfig()
+    public function testGetRequest()
     {
-        $exception = new BadConfigurationException($this->config);
+        $exception = new ConnectionException($this->request);
 
-        $this->assertEquals($this->config, $exception->getConfig());
+        $this->assertInstanceOf(Request::class, $exception->getRequest());
     }
 
     /**
@@ -52,11 +56,11 @@ class BadConfigurationExceptionTest extends TestCase
      */
     public function testGetConstructionParameters()
     {
-        $exception = new FakeBadConfigurationException($this->config);
+        $exception = new FakeConnectionException($this->request);
 
         $this->assertEquals(
             [
-                $exception->getConfig(),
+                $exception->getRequest(),
                 $exception->getMessage(),
                 $exception->getCode(),
             ],
@@ -65,7 +69,7 @@ class BadConfigurationExceptionTest extends TestCase
     }
 }
 
-class FakeBadConfigurationException extends BadConfigurationException
+class FakeConnectionException extends ConnectionException
 {
     public function getConstructorParameters()
     {

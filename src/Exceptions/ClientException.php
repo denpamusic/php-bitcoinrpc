@@ -15,7 +15,7 @@ abstract class ClientException extends Exception
      */
     public function withNamespace($namespace)
     {
-        $classname = $this->getBasename();
+        $classname = $this->getClassName();
 
         $class = $namespace."\\$classname";
 
@@ -27,11 +27,11 @@ abstract class ClientException extends Exception
     }
 
     /**
-     * Gets exception basename.
+     * Gets exception class name.
      *
      * @return string
      */
-    protected function getBasename()
+    protected function getClassName()
     {
         $pos = ($pos = strrpos(static::class, '\\')) !== false ? $pos + 1 : 0;
 
@@ -43,8 +43,5 @@ abstract class ClientException extends Exception
      *
      * @return array
      */
-    protected function getConstructorParameters()
-    {
-        return [];
-    }
+    abstract protected function getConstructorParameters();
 }
