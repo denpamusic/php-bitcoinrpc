@@ -1,14 +1,18 @@
 <?php
 
-use Denpa\Bitcoin;
+namespace Denpa\Bitcoin\Tests;
+
 use Denpa\Bitcoin\Exceptions;
+use Denpa\Bitcoin\Responses\Response;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
-use GuzzleHttp\Psr7\Response;
+use Denpa\Bitcoin\Client as BitcoinClient;
+use GuzzleHttp\Client as GuzzleHttp;
+use GuzzleHttp\Psr7\Response as GuzzleResponse;
 
 class ClientTest extends TestCase
 {
     /**
-     * Set up test.
+     * Set-up test environment.
      *
      * @return void
      */
@@ -16,7 +20,7 @@ class ClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->bitcoind = new Bitcoin\Client();
+        $this->bitcoind = new BitcoinClient();
     }
 
     /**
@@ -35,9 +39,9 @@ class ClientTest extends TestCase
      */
     public function testUrlParser($url, $scheme, $host, $port, $user, $password)
     {
-        $bitcoind = new Bitcoin\Client($url);
+        $bitcoind = new BitcoinClient($url);
 
-        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
+        $this->assertInstanceOf(BitcoinClient::class, $bitcoind);
 
         $base_uri = $bitcoind->getConfig('base_uri');
 
@@ -74,13 +78,10 @@ class ClientTest extends TestCase
      */
     public function testUrlParserWithInvalidUrl()
     {
-        try {
-            $bitcoind = new Bitcoin\Client('cookies!');
+        $this->expectException(Exceptions\BadConfigurationException::class);
+        $this->expectExceptionMessage('Invalid url');
 
-            $this->expectException(Exceptions\ClientException::class);
-        } catch (Exceptions\ClientException $e) {
-            $this->assertEquals('Invalid url', $e->getMessage());
-        }
+        $bitcoind = new BitcoinClient('cookies!');
     }
 
     /**
@@ -90,16 +91,16 @@ class ClientTest extends TestCase
      */
     public function testClientSetterGetter()
     {
-        $bitcoind = new Bitcoin\Client('http://old_client.org');
-        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
+        $bitcoind = new BitcoinClient('http://old_client.org');
+        $this->assertInstanceOf(BitcoinClient::class, $bitcoind);
 
         $base_uri = $bitcoind->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'old_client.org');
 
         $oldClient = $bitcoind->getClient();
-        $this->assertInstanceOf(\GuzzleHttp\Client::class, $oldClient);
+        $this->assertInstanceOf(GuzzleHttp::class, $oldClient);
 
-        $newClient = new \GuzzleHttp\Client(['base_uri' => 'http://new_client.org']);
+        $newClient = new GuzzleHttp(['base_uri' => 'http://new_client.org']);
         $bitcoind->setClient($newClient);
 
         $base_uri = $bitcoind->getConfig('base_uri');
@@ -113,11 +114,11 @@ class ClientTest extends TestCase
      */
     public function testCaOption()
     {
-        $bitcoind = new Bitcoin\Client();
+        $bitcoind = new BitcoinClient();
 
         $this->assertEquals(null, $bitcoind->getConfig('ca'));
 
-        $bitcoind = new Bitcoin\Client([
+        $bitcoind = new BitcoinClient([
             'ca' => __FILE__,
         ]);
 
@@ -353,18 +354,20 @@ class ClientTest extends TestCase
     public function testRequestExceptionWithEmptyResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            new Response(500),
+            new GuzzleResponse(500),
         ]);
 
-        $this->expectException(Exceptions\ClientException::class);
+        $this->expectException(Exceptions\ConnectionException::class);
         $this->expectExceptionMessage($this->error500());
         $this->expectExceptionCode(500);
 
-        $this->bitcoind
+        $r = $this->bitcoind
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
+
+        var_dump($r);
     }
 
     /**
@@ -375,7 +378,7 @@ class ClientTest extends TestCase
     public function testAsyncRequestExceptionWithEmptyResponseBody()
     {
         $guzzle = $this->mockGuzzle([
-            new Response(500),
+            new GuzzleResponse(500),
         ]);
 
         $rejected = $this->mockCallable([
@@ -531,7 +534,7 @@ class ClientTest extends TestCase
     }
 }
 
-class FakeClient extends Bitcoin\Client
+class FakeClient extends BitcoinClient
 {
     /**
      * Gets response handler class name.
@@ -540,11 +543,11 @@ class FakeClient extends Bitcoin\Client
      */
     protected function getResponseHandler()
     {
-        return 'FakeResponse';
+        return 'Denpa\\Bitcoin\\Tests\\FakeResponse';
     }
 }
 
-class FakeResponse extends Bitcoin\Responses\Response
+class FakeResponse extends Response
 {
     //
 }

@@ -1,6 +1,9 @@
 <?php
 
+namespace Denpa\Bitcoin\Tests;
+
 use Denpa\Bitcoin;
+use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 
 class FunctionsTest extends TestCase
 {
@@ -87,7 +90,7 @@ class FunctionsTest extends TestCase
      */
     public function testExceptionHandlerHelper()
     {
-        $this->assertInstanceOf(Bitcoin\Exceptions\Handler::class, Bitcoin\exception());
+        $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
     }
 
     /**
