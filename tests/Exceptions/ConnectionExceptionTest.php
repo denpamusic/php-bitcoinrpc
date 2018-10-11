@@ -2,9 +2,9 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use GuzzleHttp\Psr7\Request;
-use Denpa\Bitcoin\Tests\TestCase;
 use Denpa\Bitcoin\Exceptions\ConnectionException;
+use Denpa\Bitcoin\Tests\TestCase;
+use GuzzleHttp\Psr7\Request;
 
 class ConnectionExceptionTest extends TestCase
 {

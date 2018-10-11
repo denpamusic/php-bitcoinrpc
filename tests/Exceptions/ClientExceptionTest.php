@@ -2,9 +2,8 @@
 
 namespace Denpa\Bitcoin\Tests\Exceptions;
 
-use Denpa\Bitcoin\Tests\TestCase;
-use Denpa\Bitcoin\Responses\Response;
 use Denpa\Bitcoin\Exceptions\ClientException;
+use Denpa\Bitcoin\Tests\TestCase;
 
 class ClientExceptionTest extends TestCase
 {
@@ -44,7 +43,7 @@ class ClientExceptionTest extends TestCase
      */
     public function testGetClassName()
     {
-        $exception = new FakeClientException;
+        $exception = new FakeClientException();
 
         $this->assertEquals($exception->getClassName(), 'FakeClientException');
     }
