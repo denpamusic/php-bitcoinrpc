@@ -79,7 +79,7 @@ class FunctionsTest extends TestCase
     {
         $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
     }
-    
+
     /**
      * Test exception handler helper.
      *
