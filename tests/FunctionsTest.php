@@ -87,7 +87,7 @@ class FunctionsTest extends TestCase
      */
     public function testExceptionHandlerHelper()
     {
-        $this->assertInstanceOf(Bitcoin\Exceptions\Handler::class, exception());
+        $this->assertInstanceOf(Bitcoin\Exceptions\Handler::class, Bitcoin\exception());
     }
 
     /**
