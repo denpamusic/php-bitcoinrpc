@@ -13,17 +13,17 @@ abstract class ClientException extends Exception
      *
      * @return \Exception
      */
-    protected function withNamespace($namespace)
+    public function withNamespace($namespace)
     {
         $classname = $this->getBasename();
 
         $class = $namespace."\\$classname";
 
-        if (!class_exists($class)) {
-            class_alias(static::class, $class);
+        if (class_exists($class)) {
+            return new $class(...$this->getConstructorParameters());
         }
 
-        return new $class(...$this->getConstructorParameters());
+        return $this;
     }
 
     /**
