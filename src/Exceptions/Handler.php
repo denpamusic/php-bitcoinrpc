@@ -42,11 +42,11 @@ class Handler
     /**
      * Handle namespace change.
      *
-     * @param \Exception $exception
+     * @param \Exception|\Error $exception
      *
      * @return void
      */
-    protected function namespaceHandler(Exception $exception)
+    protected function namespaceHandler($exception)
     {
         if ($this->namespace && $exception instanceof ClientException) {
             return $exception->withNamespace($this->namespace);
@@ -56,11 +56,11 @@ class Handler
     /**
      * Handle request exception.
      *
-     * @param \Exception $exception
+     * @param \Exception|\Error $exception
      *
      * @return void
      */
-    protected function requestExceptionHandler(Exception $exception)
+    protected function requestExceptionHandler($exception)
     {
         if ($exception instanceof RequestException) {
             if (
@@ -95,12 +95,11 @@ class Handler
     /**
      * Handles exception.
      *
-     * @param \Exception $exception
-     * @param bool       $throw
+     * @param \Exception|\Error $exception
      *
      * @return void
      */
-    public function handle(Exception $exception)
+    public function handle($exception)
     {
         foreach ($this->handlers as $handler) {
             $result = $handler($exception);
