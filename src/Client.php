@@ -19,7 +19,7 @@ class Client
      *
      * @var \GuzzleHttp\Client
      */
-    protected $client = null;
+    protected $client;
 
     /**
      * Client configuration.
@@ -91,10 +91,7 @@ class Client
      */
     public function getConfig($option = null)
     {
-        return (
-                isset($this->client) &&
-                $this->client instanceof ClientInterface
-            ) ? $this->client->getConfig($option) : null;
+        return $this->client->getConfig($option);
     }
 
     /**
