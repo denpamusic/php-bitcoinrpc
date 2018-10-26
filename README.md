@@ -7,6 +7,8 @@
 [![Code Coverage](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/coverage.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/coverage)
 [![Join the chat at https://gitter.im/php-bitcoinrpc/Lobby](https://badges.gitter.im/php-bitcoinrpc/Lobby.svg)](https://gitter.im/php-bitcoinrpc/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+> :bell: __Want to fork this project for your altcoin?__ Check out [denpamusic/php-altcoinrpc](https://github.com/denpamusic/php-altcoinrpc) - fast and easy way to create JSON-RPC clients without having to maintain full fork and replace tons of lines of code.
+
 ## Installation
 Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
 ```javascript
@@ -149,6 +151,11 @@ $balance = $bitcoind->wallet('wallet2.dat')->getbalance();
 
 echo $balance->get(); // 0.10000000
 ```
+
+## Exceptions
+* `Denpa\Bitcoin\Exceptions\BadConfigurationException` - thrown on bad client configuration.
+* `Denpa\Bitcoin\Exceptions\BadRemoteCallException` - thrown on getting error message from daemon.
+* `Denpa\Bitcoin\Exceptions\ConnectionException` - thrown on daemon connection errors (e. g. timeouts)
 
 
 ## Helpers
