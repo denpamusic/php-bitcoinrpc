@@ -389,7 +389,7 @@ class Client
     {
         return [
             'json' => [
-                'method' => strtolower($method),
+                'method' => $method,
                 'params' => (array) $params,
                 'id'     => $this->rpcId++,
             ],
