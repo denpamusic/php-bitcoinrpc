@@ -45,12 +45,13 @@ or use array to define your bitcoind settings
 use Denpa\Bitcoin\Client as BitcoinClient;
 
 $bitcoind = new BitcoinClient([
-    'scheme'   => 'http',                 // optional, default http
-    'host'     => 'localhost',            // optional, default localhost
-    'port'     => 8332,                   // optional, default 8332
-    'user'     => 'rpcuser',              // required
-    'password' => 'rpcpassword',          // required
-    'ca'       => '/etc/ssl/ca-cert.pem'  // optional, for use with https scheme
+    'scheme'        => 'http',                 // optional, default http
+    'host'          => 'localhost',            // optional, default localhost
+    'port'          => 8332,                   // optional, default 8332
+    'user'          => 'rpcuser',              // required
+    'password'      => 'rpcpassword',          // required
+    'ca'            => '/etc/ssl/ca-cert.pem'  // optional, for use with https scheme
+    'preserve_case' => false,                  // optional, send method names as defined instead of lowercasing them
 ]);
 ```
 Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic:

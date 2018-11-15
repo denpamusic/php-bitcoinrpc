@@ -248,12 +248,13 @@ class Client
     protected function getDefaultConfig()
     {
         return [
-            'scheme'   => 'http',
-            'host'     => '127.0.0.1',
-            'port'     => 8332,
-            'user'     => '',
-            'password' => '',
-            'ca'       => null,
+            'scheme'        => 'http',
+            'host'          => '127.0.0.1',
+            'port'          => 8332,
+            'user'          => '',
+            'password'      => '',
+            'ca'            => null,
+            'preserve_case' => false,
         ];
     }
 
@@ -389,7 +390,8 @@ class Client
     {
         return [
             'json' => [
-                'method' => isset($this->config['preserve_case']) ? $method : strtolower($method),
+                'method' => $this->config['preserve_case'] ?
+                    $method : strtolower($method),
                 'params' => (array) $params,
                 'id'     => $this->rpcId++,
             ],

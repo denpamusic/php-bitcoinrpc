@@ -126,6 +126,26 @@ class ClientTest extends TestCase
     }
 
     /**
+     * Test preserve method name case config option.
+     *
+     * @return void
+     */
+    public function testPreserveCase()
+    {
+        $bitcoind = new BitcoinClient(['preserve_case' => true]);
+        $bitcoind->setClient($this->mockGuzzle([$this->getBlockResponse()]));
+        $bitcoind->getBlockHeader();
+
+        $request = $this->getHistoryRequestBody();
+
+        $this->assertEquals(false, $bitcoind->getConfig('preserve_case'));
+        $this->assertEquals($this->makeRequestBody(
+            'getBlockHeader',
+            $request['id']
+        ), $request);
+    }
+
+    /**
      * Test simple request.
      *
      * @return void
