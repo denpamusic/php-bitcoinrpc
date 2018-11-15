@@ -389,7 +389,7 @@ class Client
     {
         return [
             'json' => [
-                'method' => strtolower($method),
+                'method' => isset($this->config['preserve_case']) ? $method : strtolower($method),
                 'params' => (array) $params,
                 'id'     => $this->rpcId++,
             ],
