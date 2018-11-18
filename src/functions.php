@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
+
 if (!function_exists('to_bitcoin')) {
     /**
      * Converts from satoshi to bitcoin.
@@ -83,10 +85,10 @@ if (!function_exists('exception')) {
      *
      * @return \Denpa\Bitcoin\Exceptions\Handler
      */
-    function exception() : Exceptions\Handler
+    function exception() : ExceptionHandler
     {
-        return Exceptions\Handler::getInstance();
+        return ExceptionHandler::getInstance();
     }
 }
 
-set_exception_handler([Exceptions\Handler::getInstance(), 'handle']);
+set_exception_handler([ExceptionHandler::getInstance(), 'handle']);
