@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
@@ -232,7 +233,7 @@ trait Collection
                 'method count() should be called on array'
             );
         }
-        
+
         return count($value);
     }
 

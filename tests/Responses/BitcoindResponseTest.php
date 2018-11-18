@@ -446,7 +446,7 @@ class BitcoindResponseTest extends TestCase
             $this->response->count('tx')
         );
     }
-    
+
     /**
      * Test count on non array.
      *

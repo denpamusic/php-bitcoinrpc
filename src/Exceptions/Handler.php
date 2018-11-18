@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
@@ -52,7 +53,7 @@ class Handler
         if ($this->namespace && $exception instanceof ClientException) {
             return $exception->withNamespace($this->namespace);
         }
-        
+
         return null;
     }
 
@@ -79,7 +80,7 @@ class Handler
                 $exception->getCode()
             );
         }
-        
+
         return null;
     }
 
