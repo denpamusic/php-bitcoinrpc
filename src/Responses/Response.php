@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Responses;
 
@@ -33,7 +34,7 @@ abstract class Response implements ResponseInterface
     public function __construct(ResponseInterface $response)
     {
         $this->response = $response;
-        $this->container = json_decode($response->getBody(), true);
+        $this->container = json_decode((string) $response->getBody(), true);
     }
 
     /**
@@ -41,7 +42,7 @@ abstract class Response implements ResponseInterface
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function response()
+    public function response() : ResponseInterface
     {
         return $this->response;
     }
@@ -51,9 +52,9 @@ abstract class Response implements ResponseInterface
      *
      * @param \Psr\Http\Message\ResponseInterface $response
      *
-     * @return static
+     * @return self
      */
-    public function setResponse(ResponseInterface $response)
+    public function setResponse(ResponseInterface $response) : self
     {
         $this->response = $response;
 
@@ -65,7 +66,7 @@ abstract class Response implements ResponseInterface
      *
      * @return bool
      */
-    public function hasError()
+    public function hasError() : bool
     {
         return isset($this->container['error']);
     }
@@ -73,13 +74,11 @@ abstract class Response implements ResponseInterface
     /**
      * Gets error object.
      *
-     * @return object|null
+     * @return array|null
      */
-    public function error()
+    public function error() : ?array
     {
-        if ($this->hasError()) {
-            return $this->container['error'];
-        }
+        return $this->hasError() ? $this->container['error'] : null;
     }
 
     /**
@@ -87,7 +86,7 @@ abstract class Response implements ResponseInterface
      *
      * @return bool
      */
-    public function hasResult()
+    public function hasResult() : bool
     {
         return isset($this->container['result']);
     }
@@ -109,7 +108,7 @@ abstract class Response implements ResponseInterface
      *
      * @return int
      */
-    public function getStatusCode()
+    public function getStatusCode() : int
     {
         return $this->response->getStatusCode();
     }
@@ -120,9 +119,9 @@ abstract class Response implements ResponseInterface
      * @param int    $code
      * @param string $reasonPhrase
      *
-     * @return static
+     * @return self
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = '') : self
     {
         $new = clone $this;
 
@@ -136,7 +135,7 @@ abstract class Response implements ResponseInterface
      *
      * @return string
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase() : string
     {
         return $this->response->getReasonPhrase();
     }

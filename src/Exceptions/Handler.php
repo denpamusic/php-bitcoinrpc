@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
@@ -17,7 +18,7 @@ class Handler
     /**
      * Handler instance.
      *
-     * @var static
+     * @var self
      */
     protected static $instance = null;
 
@@ -44,13 +45,15 @@ class Handler
      *
      * @param \Exception|\Error $exception
      *
-     * @return void
+     * @return \Exception|null
      */
-    protected function namespaceHandler($exception)
+    protected function namespaceHandler($exception) : ?Exception
     {
         if ($this->namespace && $exception instanceof ClientException) {
             return $exception->withNamespace($this->namespace);
         }
+        
+        return null;
     }
 
     /**
@@ -58,9 +61,9 @@ class Handler
      *
      * @param \Exception|\Error $exception
      *
-     * @return void
+     * @return \Exception|null
      */
-    protected function requestExceptionHandler($exception)
+    protected function requestExceptionHandler($exception) : ?Exception
     {
         if ($exception instanceof RequestException) {
             if (
@@ -76,6 +79,8 @@ class Handler
                 $exception->getCode()
             );
         }
+        
+        return null;
     }
 
     /**
@@ -83,9 +88,9 @@ class Handler
      *
      * @param callable $handler
      *
-     * @return static
+     * @return self
      */
-    public function registerHandler(callable $handler)
+    public function registerHandler(callable $handler) : self
     {
         $this->handlers[] = $handler;
 
@@ -99,7 +104,7 @@ class Handler
      *
      * @return void
      */
-    public function handle($exception)
+    public function handle($exception) : void
     {
         foreach ($this->handlers as $handler) {
             $result = $handler($exception);
@@ -117,9 +122,9 @@ class Handler
      *
      * @param string $namespace
      *
-     * @return static
+     * @return self
      */
-    public function setNamespace($namespace)
+    public function setNamespace($namespace) : self
     {
         $this->namespace = $namespace;
 
@@ -129,9 +134,9 @@ class Handler
     /**
      * Gets handler instance.
      *
-     * @return static
+     * @return self
      */
-    public static function getInstance()
+    public static function getInstance() : self
     {
         if (is_null(self::$instance)) {
             self::$instance = new self();
@@ -145,7 +150,7 @@ class Handler
      *
      * @return void
      */
-    public static function clearInstance()
+    public static function clearInstance() : void
     {
         self::$instance = null;
     }

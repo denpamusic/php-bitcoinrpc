@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
@@ -9,9 +10,9 @@ trait Message
     /**
      * Retrieves the HTTP protocol version as a string.
      *
-     * @return string
+     * @return float
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion() : float
     {
         return $this->response->getProtocolVersion();
     }
@@ -19,11 +20,11 @@ trait Message
     /**
      * Return an instance with the specified HTTP protocol version.
      *
-     * @param string $version
+     * @param float|string $version
      *
-     * @return static
+     * @return self
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version) : self
     {
         $new = clone $this;
 
@@ -37,7 +38,7 @@ trait Message
      *
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders() : array
     {
         return $this->response->getHeaders();
     }
@@ -49,7 +50,7 @@ trait Message
      *
      * @return bool
      */
-    public function hasHeader($name)
+    public function hasHeader($name) : bool
     {
         return $this->response->hasHeader($name);
     }
@@ -61,7 +62,7 @@ trait Message
      *
      * @return array
      */
-    public function getHeader($name)
+    public function getHeader($name) : array
     {
         return $this->response->getHeader($name);
     }
@@ -73,7 +74,7 @@ trait Message
      *
      * @return string
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine($name) : string
     {
         return $this->response->getHeaderLine($name);
     }
@@ -84,9 +85,9 @@ trait Message
      * @param string       $name
      * @param string|array $value
      *
-     * @return static
+     * @return self
      */
-    public function withHeader($name, $value)
+    public function withHeader($name, $value) : self
     {
         $new = clone $this;
 
@@ -96,11 +97,12 @@ trait Message
     /**
      * Returns an instance with the specified header appended with the given value.
      *
+     * @param string       $name
      * @param string|array $value
      *
-     * @return static
+     * @return self
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value) : self
     {
         $new = clone $this;
 
@@ -112,9 +114,9 @@ trait Message
      *
      * @param string $name
      *
-     * @return static
+     * @return self
      */
-    public function withoutHeader($name)
+    public function withoutHeader($name) : self
     {
         $new = clone $this;
 
@@ -126,7 +128,7 @@ trait Message
      *
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function getBody()
+    public function getBody() : StreamInterface
     {
         return $this->response->getBody();
     }
@@ -136,9 +138,9 @@ trait Message
      *
      * @param \Psr\Http\Message\StreamInterface $body
      *
-     * @return static
+     * @return self
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body) : self
     {
         $new = clone $this;
 

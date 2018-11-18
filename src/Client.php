@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
@@ -71,7 +72,7 @@ class Client
     }
 
     /**
-     * Wait for all promises on object destruction.
+     * Settle all promises on object destruction.
      *
      * @return void
      */
@@ -89,7 +90,7 @@ class Client
      *
      * @return mixed
      */
-    public function getConfig($option = null)
+    public function getConfig(?string $option = null)
     {
         return $this->client->getConfig($option);
     }
@@ -99,7 +100,7 @@ class Client
      *
      * @return \GuzzleHttp\ClientInterface
      */
-    public function getClient()
+    public function getClient() : ClientInterface
     {
         return $this->client;
     }
@@ -109,9 +110,9 @@ class Client
      *
      * @param  \GuzzleHttp\ClientInterface
      *
-     * @return static
+     * @return self
      */
-    public function setClient(ClientInterface $client)
+    public function setClient(ClientInterface $client) : self
     {
         $this->client = $client;
 
@@ -123,9 +124,9 @@ class Client
      *
      * @param string $name
      *
-     * @return static
+     * @return self
      */
-    public function wallet($name)
+    public function wallet(string $name) : self
     {
         $this->path = "/wallet/$name";
 
@@ -138,9 +139,9 @@ class Client
      * @param string $method
      * @param mixed  $params
      *
-     * @return array
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function request($method, ...$params)
+    public function request(string $method, ...$params) : ResponseInterface
     {
         try {
             $response = $this->client
@@ -168,10 +169,10 @@ class Client
      * @return \GuzzleHttp\Promise\Promise
      */
     public function requestAsync(
-        $method,
+        string $method,
         $params = [],
         callable $fulfilled = null,
-        callable $rejected = null)
+        callable $rejected = null) : Promise\Promise
     {
         $promise = $this->client
             ->postAsync($this->path, $this->makeJson($method, $params));
@@ -195,9 +196,9 @@ class Client
      * @param string $method
      * @param array  $params
      *
-     * @return array
+     * @return \GuzzleHttp\Promise\Promise|\Psr\Http\Message\ResponseInterface
      */
-    public function __call($method, array $params = [])
+    public function __call(string $method, array $params = [])
     {
         if (strtolower(substr($method, -5)) == 'async') {
             return $this->requestAsync(substr($method, 0, -5), ...$params);
@@ -214,7 +215,7 @@ class Client
      *
      * @return void
      */
-    protected function onSuccess(ResponseInterface $response, callable $callback = null)
+    protected function onSuccess(ResponseInterface $response, callable $callback = null) : void
     {
         if (!is_null($callback)) {
             $callback($response);
@@ -229,7 +230,7 @@ class Client
      *
      * @return void
      */
-    protected function onError(Exception $exception, callable $callback = null)
+    protected function onError(Exception $exception, callable $callback = null) : void
     {
         if (!is_null($callback)) {
             try {
@@ -245,7 +246,7 @@ class Client
      *
      * @return array
      */
-    protected function getDefaultConfig()
+    protected function getDefaultConfig() : array
     {
         return [
             'scheme'        => 'http',
@@ -265,7 +266,7 @@ class Client
      *
      * @return array
      */
-    protected function mergeDefaultConfig(array $config = [])
+    protected function mergeDefaultConfig(array $config = []) : array
     {
         // use same var name as laravel-bitcoinrpc
         if (
@@ -284,11 +285,13 @@ class Client
      *
      * @return string|null
      */
-    protected function getCa()
+    protected function getCa() : ?string
     {
         if (isset($this->config['ca']) && is_file($this->config['ca'])) {
             return $this->config['ca'];
         }
+
+        return null;
     }
 
     /**
@@ -296,7 +299,7 @@ class Client
      *
      * @return array
      */
-    protected function getAuth()
+    protected function getAuth() : array
     {
         return [
             $this->config['user'],
@@ -309,10 +312,9 @@ class Client
      *
      * @return string
      */
-    protected function getDsn()
+    protected function getDsn() : string
     {
-        $scheme = isset($this->config['scheme']) ?
-            $this->config['scheme'] : 'http';
+        $scheme = $this->config['scheme'] ?? 'http';
 
         return $scheme.'://'.
             $this->config['host'].':'.
@@ -324,7 +326,7 @@ class Client
      *
      * @return string
      */
-    protected function getResponseHandler()
+    protected function getResponseHandler() : string
     {
         return 'Denpa\\Bitcoin\\Responses\\BitcoindResponse';
     }
@@ -334,7 +336,7 @@ class Client
      *
      * @return \GuzzleHttp\HandlerStack
      */
-    protected function getHandler()
+    protected function getHandler() : HandlerStack
     {
         $stack = HandlerStack::create();
 
@@ -344,7 +346,7 @@ class Client
 
                 return new $handler($response);
             }),
-            'json_response'
+            'bitcoind_response'
         );
 
         return $stack;
@@ -357,7 +359,7 @@ class Client
      *
      * @return array
      */
-    protected function parseUrl($config)
+    protected function parseUrl($config) : array
     {
         if (is_string($config)) {
             $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
@@ -386,7 +388,7 @@ class Client
      *
      * @return array
      */
-    protected function makeJson($method, $params = [])
+    protected function makeJson(string $method, $params = []) : array
     {
         return [
             'json' => [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
@@ -33,7 +34,7 @@ class BadRemoteCallException extends ClientException
      *
      * @return \Denpa\Bitcoin\Responses\Response
      */
-    public function getResponse()
+    public function getResponse() : Response
     {
         return $this->response;
     }
@@ -43,7 +44,7 @@ class BadRemoteCallException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters()
+    protected function getConstructorParameters() : array
     {
         return [
             $this->getResponse(),

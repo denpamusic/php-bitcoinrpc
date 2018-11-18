@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
@@ -14,7 +15,7 @@ trait ReadOnlyArray
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : void
     {
         throw new BadMethodCallException('Cannot modify readonly object');
     }
@@ -26,7 +27,7 @@ trait ReadOnlyArray
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return isset($this->result()[$offset]);
     }
@@ -38,7 +39,7 @@ trait ReadOnlyArray
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : void
     {
         throw new BadMethodCallException('Cannot modify readonly object');
     }
@@ -52,7 +53,6 @@ trait ReadOnlyArray
      */
     public function offsetGet($offset)
     {
-        return isset($this->result()[$offset]) ?
-            $this->result()[$offset] : null;
+        return $this->result()[$offset] ?? null;
     }
 }

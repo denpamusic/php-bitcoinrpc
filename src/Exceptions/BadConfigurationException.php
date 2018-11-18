@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
@@ -31,7 +32,7 @@ class BadConfigurationException extends ClientException
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig() : array
     {
         return $this->config;
     }
@@ -41,7 +42,7 @@ class BadConfigurationException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters()
+    protected function getConstructorParameters() : array
     {
         return [
             $this->getConfig(),

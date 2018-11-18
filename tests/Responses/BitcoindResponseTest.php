@@ -445,21 +445,18 @@ class BitcoindResponseTest extends TestCase
             4,
             $this->response->count('tx')
         );
-
-        $this->assertEquals(
-            1,
-            $this->response->count('hash')
-        );
-
-        $this->assertEquals(
-            1,
-            $this->response->key('hash')->count()
-        );
-
-        $this->assertEquals(
-            0,
-            $this->response->count('nonexistent')
-        );
+    }
+    
+    /**
+     * Test count on non array.
+     *
+     * @return void
+     */
+    public function testCountOnNonArray()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('method count() should be called on array');
+        $this->response->count('hash');
     }
 
     /**

@@ -502,7 +502,7 @@ class FakeClient extends BitcoinClient
      *
      * @return string
      */
-    protected function getResponseHandler()
+    protected function getResponseHandler() : string
     {
         return 'Denpa\\Bitcoin\\Tests\\FakeResponse';
     }

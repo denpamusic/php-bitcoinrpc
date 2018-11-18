@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
@@ -33,7 +34,7 @@ class ConnectionException extends ClientException
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getRequest()
+    public function getRequest() : Request
     {
         return $this->request;
     }
@@ -43,7 +44,7 @@ class ConnectionException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters()
+    protected function getConstructorParameters() : array
     {
         return [
             $this->getRequest(),

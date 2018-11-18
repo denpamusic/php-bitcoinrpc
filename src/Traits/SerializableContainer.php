@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
@@ -9,7 +10,7 @@ trait SerializableContainer
      *
      * @return array
      */
-    public function getContainer()
+    public function getContainer() : array
     {
         return $this->container;
     }
@@ -19,9 +20,9 @@ trait SerializableContainer
      *
      * @return string
      */
-    public function serialize()
+    public function serialize() : string
     {
-        return serialize($this->container);
+        return serialize($this->getContainer());
     }
 
     /**
@@ -31,7 +32,7 @@ trait SerializableContainer
      *
      * @return void
      */
-    public function unserialize($serialized)
+    public function unserialize($serialized) : void
     {
         $this->container = unserialize($serialized);
     }
@@ -41,8 +42,8 @@ trait SerializableContainer
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize() : array
     {
-        return $this->container;
+        return $this->getContainer();
     }
 }

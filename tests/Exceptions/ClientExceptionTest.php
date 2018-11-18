@@ -53,12 +53,12 @@ class FakeClientException extends ClientException
 {
     // original ClientException is an abstract class
 
-    public function getClassName()
+    public function getClassName() : string
     {
         return parent::getClassName();
     }
 
-    protected function getConstructorParameters()
+    protected function getConstructorParameters() : array
     {
         return [];
     }

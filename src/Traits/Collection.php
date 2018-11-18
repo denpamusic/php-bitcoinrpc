@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
@@ -20,7 +21,7 @@ trait Collection
      *
      * @return mixed
      */
-    public function get($key = null)
+    public function get(?string $key = null)
     {
         $key = $this->constructKey($key);
 
@@ -42,7 +43,7 @@ trait Collection
      *
      * @return bool
      */
-    public function exists($key = null)
+    public function exists(?string $key = null) : bool
     {
         $key = $this->constructKey($key);
 
@@ -58,7 +59,7 @@ trait Collection
      *
      * @return bool
      */
-    public function has($key = null)
+    public function has(?string $key = null) : bool
     {
         $key = $this->constructKey($key);
 
@@ -74,7 +75,7 @@ trait Collection
      *
      * @return mixed
      */
-    public function first($key = null)
+    public function first(?string $key = null)
     {
         $value = $this->get($key);
 
@@ -92,7 +93,7 @@ trait Collection
      *
      * @return mixed
      */
-    public function last($key = null)
+    public function last(?string $key = null)
     {
         $value = $this->get($key);
 
@@ -111,7 +112,7 @@ trait Collection
      *
      * @return bool
      */
-    public function contains($needle, $key = null)
+    public function contains($needle, ?string $key = null) : bool
     {
         $value = $this->get($key);
 
@@ -129,9 +130,9 @@ trait Collection
      *
      * @param string|null $key
      *
-     * @return static
+     * @return self
      */
-    public function key($key = null)
+    public function key(?string $key = null) : self
     {
         $new = clone $this;
         $new->current = $key;
@@ -146,7 +147,7 @@ trait Collection
      *
      * @return array
      */
-    public function keys($key = null)
+    public function keys(?string $key = null) : array
     {
         $value = $this->get($key);
 
@@ -166,7 +167,7 @@ trait Collection
      *
      * @return array
      */
-    public function values($key = null)
+    public function values(?string $key = null) : array
     {
         $value = $this->get($key);
 
@@ -187,7 +188,7 @@ trait Collection
      *
      * @return mixed
      */
-    public function random($number = 1, $key = null)
+    public function random(int $number = 1, ?string $key = null)
     {
         $value = $this->get($key);
 
@@ -218,7 +219,7 @@ trait Collection
      *
      * @return int
      */
-    public function count($key = null)
+    public function count(?string $key = null) : int
     {
         if (is_null($this->constructKey($key))) {
             return count($this->result());
@@ -226,11 +227,13 @@ trait Collection
 
         $value = $this->get($key);
 
-        if (is_array($value)) {
-            return count($value);
+        if (!is_array($value)) {
+            throw new InvalidArgumentException(
+                'method count() should be called on array'
+            );
         }
-
-        return (int) $value > 0;
+        
+        return count($value);
     }
 
     /**
@@ -240,7 +243,7 @@ trait Collection
      *
      * @return array
      */
-    public function flatten($key = null)
+    public function flatten(?string $key = null) : array
     {
         $array = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator((array) $this->get($key))
@@ -261,7 +264,7 @@ trait Collection
      *
      * @return float
      */
-    public function sum($key = null)
+    public function sum(?string $key = null) : float
     {
         return array_sum($this->flatten($key));
     }
@@ -271,9 +274,9 @@ trait Collection
      *
      * @param string|null $key
      *
-     * @return static
+     * @return self
      */
-    public function __invoke($key = null)
+    public function __invoke(?string $key = null) : self
     {
         return $this->key($key);
     }
@@ -283,7 +286,7 @@ trait Collection
      *
      * @return string
      */
-    public function __toString()
+    public function __toString() : string
     {
         $value = $this->get();
 
@@ -301,7 +304,7 @@ trait Collection
      *
      * @return string|null
      */
-    protected function constructKey($key = null)
+    protected function constructKey(?string $key = null) : ?string
     {
         if (!is_null($key) && !is_null($this->current)) {
             return $this->current.'.'.$key;
@@ -317,13 +320,13 @@ trait Collection
     /**
      * Parses dotted notation.
      *
-     * @param string     $key
-     * @param callable   $callback
-     * @param array|null $result
+     * @param array|string $key
+     * @param callable     $callback
+     * @param array|null   $result
      *
      * @return mixed
      */
-    protected function parseKey($key, callable $callback, $result = null)
+    protected function parseKey($key, callable $callback, ?array $result = null)
     {
         $parts = is_array($key) ? $key : explode('.', trim($key, '.'));
         $result = $result ?: $this->result();
