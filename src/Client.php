@@ -270,12 +270,11 @@ class Client
     protected function mergeDefaultConfig(array $config = []) : array
     {
         // use same var name as laravel-bitcoinrpc
-        if (
-            !array_key_exists('password', $config) &&
-            array_key_exists('pass', $config)
-        ) {
-            $config['password'] = $config['pass'];
-            unset($config['pass']);
+        $config['password'] = $config['password'] ?? $config['pass'] ?? null;
+
+        if (is_null($config['password'])) {
+            // use default value from getDefaultConfig()
+            unset($config['password']);
         }
 
         return array_merge($this->getDefaultConfig(), $config);
