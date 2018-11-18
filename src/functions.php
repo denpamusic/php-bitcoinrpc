@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
@@ -13,7 +14,7 @@ if (!function_exists('to_bitcoin')) {
      */
     function to_bitcoin($satoshi) : string
     {
-        return bcdiv((string)(int) $satoshi, (string) 1e8, 8);
+        return bcdiv((string) (int) $satoshi, (string) 1e8, 8);
     }
 }
 
@@ -64,7 +65,7 @@ if (!function_exists('to_fixed')) {
      * Brings number to fixed precision without rounding.
      *
      * @param string|float $number
-     * @param int   $precision
+     * @param int          $precision
      *
      * @return string
      */
