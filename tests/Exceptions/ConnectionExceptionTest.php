@@ -71,7 +71,7 @@ class ConnectionExceptionTest extends TestCase
 
 class FakeConnectionException extends ConnectionException
 {
-    public function getConstructorParameters()
+    public function getConstructorParameters() : array
     {
         return parent::getConstructorParameters();
     }

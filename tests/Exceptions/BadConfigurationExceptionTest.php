@@ -67,7 +67,7 @@ class BadConfigurationExceptionTest extends TestCase
 
 class FakeBadConfigurationException extends BadConfigurationException
 {
-    public function getConstructorParameters()
+    public function getConstructorParameters() : array
     {
         return parent::getConstructorParameters();
     }

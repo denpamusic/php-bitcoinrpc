@@ -74,7 +74,7 @@ class BadRemoteCallExceptionTest extends TestCase
 
 class FakeBadRemoteCallException extends BadRemoteCallException
 {
-    public function getConstructorParameters()
+    public function getConstructorParameters() : array
     {
         return parent::getConstructorParameters();
     }
