@@ -4,6 +4,7 @@ php:
   - 7.1
   - 7.2
   - hhvm
+  - nightly
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -20,6 +21,7 @@ script:
 matrix:
   allow_failures:
     - php: hhvm
+    - php: nightly
   fast_finish: true
 
 notifications:
