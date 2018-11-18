@@ -138,7 +138,6 @@ class ClientTest extends TestCase
 
         $request = $this->getHistoryRequestBody();
 
-        $this->assertEquals(false, $bitcoind->getConfig('preserve_case'));
         $this->assertEquals($this->makeRequestBody(
             'getBlockHeader',
             $request['id']
@@ -152,12 +151,8 @@ class ClientTest extends TestCase
      */
     public function testRequest()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->getBlockResponse(),
-        ]);
-
         $response = $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
             ->request(
                 'getblockheader',
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
@@ -182,12 +177,8 @@ class ClientTest extends TestCase
     {
         $wallet = 'testwallet.dat';
 
-        $guzzle = $this->mockGuzzle([
-            $this->getBalanceResponse(),
-        ]);
-
         $response = $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBalanceResponse()]))
             ->wallet($wallet)
             ->request('getbalance');
 
@@ -207,12 +198,8 @@ class ClientTest extends TestCase
     {
         $wallet = 'testwallet2.dat';
 
-        $guzzle = $this->mockGuzzle([
-            $this->getBalanceResponse(),
-        ]);
-
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBalanceResponse()]))
             ->wallet($wallet)
             ->requestAsync('getbalance', []);
 
@@ -231,10 +218,6 @@ class ClientTest extends TestCase
      */
     public function testAsyncRequest()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->getBlockResponse(),
-        ]);
-
         $onFulfilled = $this->mockCallable([
             $this->callback(function (BitcoindResponse $response) {
                 return $response->get() == self::$getBlockResponse;
@@ -242,7 +225,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
             ->requestAsync(
                 'getblockheader',
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
@@ -268,12 +251,8 @@ class ClientTest extends TestCase
      */
     public function testMagic()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->getBlockResponse(),
-        ]);
-
         $response = $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
             ->getBlockHeader(
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
             );
@@ -293,10 +272,6 @@ class ClientTest extends TestCase
      */
     public function testAsyncMagic()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->getBlockResponse(),
-        ]);
-
         $onFulfilled = $this->mockCallable([
             $this->callback(function (BitcoindResponse $response) {
                 return $response->get() == self::$getBlockResponse;
@@ -304,7 +279,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
             ->getBlockHeaderAsync(
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
                 function ($response) use ($onFulfilled) {
@@ -329,16 +304,12 @@ class ClientTest extends TestCase
      */
     public function testBitcoindException()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(200),
-        ]);
-
         $this->expectException(Exceptions\BadRemoteCallException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->rawTransactionError(200)]))
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
@@ -351,16 +322,12 @@ class ClientTest extends TestCase
      */
     public function testRequestExceptionWithServerErrorCode()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->rawTransactionError(500),
-        ]);
-
         $this->expectException(Exceptions\BadRemoteCallException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->rawTransactionError(200)]))
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
@@ -373,21 +340,15 @@ class ClientTest extends TestCase
      */
     public function testRequestExceptionWithEmptyResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            new GuzzleResponse(500),
-        ]);
-
         $this->expectException(Exceptions\ConnectionException::class);
         $this->expectExceptionMessage($this->error500());
         $this->expectExceptionCode(500);
 
-        $r = $this->bitcoind
-            ->setClient($guzzle)
+        $this->bitcoind
+            ->setClient($this->mockGuzzle([new GuzzleResponse(500)]))
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
-
-        var_dump($r);
     }
 
     /**
@@ -397,10 +358,6 @@ class ClientTest extends TestCase
      */
     public function testAsyncRequestExceptionWithEmptyResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            new GuzzleResponse(500),
-        ]);
-
         $rejected = $this->mockCallable([
             $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == $this->error500() &&
@@ -409,7 +366,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([new GuzzleResponse(500)]))
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
@@ -429,16 +386,12 @@ class ClientTest extends TestCase
      */
     public function testRequestExceptionWithResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithResponse(),
-        ]);
-
         $this->expectException(Exceptions\BadRemoteCallException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->requestExceptionWithResponse()]))
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
@@ -451,10 +404,6 @@ class ClientTest extends TestCase
      */
     public function testAsyncRequestExceptionWithResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithResponse(),
-        ]);
-
         $onRejected = $this->mockCallable([
             $this->callback(function (Exceptions\BadRemoteCallException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
@@ -463,7 +412,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->requestExceptionWithResponse()]))
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
@@ -483,16 +432,12 @@ class ClientTest extends TestCase
      */
     public function testRequestExceptionWithNoResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithoutResponse(),
-        ]);
-
         $this->expectException(Exceptions\ClientException::class);
         $this->expectExceptionMessage('test');
         $this->expectExceptionCode(0);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->requestExceptionWithoutResponse()]))
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
             );
@@ -505,10 +450,6 @@ class ClientTest extends TestCase
      */
     public function testAsyncRequestExceptionWithNoResponseBody()
     {
-        $guzzle = $this->mockGuzzle([
-            $this->requestExceptionWithoutResponse(),
-        ]);
-
         $rejected = $this->mockCallable([
             $this->callback(function (Exceptions\ClientException $exception) {
                 return $exception->getMessage() == 'test' &&
@@ -517,7 +458,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->bitcoind
-            ->setClient($guzzle)
+            ->setClient($this->mockGuzzle([$this->requestExceptionWithoutResponse()]))
             ->requestAsync(
                 'getrawtransaction',
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
