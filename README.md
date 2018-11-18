@@ -19,7 +19,8 @@ Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directo
 and run ```php composer.phar install```.
 
 ## Requirements
-PHP 7.0 or higher
+PHP 7.1 or higher  
+_For PHP 5.6 and 7.0 use [php-bitcoinrpc v2.0.x](https://github.com/denpamusic/php-bitcoinrpc/tree/2.1.x)._
 
 ## Usage
 Create new object with url as parameter
