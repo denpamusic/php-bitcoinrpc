@@ -174,8 +174,8 @@ class Client
     public function requestAsync(
         string $method,
         $params = [],
-        callable $fulfilled = null,
-        callable $rejected = null) : Promise\Promise
+        ?callable $fulfilled = null,
+        ?callable $rejected = null) : Promise\Promise
     {
         $promise = $this->client
             ->postAsync($this->path, $this->makeJson($method, $params));
@@ -230,7 +230,7 @@ class Client
      *
      * @return void
      */
-    protected function onSuccess(ResponseInterface $response, callable $callback = null) : void
+    protected function onSuccess(ResponseInterface $response, ?callable $callback = null) : void
     {
         if (!is_null($callback)) {
             $callback($response);
@@ -245,7 +245,7 @@ class Client
      *
      * @return void
      */
-    protected function onError(Exception $exception, callable $callback = null) : void
+    protected function onError(Exception $exception, ?callable $callback = null) : void
     {
         if (!is_null($callback)) {
             try {
