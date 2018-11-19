@@ -54,14 +54,18 @@ class Client
     /**
      * Constructs new client.
      *
-     * @param mixed $config
+     * @param array|string $config
      *
      * @return void
      */
     public function __construct($config = [])
     {
+        if (is_string($config)) {
+            $config = $this->parseUrl($config);
+        }
+
         // init defaults
-        $this->config = $this->mergeDefaultConfig($this->parseUrl($config));
+        $this->config = $this->mergeDefaultConfig($config);
 
         // construct client
         $this->client = new GuzzleHttp([
@@ -363,31 +367,27 @@ class Client
     }
 
     /**
-     * Expand URL config into components.
+     * Expand URL into components.
      *
-     * @param mixed $config
+     * @param string $url
      *
      * @return array
      */
-    protected function parseUrl($config) : array
+    protected function parseUrl(string $url) : array
     {
-        if (is_string($config)) {
-            $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
+        $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
 
-            $parts = (array) parse_url($config);
-            $parts = array_intersect_key($parts, array_flip($allowed));
+        $parts = (array) parse_url($url);
+        $parts = array_intersect_key($parts, array_flip($allowed));
 
-            if (!$parts || empty($parts)) {
-                throw new BadConfigurationException(
-                    ['url' => $config],
-                    'Invalid url'
-                );
-            }
-
-            return $parts;
+        if (!$parts || empty($parts)) {
+            throw new BadConfigurationException(
+                ['url' => $url],
+                'Invalid url'
+            );
         }
 
-        return $config;
+        return $parts;
     }
 
     /**
