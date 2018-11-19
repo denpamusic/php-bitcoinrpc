@@ -73,15 +73,13 @@ class Client
     }
 
     /**
-     * Settle all promises on object destruction.
+     * Wait for all promises on object destruction.
      *
      * @return void
      */
     public function __destruct()
     {
-        if (!empty($this->promises)) {
-            Promise\settle($this->promises)->wait();
-        }
+        $this->wait();
     }
 
     /**
@@ -189,6 +187,18 @@ class Client
         $this->promises[] = $promise;
 
         return $promise;
+    }
+    
+    /**
+     * Settle all promises.
+     *
+     * @return void
+     */
+    public function wait() : void
+    {
+        if (!empty($this->promises)) {
+            Promise\settle($this->promises)->wait();
+        }
     }
 
     /**
