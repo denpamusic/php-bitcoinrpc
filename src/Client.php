@@ -188,7 +188,7 @@ class Client
 
         return $promise;
     }
-    
+
     /**
      * Settle all promises.
      *
