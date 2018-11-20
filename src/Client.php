@@ -90,7 +90,7 @@ class Client
     }
 
     /**
-     * Gets http client config.
+     * Gets client config.
      *
      * @param string|null $option
      *
@@ -98,7 +98,15 @@ class Client
      */
     public function getConfig(?string $option = null)
     {
-        return $this->client->getConfig($option);
+        if (is_null($option)) {
+            return $this->config;
+        }
+        
+        if (array_key_exists($option, $this->config)) {
+            return $this->config[$option];
+        }
+
+        return null;
     }
 
     /**

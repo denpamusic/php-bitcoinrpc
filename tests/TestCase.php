@@ -118,7 +118,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      */
     protected function mockGuzzle(array $queue = [], $handler = null)
     {
-        $handler = $handler ?: $this->bitcoind->getConfig('handler');
+        $handler = $handler ?: $this->bitcoind->getClient()->getConfig('handler');
 
         if ($handler) {
             $middleware = \GuzzleHttp\Middleware::history($this->history);

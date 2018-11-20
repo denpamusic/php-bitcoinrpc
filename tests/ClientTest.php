@@ -43,13 +43,13 @@ class ClientTest extends TestCase
 
         $this->assertInstanceOf(BitcoinClient::class, $bitcoind);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcoind->getClient()->getConfig('base_uri');
 
         $this->assertEquals($base_uri->getScheme(), $scheme);
         $this->assertEquals($base_uri->getHost(), $host);
         $this->assertEquals($base_uri->getPort(), $port);
 
-        $auth = $bitcoind->getConfig('auth');
+        $auth = $bitcoind->getClient()->getConfig('auth');
         $this->assertEquals($auth[0], $user);
         $this->assertEquals($auth[1], $password);
     }
@@ -69,6 +69,26 @@ class ClientTest extends TestCase
             ['http://testuser@127.0.0.1:8000/', 'http', '127.0.0.1', 8000, 'testuser', ''],
             ['http://testuser:testpass@localhost:8000', 'http', 'localhost', 8000, 'testuser', 'testpass'],
         ];
+    }
+
+    /**
+     * Test client config getter.
+     *
+     * @return void
+     */
+    public function testClientConfigGetter()
+    {
+        $config = $this->bitcoind->getConfig();
+
+        $this->assertNull($this->bitcoind->getConfig('nonexistent'));
+
+        $this->assertSame($config['scheme'], $this->bitcoind->getConfig('scheme'));
+        $this->assertSame($config['host'], $this->bitcoind->getConfig('host'));
+        $this->assertSame($config['port'], $this->bitcoind->getConfig('port'));
+        $this->assertSame($config['user'], $this->bitcoind->getConfig('user'));
+        $this->assertSame($config['password'], $this->bitcoind->getConfig('password'));
+        $this->assertSame($config['ca'], $this->bitcoind->getConfig('ca'));
+        $this->assertSame($config['preserve_case'], $this->bitcoind->getConfig('preserve_case'));
     }
 
     /**
@@ -94,7 +114,7 @@ class ClientTest extends TestCase
         $bitcoind = new BitcoinClient('http://old_client.org');
         $this->assertInstanceOf(BitcoinClient::class, $bitcoind);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcoind->getClient()->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'old_client.org');
 
         $oldClient = $bitcoind->getClient();
@@ -103,7 +123,7 @@ class ClientTest extends TestCase
         $newClient = new GuzzleHttp(['base_uri' => 'http://new_client.org']);
         $bitcoind->setClient($newClient);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcoind->getClient()->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'new_client.org');
     }
 
@@ -116,13 +136,13 @@ class ClientTest extends TestCase
     {
         $bitcoind = new BitcoinClient();
 
-        $this->assertEquals(null, $bitcoind->getConfig('ca'));
+        $this->assertEquals(null, $bitcoind->getClient()->getConfig('ca'));
 
         $bitcoind = new BitcoinClient([
             'ca' => __FILE__,
         ]);
 
-        $this->assertEquals(__FILE__, $bitcoind->getConfig('verify'));
+        $this->assertEquals(__FILE__, $bitcoind->getClient()->getConfig('verify'));
     }
 
     /**
@@ -482,7 +502,7 @@ class ClientTest extends TestCase
 
         $guzzle = $this->mockGuzzle([
             $this->getBlockResponse(),
-        ], $fake->getConfig('handler'));
+        ], $fake->getClient()->getConfig('handler'));
 
         $response = $fake
             ->setClient($guzzle)
