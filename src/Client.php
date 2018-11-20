@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Traits\HandlesAsync;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
-use Exception;
+use Throwable;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
@@ -16,6 +17,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
+    use HandlesAsync;
+
     /**
      * Http Client.
      *
@@ -156,7 +159,7 @@ class Client
             }
 
             return $response;
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             throw exception()->handle($exception);
         }
     }
@@ -185,7 +188,11 @@ class Client
         });
 
         $promise->otherwise(function ($exception) use ($rejected) {
-            $this->onError($exception, $rejected);
+            try {
+                exception()->handle($exception);
+            } catch (Throwable $exception) {
+                $this->onError($exception, $rejected);
+            }
         });
 
         $this->promises[] = $promise;
@@ -220,40 +227,6 @@ class Client
         }
 
         return $this->request($method, ...$params);
-    }
-
-    /**
-     * Handles async request success.
-     *
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @param callable|null                       $callback
-     *
-     * @return void
-     */
-    protected function onSuccess(ResponseInterface $response, ?callable $callback = null) : void
-    {
-        if (!is_null($callback)) {
-            $callback($response);
-        }
-    }
-
-    /**
-     * Handles async request failure.
-     *
-     * @param \Exception    $exception
-     * @param callable|null $callback
-     *
-     * @return void
-     */
-    protected function onError(Exception $exception, ?callable $callback = null) : void
-    {
-        if (!is_null($callback)) {
-            try {
-                exception()->handle($exception);
-            } catch (Exception $exception) {
-                $callback($exception);
-            }
-        }
     }
 
     /**

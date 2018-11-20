@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
-use Exception;
+use Throwable;
 use GuzzleHttp\Exception\RequestException;
 
 class Handler
@@ -44,11 +44,11 @@ class Handler
     /**
      * Handle namespace change.
      *
-     * @param \Exception|\Error $exception
+     * @param \Throwable $exception
      *
-     * @return \Exception|null
+     * @return \Throwable|null
      */
-    protected function namespaceHandler($exception) : ?Exception
+    protected function namespaceHandler(Throwable $exception) : ?Throwable
     {
         if ($this->namespace && $exception instanceof ClientException) {
             return $exception->withNamespace($this->namespace);
@@ -60,11 +60,11 @@ class Handler
     /**
      * Handle request exception.
      *
-     * @param \Exception|\Error $exception
+     * @param \Throwable $exception
      *
-     * @return \Exception|null
+     * @return \Throwable|null
      */
-    protected function requestExceptionHandler($exception) : ?Exception
+    protected function requestExceptionHandler(Throwable $exception) : ?Throwable
     {
         if ($exception instanceof RequestException) {
             if (
@@ -101,16 +101,16 @@ class Handler
     /**
      * Handles exception.
      *
-     * @param \Exception|\Error $exception
+     * @param \Throwable $exception
      *
      * @return void
      */
-    public function handle($exception) : void
+    public function handle(Throwable $exception) : void
     {
         foreach ($this->handlers as $handler) {
             $result = $handler($exception);
 
-            if ($result instanceof Exception) {
+            if ($result instanceof Throwable) {
                 $exception = $result;
             }
         }
