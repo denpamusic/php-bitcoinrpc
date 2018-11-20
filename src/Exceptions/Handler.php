@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
-use Throwable;
 use GuzzleHttp\Exception\RequestException;
+use Throwable;
 
 class Handler
 {

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Traits\HandlesAsync;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
-use Throwable;
+use Denpa\Bitcoin\Traits\HandlesAsync;
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class Client
 {
