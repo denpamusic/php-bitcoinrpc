@@ -101,7 +101,7 @@ class Client
         if (is_null($option)) {
             return $this->config;
         }
-        
+
         if (array_key_exists($option, $this->config)) {
             return $this->config[$option];
         }
