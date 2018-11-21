@@ -17,7 +17,7 @@ before_script:
 script:
   - mkdir -p build/logs
   - php vendor/bin/phpunit
-  - if [[ "$TRAVIS_PULL_REQUEST" == "false" && $TRAVIS_PHP_VERSION != "hhvm" && $TRAVIS_PHP_VERSION != "nightly" && $TRAVIS_PHP_VERSION != "7.3"]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [[ "$TRAVIS_PULL_REQUEST" == "false" && $TRAVIS_PHP_VERSION != "hhvm" && $TRAVIS_PHP_VERSION != "nightly" && $TRAVIS_PHP_VERSION != "7.3" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 
 matrix:
   allow_failures:
