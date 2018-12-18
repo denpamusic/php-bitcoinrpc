@@ -13,7 +13,7 @@
 Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-    "denpa/php-bitcoinrpc": "^2.0"
+    "denpa/php-bitcoinrpc": "^2.1"
 }
 ```
 and run ```php composer.phar install```.
