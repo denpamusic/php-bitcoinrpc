@@ -11,7 +11,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - composer self-update
-  - if [[ ! -z "$PHPUNIT_VERSION" ]]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-update; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then composer require "phpunit/phpunit:~5.0" --no-update; fi
   - composer install --prefer-source --no-interaction
 
 script:
@@ -20,9 +20,6 @@ script:
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" && $TRAVIS_PHP_VERSION != "hhvm" && $TRAVIS_PHP_VERSION != "nightly" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 
 matrix:
-  include:
-    - php: hhvm
-      env: PHPUNIT_VERSION=~5.0
   allow_failures:
     - php: hhvm
     - php: nightly
