@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
+use Denpa\Bitcoin\Traits\Singleton;
 use GuzzleHttp\Exception\RequestException;
 use Throwable;
 
 class Handler
 {
+    use Singleton;
+    
     /**
      * Exception namespace.
      *
      * @var string
      */
     protected $namespace = null;
-
-    /**
-     * Handler instance.
-     *
-     * @var self
-     */
-    protected static $instance = null;
 
     /**
      * Handler functions array.
@@ -130,29 +126,5 @@ class Handler
         $this->namespace = $namespace;
 
         return $this;
-    }
-
-    /**
-     * Gets handler instance.
-     *
-     * @return self
-     */
-    public static function getInstance() : self
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Clears instance.
-     *
-     * @return void
-     */
-    public static function clearInstance() : void
-    {
-        self::$instance = null;
     }
 }
