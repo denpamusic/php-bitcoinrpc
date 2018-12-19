@@ -11,7 +11,7 @@ use Throwable;
 class Handler
 {
     use Singleton;
-    
+
     /**
      * Exception namespace.
      *
