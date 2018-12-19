@@ -12,7 +12,7 @@ trait Singleton
      * @var self
      */
     protected static $instance = null;
-    
+
     /**
      * Gets singleton instance.
      *
