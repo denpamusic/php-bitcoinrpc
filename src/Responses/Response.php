@@ -79,7 +79,7 @@ abstract class Response implements ResponseInterface
      */
     public function error() : ?array
     {
-        return $this->hasError() ? $this->container['error'] : null;
+        return $this->container['error'] ?? null;
     }
 
     /**
@@ -95,13 +95,11 @@ abstract class Response implements ResponseInterface
     /**
      * Gets result array.
      *
-     * @return array|null
+     * @return mixed
      */
     public function result()
     {
-        if ($this->hasResult()) {
-            return $this->container['result'];
-        }
+        return $this->container['result'] ?? null;
     }
 
     /**
