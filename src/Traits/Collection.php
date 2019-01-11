@@ -28,6 +28,7 @@ trait Collection
 
         if (is_null($key)) {
             $array = $this->toArray();
+
             return $this->count() == 1 ? end($array) : $array;
         }
 
