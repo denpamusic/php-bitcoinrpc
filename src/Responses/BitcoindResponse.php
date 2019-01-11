@@ -23,7 +23,7 @@ class BitcoindResponse extends Response implements
      */
     public function toArray() : array
     {
-        return $this->result();
+        return (array) $this->result();
     }
 
     /**

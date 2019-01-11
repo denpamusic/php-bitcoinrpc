@@ -165,7 +165,7 @@ class BitcoindResponseTest extends TestCase
     public function testArrayAccessSet()
     {
         $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot modify readonly object');
+        $this->expectExceptionMessage('Cannot modify immutable object');
         $this->response['hash'] = 'test';
     }
 
@@ -177,7 +177,7 @@ class BitcoindResponseTest extends TestCase
     public function testArrayAccessUnset()
     {
         $this->expectException(\BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot modify readonly object');
+        $this->expectExceptionMessage('Cannot modify immutable object');
         unset($this->response['hash']);
     }
 
@@ -553,7 +553,7 @@ class BitcoindResponseTest extends TestCase
      */
     public function testSerialize()
     {
-        $serializedContainer = serialize($this->response->getContainer());
+        $serializedContainer = serialize($this->response->toContainer());
 
         $serialized = sprintf(
             'C:%u:"%s":%u:{%s}',
@@ -576,11 +576,11 @@ class BitcoindResponseTest extends TestCase
      */
     public function testUnserialize()
     {
-        $container = $this->response->getContainer();
+        $container = $this->response->toContainer();
 
         $this->assertEquals(
             $container,
-            unserialize(serialize($this->response))->getContainer()
+            unserialize(serialize($this->response))->toContainer()
         );
     }
 
@@ -592,7 +592,7 @@ class BitcoindResponseTest extends TestCase
     public function testJsonSerialize()
     {
         $this->assertEquals(
-            json_encode($this->response->getContainer()),
+            json_encode($this->response->toContainer()),
             json_encode($this->response)
         );
     }

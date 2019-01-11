@@ -27,7 +27,8 @@ trait Collection
         $key = $this->constructKey($key);
 
         if (is_null($key)) {
-            return $this->toArray();
+            $array = $this->toArray();
+            return $this->count() == 1 ? end($array) : $array;
         }
 
         return $this->parseKey($key, function ($part, $result) {
