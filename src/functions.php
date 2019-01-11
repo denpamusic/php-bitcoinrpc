@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Denpa\Bitcoin;
 
 use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
+use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 
 if (!function_exists('to_bitcoin')) {
     /**
@@ -76,6 +77,32 @@ if (!function_exists('to_fixed')) {
         $number = $number * pow(10, $precision);
 
         return bcdiv((string) $number, (string) pow(10, $precision), $precision);
+    }
+}
+
+if (!function_exists('split_url')) {
+    /**
+     * Splits url into parts.
+     *
+     * @param string $url
+     *
+     * @return array
+     */
+    function split_url(string $url) : array
+    {
+        $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
+
+        $parts = (array) parse_url($url);
+        $parts = array_intersect_key($parts, array_flip($allowed));
+
+        if (!$parts || empty($parts)) {
+            throw new BadConfigurationException(
+                ['url' => $url],
+                'Invalid url'
+            );
+        }
+
+        return $parts;
     }
 }
 

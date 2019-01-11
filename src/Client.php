@@ -64,7 +64,7 @@ class Client
     public function __construct($config = [])
     {
         if (is_string($config)) {
-            $config = $this->parseUrl($config);
+            $config = split_url($config);
         }
 
         // init defaults
@@ -347,29 +347,6 @@ class Client
         return $stack;
     }
 
-    /**
-     * Expand URL into components.
-     *
-     * @param string $url
-     *
-     * @return array
-     */
-    protected function parseUrl(string $url) : array
-    {
-        $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
-
-        $parts = (array) parse_url($url);
-        $parts = array_intersect_key($parts, array_flip($allowed));
-
-        if (!$parts || empty($parts)) {
-            throw new BadConfigurationException(
-                ['url' => $url],
-                'Invalid url'
-            );
-        }
-
-        return $parts;
-    }
 
     /**
      * Construct json request.
