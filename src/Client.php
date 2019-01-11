@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
 use Denpa\Bitcoin\Traits\HandlesAsync;
 use GuzzleHttp\Client as GuzzleHttp;
@@ -346,7 +345,6 @@ class Client
 
         return $stack;
     }
-
 
     /**
      * Construct json request.
