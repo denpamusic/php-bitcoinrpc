@@ -67,7 +67,8 @@ class Client
         }
 
         // init configuration
-        $this->config = new Config($config);
+        $provider = $this->getConfigProvider();
+        $this->config = new $provider($config);
 
         // construct client
         $this->client = new GuzzleHttp([
@@ -224,6 +225,16 @@ class Client
         }
 
         return $this->request($method, ...$params);
+    }
+
+    /**
+     * Gets config provider class name.
+     *
+     * @return string
+     */
+    protected function getConfigProvider() : string
+    {
+        return 'Denpa\\Bitcoin\\Config';
     }
 
     /**

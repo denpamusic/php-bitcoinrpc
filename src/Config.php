@@ -11,6 +11,11 @@ class Config implements \ArrayAccess, \Countable
 {
     use Collection, ImmutableArray;
 
+    /**
+     * Default configuration.
+     *
+     * @var array
+     */
     protected $config = [
         'scheme'        => 'http',
         'host'          => '127.0.0.1',
