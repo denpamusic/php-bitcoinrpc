@@ -28,7 +28,7 @@ class Client
     /**
      * Client configuration.
      *
-     * @var array
+     * @var \Denpa\Bitcoin\Config
      */
     protected $config;
 
@@ -66,14 +66,14 @@ class Client
             $config = split_url($config);
         }
 
-        // init defaults
-        $this->config = $this->mergeDefaultConfig($config);
+        // init configuration
+        $this->config = new Config($config);
 
         // construct client
         $this->client = new GuzzleHttp([
-            'base_uri' => $this->getDsn(),
-            'auth'     => $this->getAuth(),
-            'verify'   => $this->getCa(),
+            'base_uri' => $this->config->getDsn(),
+            'auth'     => $this->config->getAuth(),
+            'verify'   => $this->config->getCa(),
             'handler'  => $this->getHandler(),
         ]);
     }
@@ -91,21 +91,11 @@ class Client
     /**
      * Gets client config.
      *
-     * @param string|null $option
-     *
-     * @return mixed
+     * @return \Denpa\Bitcoin\Config
      */
-    public function getConfig(?string $option = null)
+    public function getConfig() : Config
     {
-        if (is_null($option)) {
-            return $this->config;
-        }
-
-        if (array_key_exists($option, $this->config)) {
-            return $this->config[$option];
-        }
-
-        return null;
+        return $this->config;
     }
 
     /**
@@ -234,85 +224,6 @@ class Client
         }
 
         return $this->request($method, ...$params);
-    }
-
-    /**
-     * Gets default configuration.
-     *
-     * @return array
-     */
-    protected function getDefaultConfig() : array
-    {
-        return [
-            'scheme'        => 'http',
-            'host'          => '127.0.0.1',
-            'port'          => 8332,
-            'user'          => null,
-            'password'      => null,
-            'ca'            => null,
-            'preserve_case' => false,
-        ];
-    }
-
-    /**
-     * Merge config with default values.
-     *
-     * @param array $config
-     *
-     * @return array
-     */
-    protected function mergeDefaultConfig(array $config = []) : array
-    {
-        // use same var name as laravel-bitcoinrpc
-        $config['password'] = $config['password'] ?? $config['pass'] ?? null;
-
-        if (is_null($config['password'])) {
-            // use default value from getDefaultConfig()
-            unset($config['password']);
-        }
-
-        return array_merge($this->getDefaultConfig(), $config);
-    }
-
-    /**
-     * Gets CA file from config.
-     *
-     * @return string|null
-     */
-    protected function getCa() : ?string
-    {
-        if (isset($this->config['ca']) && is_file($this->config['ca'])) {
-            return $this->config['ca'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets authentication array.
-     *
-     * @return array
-     */
-    protected function getAuth() : array
-    {
-        return [
-            $this->config['user'],
-            $this->config['password'],
-        ];
-    }
-
-    /**
-     * Gets DSN string.
-     *
-     * @return string
-     */
-    protected function getDsn() : string
-    {
-        $scheme = $this->config['scheme'] ?? 'http';
-
-        return $scheme.'://'.
-            $this->config['host'].':'.
-            $this->config['port'];
     }
 
     /**

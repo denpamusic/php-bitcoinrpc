@@ -24,26 +24,6 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test client config getter.
-     *
-     * @return void
-     */
-    public function testClientConfigGetter()
-    {
-        $config = $this->bitcoind->getConfig();
-
-        $this->assertNull($this->bitcoind->getConfig('nonexistent'));
-
-        $this->assertSame($config['scheme'], $this->bitcoind->getConfig('scheme'));
-        $this->assertSame($config['host'], $this->bitcoind->getConfig('host'));
-        $this->assertSame($config['port'], $this->bitcoind->getConfig('port'));
-        $this->assertSame($config['user'], $this->bitcoind->getConfig('user'));
-        $this->assertSame($config['password'], $this->bitcoind->getConfig('password'));
-        $this->assertSame($config['ca'], $this->bitcoind->getConfig('ca'));
-        $this->assertSame($config['preserve_case'], $this->bitcoind->getConfig('preserve_case'));
-    }
-
-    /**
      * Test client getter and setter.
      *
      * @return void
