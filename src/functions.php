@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
+use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 
 if (!function_exists('to_bitcoin')) {
     /**
