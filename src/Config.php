@@ -28,7 +28,8 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return void
      */
-    public function __construct(array $config = []) {
+    public function __construct(array $config = [])
+    {
         $this->set($config);
     }
 
