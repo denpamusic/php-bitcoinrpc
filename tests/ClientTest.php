@@ -24,54 +24,6 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test url parser.
-     *
-     * @param string $url
-     * @param string $scheme
-     * @param string $host
-     * @param int    $port
-     * @param string $user
-     * @param string $password
-     *
-     * @return void
-     *
-     * @dataProvider urlProvider
-     */
-    public function testUrlParser($url, $scheme, $host, $port, $user, $password)
-    {
-        $bitcoind = new BitcoinClient($url);
-
-        $this->assertInstanceOf(BitcoinClient::class, $bitcoind);
-
-        $base_uri = $bitcoind->getClient()->getConfig('base_uri');
-
-        $this->assertEquals($base_uri->getScheme(), $scheme);
-        $this->assertEquals($base_uri->getHost(), $host);
-        $this->assertEquals($base_uri->getPort(), $port);
-
-        $auth = $bitcoind->getClient()->getConfig('auth');
-        $this->assertEquals($auth[0], $user);
-        $this->assertEquals($auth[1], $password);
-    }
-
-    /**
-     * Data provider for url expander test.
-     *
-     * @return array
-     */
-    public function urlProvider()
-    {
-        return [
-            ['https://localhost', 'https', 'localhost', 8332, '', ''],
-            ['https://localhost:8000', 'https', 'localhost', 8000, '', ''],
-            ['http://localhost', 'http', 'localhost', 8332, '', ''],
-            ['http://localhost:8000', 'http', 'localhost', 8000, '', ''],
-            ['http://testuser@127.0.0.1:8000/', 'http', '127.0.0.1', 8000, 'testuser', ''],
-            ['http://testuser:testpass@localhost:8000', 'http', 'localhost', 8000, 'testuser', 'testpass'],
-        ];
-    }
-
-    /**
      * Test client config getter.
      *
      * @return void
@@ -89,19 +41,6 @@ class ClientTest extends TestCase
         $this->assertSame($config['password'], $this->bitcoind->getConfig('password'));
         $this->assertSame($config['ca'], $this->bitcoind->getConfig('ca'));
         $this->assertSame($config['preserve_case'], $this->bitcoind->getConfig('preserve_case'));
-    }
-
-    /**
-     * Test url parser with invalid url.
-     *
-     * @return array
-     */
-    public function testUrlParserWithInvalidUrl()
-    {
-        $this->expectException(Exceptions\BadConfigurationException::class);
-        $this->expectExceptionMessage('Invalid url');
-
-        $bitcoind = new BitcoinClient('cookies!');
     }
 
     /**

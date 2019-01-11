@@ -3,6 +3,7 @@
 namespace Denpa\Bitcoin\Tests;
 
 use Denpa\Bitcoin;
+use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 
 class FunctionsTest extends TestCase
@@ -84,6 +85,46 @@ class FunctionsTest extends TestCase
     }
 
     /**
+     * Test url parser.
+     *
+     * @param string $url
+     * @param string $scheme
+     * @param string $host
+     * @param int    $port
+     * @param string $user
+     * @param string $password
+     *
+     * @return void
+     *
+     * @dataProvider urlProvider
+     */
+    public function testSplitUrl($url, $scheme, $host, $port, $user, $pass)
+    {
+        $parts = Bitcoin\split_url($url);
+
+        $this->assertEquals($parts['scheme'], $scheme);
+        $this->assertEquals($parts['host'], $host);
+        foreach (['port', 'user', 'pass'] as $part) {
+            if (!is_null(${$part})) {
+                $this->assertEquals($parts[$part], ${$part});
+            }
+        }
+    }
+
+    /**
+     * Test url parser with invalid url.
+     *
+     * @return array
+     */
+    public function testSplitUrlWithInvalidUrl()
+    {
+        $this->expectException(BadConfigurationException::class);
+        $this->expectExceptionMessage('Invalid url');
+
+        Bitcoin\split_url('cookies!');
+    }
+
+    /**
      * Test exception handler helper.
      *
      * @return void
@@ -91,6 +132,23 @@ class FunctionsTest extends TestCase
     public function testExceptionHandlerHelper()
     {
         $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
+    }
+
+    /**
+     * Provides url strings and parts.
+     *
+     * @return array
+     */
+    public function urlProvider()
+    {
+        return [
+            ['https://localhost', 'https', 'localhost', null, null, null],
+            ['https://localhost:8000', 'https', 'localhost', 8000, null, null],
+            ['http://localhost', 'http', 'localhost', null, null, null],
+            ['http://localhost:8000', 'http', 'localhost', 8000, null, null],
+            ['http://testuser@127.0.0.1:8000/', 'http', '127.0.0.1', 8000, 'testuser', null],
+            ['http://testuser:testpass@localhost:8000', 'http', 'localhost', 8000, 'testuser', 'testpass'],
+        ];
     }
 
     /**
