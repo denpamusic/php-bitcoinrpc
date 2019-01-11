@@ -6,7 +6,7 @@ namespace Denpa\Bitcoin\Traits;
 
 use BadMethodCallException;
 
-trait ReadOnlyArray
+trait ImmutableArray
 {
     /**
      * Assigns a value to the specified offset.
@@ -18,7 +18,7 @@ trait ReadOnlyArray
      */
     public function offsetSet($offset, $value) : void
     {
-        throw new BadMethodCallException('Cannot modify readonly object');
+        throw new BadMethodCallException('Cannot modify immutable object');
     }
 
     /**
@@ -30,7 +30,7 @@ trait ReadOnlyArray
      */
     public function offsetExists($offset) : bool
     {
-        return isset($this->result()[$offset]);
+        return isset($this->toArray()[$offset]);
     }
 
     /**
@@ -42,7 +42,7 @@ trait ReadOnlyArray
      */
     public function offsetUnset($offset) : void
     {
-        throw new BadMethodCallException('Cannot modify readonly object');
+        throw new BadMethodCallException('Cannot modify immutable object');
     }
 
     /**
@@ -54,6 +54,6 @@ trait ReadOnlyArray
      */
     public function offsetGet($offset)
     {
-        return $this->result()[$offset] ?? null;
+        return $this->toArray()[$offset] ?? null;
     }
 }

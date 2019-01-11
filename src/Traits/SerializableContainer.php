@@ -7,23 +7,13 @@ namespace Denpa\Bitcoin\Traits;
 trait SerializableContainer
 {
     /**
-     * Gets container.
-     *
-     * @return array
-     */
-    public function getContainer() : array
-    {
-        return $this->container;
-    }
-
-    /**
      * Returns the string representation of the object.
      *
      * @return string
      */
     public function serialize() : string
     {
-        return serialize($this->getContainer());
+        return serialize($this->toContainer());
     }
 
     /**
@@ -45,6 +35,6 @@ trait SerializableContainer
      */
     public function jsonSerialize() : array
     {
-        return $this->getContainer();
+        return $this->toContainer();
     }
 }

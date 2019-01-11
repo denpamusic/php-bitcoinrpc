@@ -27,7 +27,7 @@ trait Collection
         $key = $this->constructKey($key);
 
         if (is_null($key)) {
-            return $this->result();
+            return $this->toArray();
         }
 
         return $this->parseKey($key, function ($part, $result) {
@@ -223,7 +223,7 @@ trait Collection
     public function count(?string $key = null) : int
     {
         if (is_null($this->constructKey($key))) {
-            return count($this->result());
+            return count($this->toArray());
         }
 
         $value = $this->get($key);
@@ -330,7 +330,7 @@ trait Collection
     protected function parseKey($key, callable $callback, ?array $result = null)
     {
         $parts = is_array($key) ? $key : explode('.', trim($key, '.'));
-        $result = $result ?: $this->result();
+        $result = $result ?: $this->toArray();
 
         while (!is_null($part = array_shift($parts))) {
             if ($part == '*') {

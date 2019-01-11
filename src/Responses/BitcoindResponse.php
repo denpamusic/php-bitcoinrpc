@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Denpa\Bitcoin\Responses;
 
 use Denpa\Bitcoin\Traits\Collection;
-use Denpa\Bitcoin\Traits\ReadOnlyArray;
+use Denpa\Bitcoin\Traits\ImmutableArray;
 use Denpa\Bitcoin\Traits\SerializableContainer;
 
 class BitcoindResponse extends Response implements
@@ -14,5 +14,25 @@ class BitcoindResponse extends Response implements
     \Serializable,
     \JsonSerializable
 {
-    use Collection, ReadOnlyArray, SerializableContainer;
+    use Collection, ImmutableArray, SerializableContainer;
+
+    /**
+     * Gets array representation of response object.
+     *
+     * @return array
+     */
+    public function toArray() : array
+    {
+        return $this->result();
+    }
+
+    /**
+     * Gets root container of response object.
+     *
+     * @return array
+     */
+    public function toContainer() : array
+    {
+        return $this->container;
+    }
 }
