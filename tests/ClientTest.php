@@ -47,24 +47,6 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test ca config option.
-     *
-     * @return void
-     */
-    public function testCaOption()
-    {
-        $bitcoind = new BitcoinClient();
-
-        $this->assertEquals(null, $bitcoind->getClient()->getConfig('ca'));
-
-        $bitcoind = new BitcoinClient([
-            'ca' => __FILE__,
-        ]);
-
-        $this->assertEquals(__FILE__, $bitcoind->getClient()->getConfig('verify'));
-    }
-
-    /**
      * Test preserve method name case config option.
      *
      * @return void
