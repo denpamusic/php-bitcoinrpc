@@ -2,16 +2,16 @@
 
 namespace Denpa\Bitcoin\Tests;
 
-use stdClass;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
+use stdClass;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {

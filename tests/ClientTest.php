@@ -2,9 +2,9 @@
 
 namespace Denpa\Bitcoin\Tests;
 
-use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Client as BitcoinClient;
 use Denpa\Bitcoin\Exceptions;
+use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use Denpa\Bitcoin\Responses\Response;
 use GuzzleHttp\Client as GuzzleHttp;
