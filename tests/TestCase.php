@@ -2,10 +2,16 @@
 
 namespace Denpa\Bitcoin\Tests;
 
+use stdClass;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +20,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -82,7 +88,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return string
      */
-    protected function error500()
+    protected function error500() : string
     {
         return 'Server error: `POST /` '.
             'resulted in a `500 Internal Server Error` response';
@@ -95,9 +101,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return callable
      */
-    protected function mockCallable(array $with = [])
+    protected function mockCallable(array $with = []) : callable
     {
-        $callable = $this->getMockBuilder(\stdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -116,17 +122,19 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \GuzzleHttp\Client
      */
-    protected function mockGuzzle(array $queue = [], $handler = null)
-    {
+    protected function mockGuzzle(
+        array $queue = [],
+        HandlerStack $handler = null
+    ) : GuzzleClient {
         $handler = $handler ?: $this->bitcoind->getClient()->getConfig('handler');
 
         if ($handler) {
-            $middleware = \GuzzleHttp\Middleware::history($this->history);
+            $middleware = Middleware::history($this->history);
             $handler->push($middleware);
             $handler->setHandler(new MockHandler($queue));
         }
 
-        return new \GuzzleHttp\Client([
+        return new GuzzleClient([
             'handler' => $handler,
         ]);
     }
@@ -138,7 +146,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function getBlockResponse($code = 200)
+    protected function getBlockResponse(int $code = 200) : ResponseInterface
     {
         $json = json_encode([
             'result' => self::$getBlockResponse,
@@ -156,7 +164,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function getBalanceResponse($code = 200)
+    protected function getBalanceResponse(int $code = 200) : ResponseInterface
     {
         $json = json_encode([
             'result' => self::$balanceResponse,
@@ -174,7 +182,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function rawTransactionError($code = 500)
+    protected function rawTransactionError(int $code = 500) : ResponseInterface
     {
         $json = json_encode([
             'result' => null,
@@ -188,9 +196,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Return exception with response.
      *
-     * @return Closure
+     * @return callable
      */
-    protected function requestExceptionWithResponse()
+    protected function requestExceptionWithResponse() : callable
     {
         $exception = function ($request) {
             return new RequestException(
@@ -206,9 +214,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     /**
      * Return exception without response.
      *
-     * @return Closure
+     * @return callable
      */
-    protected function requestExceptionWithoutResponse()
+    protected function requestExceptionWithoutResponse() : callable
     {
         $exception = function ($request) {
             return new RequestException('test', $request);
@@ -221,12 +229,16 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      * Make request body.
      *
      * @param string $method
-     * @param mixed  $params
+     * @param int    $id
+     * @param mixed  $params,...
      *
      * @return array
      */
-    protected function makeRequestBody($method, $id, ...$params)
-    {
+    protected function makeRequestBody(
+        string $method,
+        int $id,
+        ...$params
+    ) : array {
         return [
             'method' => $method,
             'params' => (array) $params,
@@ -239,9 +251,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @param int $index
      *
-     * @return string
+     * @return \Psr\Http\Message\UriInterface|null
      */
-    protected function getHistoryRequestUri($index = 0)
+    protected function getHistoryRequestUri(int $index = 0) : ?UriInterface
     {
         if (isset($this->history[$index])) {
             return $this->history[$index]['request']->getUri();
@@ -253,9 +265,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @param int $index
      *
-     * @return string
+     * @return mixed
      */
-    protected function getHistoryRequestBody($index = 0)
+    protected function getHistoryRequestBody(int $index = 0)
     {
         if (isset($this->history[$index])) {
             return json_decode(

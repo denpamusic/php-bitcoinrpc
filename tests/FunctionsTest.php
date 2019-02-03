@@ -18,7 +18,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToBtc($satoshi, $bitcoin)
+    public function testToBtc(int $satoshi, string $bitcoin) : void
     {
         $this->assertEquals($bitcoin, Bitcoin\to_bitcoin($satoshi));
     }
@@ -33,7 +33,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToSatoshi($satoshi, $bitcoin)
+    public function testToSatoshi(int $satoshi, string $bitcoin) : void
     {
         $this->assertEquals($satoshi, Bitcoin\to_satoshi($bitcoin));
     }
@@ -48,7 +48,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider bitsBtcProvider
      */
-    public function testToBits($ubtc, $bitcoin)
+    public function testToBits(int $ubtc, string $bitcoin) : void
     {
         $this->assertEquals($ubtc, Bitcoin\to_ubtc($bitcoin));
     }
@@ -63,7 +63,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider mbtcBtcProvider
      */
-    public function testToMbtc($mbtc, $bitcoin)
+    public function testToMbtc(float $mbtc, string $bitcoin) : void
     {
         $this->assertEquals($mbtc, Bitcoin\to_mbtc($bitcoin));
     }
@@ -79,27 +79,36 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider floatProvider
      */
-    public function testToFixed($float, $precision, $expected)
-    {
+    public function testToFixed(
+        float $float,
+        int $precision,
+        string $expected
+    ) : void {
         $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
     }
 
     /**
      * Test url parser.
      *
-     * @param string $url
-     * @param string $scheme
-     * @param string $host
-     * @param int    $port
-     * @param string $user
-     * @param string $password
+     * @param string      $url
+     * @param string      $scheme
+     * @param string      $host
+     * @param int|null    $port
+     * @param string|null $user
+     * @param string|null $password
      *
      * @return void
      *
      * @dataProvider urlProvider
      */
-    public function testSplitUrl($url, $scheme, $host, $port, $user, $pass)
-    {
+    public function testSplitUrl(
+        string $url,
+        string $scheme,
+        string $host,
+        ?int $port,
+        ?string $user,
+        ?string $pass
+    ) : void {
         $parts = Bitcoin\split_url($url);
 
         $this->assertEquals($parts['scheme'], $scheme);
@@ -116,7 +125,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function testSplitUrlWithInvalidUrl()
+    public function testSplitUrlWithInvalidUrl() : void
     {
         $this->expectException(BadConfigurationException::class);
         $this->expectExceptionMessage('Invalid url');
@@ -129,7 +138,7 @@ class FunctionsTest extends TestCase
      *
      * @return void
      */
-    public function testExceptionHandlerHelper()
+    public function testExceptionHandlerHelper() : void
     {
         $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
     }
@@ -139,7 +148,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function urlProvider()
+    public function urlProvider() : array
     {
         return [
             ['https://localhost', 'https', 'localhost', null, null, null],
@@ -156,7 +165,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function satoshiBtcProvider()
+    public function satoshiBtcProvider() : array
     {
         return [
             [1000, '0.00001000'],
@@ -172,7 +181,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function bitsBtcProvider()
+    public function bitsBtcProvider() : array
     {
         return [
             [10, '0.00001000'],
@@ -188,7 +197,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function mbtcBtcProvider()
+    public function mbtcBtcProvider() : array
     {
         return [
             [0.01, '0.00001000'],
@@ -204,7 +213,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function floatProvider()
+    public function floatProvider() : array
     {
         return [
             [1.2345678910, 0, '1'],
