@@ -2,8 +2,8 @@
 
 namespace Denpa\Bitcoin\Tests;
 
-use Denpa\Bitcoin\Config;
 use Denpa\Bitcoin\Client as BitcoinClient;
+use Denpa\Bitcoin\Config;
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
 use Denpa\Bitcoin\Responses\Response;
