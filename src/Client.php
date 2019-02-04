@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
-use Denpa\Bitcoin\Traits\HandlesAsync;
 use GuzzleHttp\Client as GuzzleHttp;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -16,8 +17,6 @@ use Throwable;
 
 class Client
 {
-    use HandlesAsync;
-
     /**
      * Http Client.
      *
@@ -140,16 +139,15 @@ class Client
     /**
      * Makes request to Bitcoin Core.
      *
-     * @param string $method
-     * @param mixed  $params
+     * @param \Denpa\Bitcoin\Requests\Request $requests,...
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function request(string $method, ...$params) : ResponseInterface
+    public function send(Request ...$requests) : ResponseInterface
     {
         try {
-            $response = $this->client
-                ->post($this->path, $this->makeJson($method, $params));
+            $json = $this->makeJson(...$requests);
+            $response = $this->client->post($this->path, $json);
 
             if ($response->hasError()) {
                 // throw exception on error
@@ -165,33 +163,16 @@ class Client
     /**
      * Makes async request to Bitcoin Core.
      *
-     * @param string        $method
-     * @param mixed         $params
-     * @param callable|null $fulfilled
-     * @param callable|null $rejected
+     * @param \Denpa\Bitcoin\Requests\Request $requests,...
      *
-     * @return \GuzzleHttp\Promise\Promise
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function requestAsync(
-        string $method,
-        $params = [],
-        ?callable $fulfilled = null,
-        ?callable $rejected = null) : Promise\Promise
+    public function sendAsync(Request ...$requests) : PromiseInterface
     {
-        $promise = $this->client
-            ->postAsync($this->path, $this->makeJson($method, $params));
+        $json = $this->makeJson(...$requests);
+        $promise = $this->client->postAsync($this->path, $json);
 
-        $promise->then(function ($response) use ($fulfilled) {
-            $this->onSuccess($response, $fulfilled);
-        });
-
-        $promise->otherwise(function ($exception) use ($rejected) {
-            try {
-                exception()->handle($exception);
-            } catch (Throwable $exception) {
-                $this->onError($exception, $rejected);
-            }
-        });
+        $promise = new PromiseWrapper($promise);
 
         $this->promises[] = $promise;
 
@@ -221,10 +202,22 @@ class Client
     public function __call(string $method, array $params = [])
     {
         if (strtolower(substr($method, -5)) == 'async') {
-            return $this->requestAsync(substr($method, 0, -5), ...$params);
+            return $this->sendAsync(
+                new Request(substr($method, 0, -5), ...$params)
+            );
         }
 
-        return $this->request($method, ...$params);
+        return $this->send(new Request($method, ...$params));
+    }
+
+    /**
+     * Get JSON-RPC id.
+     *
+     * @return int
+     */
+    public function getId() : int
+    {
+        return $this->rpcId++;
     }
 
     /**
@@ -269,22 +262,18 @@ class Client
     }
 
     /**
-     * Construct json request.
+     * Gets json array.
      *
-     * @param string $method
-     * @param mixed  $params
+     * @param \Denpa\Bitcoin\Requests\Request $requests,...
      *
      * @return array
      */
-    protected function makeJson(string $method, $params = []) : array
+    protected function makeJson(Request ...$requests) : array
     {
-        return [
-            'json' => [
-                'method' => $this->config['preserve_case'] ?
-                    $method : strtolower($method),
-                'params' => (array) $params,
-                'id'     => $this->rpcId++,
-            ],
-        ];
+        $requests = array_map(function (Request $request) {
+            return $request->serializeFor($this);
+        }, $requests);
+
+        return ['json' => count($requests) > 1 ? $requests : $requests[0]];
     }
 }
