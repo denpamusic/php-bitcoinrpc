@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Tests;
 
-use Denpa\Bitcoin\Config;
 use Denpa\Bitcoin\Client as BitcoinClient;
+use Denpa\Bitcoin\Config;
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Responses\BitcoindResponse;
