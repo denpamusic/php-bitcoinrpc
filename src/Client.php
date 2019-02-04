@@ -143,7 +143,7 @@ class Client
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function send(Request ...$requests) : ResponseInterface
+    public function send(...$requests) : ResponseInterface
     {
         try {
             $json = $this->makeJson(...$requests);
@@ -167,7 +167,7 @@ class Client
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function sendAsync(Request ...$requests) : PromiseInterface
+    public function sendAsync(...$requests) : PromiseInterface
     {
         $json = $this->makeJson(...$requests);
         $promise = $this->client->postAsync($this->path, $json);
@@ -268,7 +268,7 @@ class Client
      *
      * @return array
      */
-    protected function makeJson(Request ...$requests) : array
+    protected function makeJson(...$requests) : array
     {
         $requests = array_map(function (Request $request) {
             return $request->serializeFor($this);
