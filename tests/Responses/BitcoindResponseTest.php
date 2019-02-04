@@ -411,7 +411,7 @@ class BitcoindResponseTest extends TestCase
 
         $random2 = $this->response->random(2);
         $this->assertCount(2, $random2);
-        foreach($random2 as $key => $value) {
+        foreach ($random2 as $key => $value) {
             $this->assertTrue((self::$getBlockResponse[$key] ?? null) == $value);
         }
 
