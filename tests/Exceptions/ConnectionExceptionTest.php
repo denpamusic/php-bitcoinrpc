@@ -13,7 +13,7 @@ class ConnectionExceptionTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class ConnectionExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testThrow()
+    public function testThrow() : void
     {
         $this->expectException(ConnectionException::class);
         $this->expectExceptionMessage('Test message');
@@ -42,7 +42,7 @@ class ConnectionExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetRequest()
+    public function testGetRequest() : void
     {
         $exception = new ConnectionException($this->request);
 
@@ -54,7 +54,7 @@ class ConnectionExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetConstructionParameters()
+    public function testGetConstructionParameters() : void
     {
         $exception = new FakeConnectionException($this->request);
 
