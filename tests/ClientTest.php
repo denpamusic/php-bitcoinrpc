@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Tests;
 
+use Denpa\Bitcoin\Config;
 use Denpa\Bitcoin\Client as BitcoinClient;
 use Denpa\Bitcoin\Exceptions;
 use Denpa\Bitcoin\Requests\Request;
@@ -66,6 +67,16 @@ class ClientTest extends TestCase
             'getBlockHeader',
             $request['id']
         ), $request);
+    }
+
+    /**
+     * Test client config getter.
+     *
+     * @return void
+     */
+    public function testGetConfig() : void
+    {
+        $this->assertInstanceOf(Config::class, $this->bitcoind->getConfig());
     }
 
     /**
