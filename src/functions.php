@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
+use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
 use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
 
@@ -104,6 +105,29 @@ if (!function_exists('split_url')) {
 
         return $parts;
     }
+}
+
+if (!function_exists('request_for')) {
+    /**
+     * Creates request for value.
+     *
+     * @param mixed $value
+     *
+     * @return \Denpa\Bitcoin\Requests\Request
+     */
+     function request_for($value) : Request
+     {
+         if ($value instanceof Request) {
+             return $value;
+         }
+
+         if (is_array($value)) {
+             $params = (array) end($value);
+             return new Request(key($value), ...$params);
+         }
+
+         return new Request($value);
+     }
 }
 
 if (!function_exists('exception')) {

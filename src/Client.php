@@ -270,8 +270,8 @@ class Client
      */
     protected function makeJson(...$requests) : array
     {
-        $requests = array_map(function (Request $request) {
-            return $request->serializeFor($this);
+        $requests = array_map(function ($value) {
+            return request_for($value)->serializeFor($this);
         }, $requests);
 
         return ['json' => count($requests) > 1 ? $requests : $requests[0]];

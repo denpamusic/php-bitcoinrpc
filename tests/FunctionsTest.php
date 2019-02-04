@@ -88,6 +88,27 @@ class FunctionsTest extends TestCase
     }
 
     /**
+     * Test request_for helper.
+     *
+     * @param mixed $value
+     *
+     * @return void
+     *
+     * @dataProvider requestProvider
+     */
+    public function testRequestFor($value) : void
+    {
+        $request = Bitcoin\request_for($value);
+
+        if (is_string($value)) {
+            $this->assertEquals($value, $request->getMethod());
+        } else {
+            $this->assertEquals(key($value), $request->getMethod());
+            $this->assertEquals((array)end($value), $request->getParams());
+        }
+    }
+
+    /**
      * Test url parser.
      *
      * @param string      $url
@@ -141,6 +162,21 @@ class FunctionsTest extends TestCase
     public function testExceptionHandlerHelper() : void
     {
         $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
+    }
+
+    /**
+     * Provides value for request helper test.
+     *
+     * @return array
+     */
+    public function requestProvider() : array
+    {
+        return [
+            ['getbalance'],
+            [['getblock' => 'foo']],
+            [['getblock' => ['foo']]],
+            [['getblock' => ['foo', 'bar']]],
+        ];
     }
 
     /**

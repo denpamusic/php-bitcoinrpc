@@ -25,8 +25,8 @@ class Request
     /**
      * Constructs new request.
      *
-     * @param array|string $config
-     * @param mixed        $params,...
+     * @param string  $method
+     * @param mixed   $params,...
      *
      * @return void
      */
