@@ -104,7 +104,7 @@ class FunctionsTest extends TestCase
             $this->assertEquals($value, $request->getMethod());
         } else {
             $this->assertEquals(key($value), $request->getMethod());
-            $this->assertEquals((array)end($value), $request->getParams());
+            $this->assertEquals((array) end($value), $request->getParams());
         }
     }
 
