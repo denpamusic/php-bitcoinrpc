@@ -88,10 +88,7 @@ class ClientTest extends TestCase
     {
         $response = $this->bitcoind
             ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
-            ->send(new Request(
-                'getblockheader',
-                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
-            ));
+            ->send(['getblockheader' => '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f']);
 
         $request = $this->getHistoryRequestBody();
 
@@ -115,7 +112,7 @@ class ClientTest extends TestCase
         $response = $this->bitcoind
             ->setClient($this->mockGuzzle([$this->getBalanceResponse()]))
             ->wallet($wallet)
-            ->send(new Request('getbalance'));
+            ->send('getbalance');
 
         $this->assertEquals(self::$balanceResponse, $response->get());
         $this->assertEquals(
@@ -136,7 +133,7 @@ class ClientTest extends TestCase
         $this->bitcoind
             ->setClient($this->mockGuzzle([$this->getBalanceResponse()]))
             ->wallet($wallet)
-            ->sendAsync(new Request('getbalance'));
+            ->sendAsync('getbalance');
 
         $this->bitcoind->wait();
 
@@ -161,10 +158,7 @@ class ClientTest extends TestCase
 
         $this->bitcoind
             ->setClient($this->mockGuzzle([$this->getBlockResponse()]))
-            ->sendAsync(new Request(
-                'getblockheader',
-                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
-            ))
+            ->sendAsync(['getblockheader' =>  '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'])
             ->then($onFulfilled);
 
         $this->bitcoind->wait();
@@ -298,10 +292,7 @@ class ClientTest extends TestCase
 
         $this->bitcoind
             ->setClient($this->mockGuzzle([new GuzzleResponse(500)]))
-            ->sendAsync(new Request(
-                'getrawtransaction',
-                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
-            ))
+            ->sendAsync(['getrawtransaction' => '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'])
             ->otherwise($rejected);
 
         $this->bitcoind->wait();
@@ -341,10 +332,7 @@ class ClientTest extends TestCase
 
         $this->bitcoind
             ->setClient($this->mockGuzzle([$this->requestExceptionWithResponse()]))
-            ->sendAsync(new Request(
-                'getrawtransaction',
-                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
-            ))
+            ->sendAsync(['getrawtransaction' => '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'])
             ->otherwise($rejected);
 
         $this->bitcoind->wait();
@@ -384,10 +372,7 @@ class ClientTest extends TestCase
 
         $this->bitcoind
             ->setClient($this->mockGuzzle([$this->requestExceptionWithoutResponse()]))
-            ->sendAsync(new Request(
-                'getrawtransaction',
-                '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
-            ))
+            ->sendAsync(['getrawtransaction' => '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'])
             ->otherwise($rejected);
 
         $this->bitcoind->wait();
@@ -408,10 +393,7 @@ class ClientTest extends TestCase
 
         $response = $fake
             ->setClient($guzzle)
-            ->send(new Request(
-                'getblockheader',
-                '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
-            ));
+            ->send(['getblockheader' => '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f']);
 
         $this->assertInstanceOf(FakeResponse::class, $response);
     }
