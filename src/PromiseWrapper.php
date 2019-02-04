@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Throwable;
 use GuzzleHttp\Promise\PromiseInterface;
+use Throwable;
 
 class PromiseWrapper implements PromiseInterface
 {
@@ -83,8 +83,9 @@ class PromiseWrapper implements PromiseInterface
      *
      * @param mixed $value
      *
-     * @return void
      * @throws \RuntimeException if the promise is already resolved.
+     *
+     * @return void
      */
     public function resolve($value) : void
     {
@@ -96,8 +97,9 @@ class PromiseWrapper implements PromiseInterface
      *
      * @param mixed $reason
      *
-     * @return void
      * @throws \RuntimeException if the promise is already resolved.
+     *
+     * @return void
      */
     public function reject($reason) : void
     {
@@ -108,6 +110,7 @@ class PromiseWrapper implements PromiseInterface
      * Cancels the promise if possible.
      *
      * @return void
+     *
      * @link https://github.com/promises-aplus/cancellation-spec/issues/7
      */
     public function cancel() : void
@@ -125,9 +128,10 @@ class PromiseWrapper implements PromiseInterface
      *
      * @param bool $unwrap
      *
-     * @return mixed
      * @throws \LogicException if the promise has no wait function or if the
      *                         promise does not settle after waiting.
+     *
+     * @return mixed
      */
     public function wait($unwrap = true)
     {

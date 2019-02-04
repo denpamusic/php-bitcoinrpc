@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Requests\Request;
 use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
+use Denpa\Bitcoin\Requests\Request;
 use GuzzleHttp\Client as GuzzleHttp;
-use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

@@ -3,8 +3,8 @@
 namespace Denpa\Bitcoin\Tests\Request;
 
 use Denpa\Bitcoin\Client as BitcoinClient;
-use Denpa\Bitcoin\Tests\TestCase;
 use Denpa\Bitcoin\Requests\Request;
+use Denpa\Bitcoin\Tests\TestCase;
 
 class RequestTest extends TestCase
 {
@@ -64,7 +64,7 @@ class RequestTest extends TestCase
         $this->assertEquals([
             'method' => 'getblock',
             'params' => ['foo'],
-            'id' => 0,
+            'id'     => 0,
         ], $array);
     }
 }
