@@ -74,9 +74,9 @@ if (!function_exists('to_fixed')) {
      */
     function to_fixed(float $number, int $precision = 8) : string
     {
-        $number = $number * pow(10, $precision);
+        $number = bcmul((string) $number, (string) pow(10, $precision));
 
-        return bcdiv((string) $number, (string) pow(10, $precision), $precision);
+        return bcdiv($number, (string) pow(10, $precision), $precision);
     }
 }
 
