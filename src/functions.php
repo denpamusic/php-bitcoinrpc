@@ -68,7 +68,7 @@ if (!function_exists('to_fixed')) {
      * Brings number to fixed precision without rounding.
      *
      * @param string $number
-     * @param int   $precision
+     * @param int    $precision
      *
      * @return string
      */
