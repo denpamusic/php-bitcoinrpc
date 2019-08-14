@@ -31,7 +31,7 @@ if (!function_exists('to_satoshi')) {
      */
     function to_satoshi($bitcoin) : string
     {
-        return bcmul(to_fixed((float) $bitcoin, 8), (string) 1e8);
+        return bcmul(to_fixed($bitcoin, 8), (string) 1e8);
     }
 }
 
@@ -45,7 +45,7 @@ if (!function_exists('to_ubtc')) {
      */
     function to_ubtc($bitcoin) : string
     {
-        return bcmul(to_fixed((float) $bitcoin, 8), (string) 1e6, 4);
+        return bcmul(to_fixed($bitcoin, 8), (string) 1e6, 4);
     }
 }
 
@@ -59,7 +59,7 @@ if (!function_exists('to_mbtc')) {
      */
     function to_mbtc($bitcoin) : string
     {
-        return bcmul(to_fixed((float) $bitcoin, 8), (string) 1e3, 4);
+        return bcmul(to_fixed($bitcoin, 8), (string) 1e3, 4);
     }
 }
 
@@ -67,16 +67,16 @@ if (!function_exists('to_fixed')) {
     /**
      * Brings number to fixed precision without rounding.
      *
-     * @param float $number
-     * @param int   $precision
+     * @param string $number
+     * @param int    $precision
      *
      * @return string
      */
-    function to_fixed(float $number, int $precision = 8) : string
+    function to_fixed(string $number, int $precision = 8) : string
     {
-        $number = $number * pow(10, $precision);
+        $number = bcmul($number, (string) pow(10, $precision));
 
-        return bcdiv((string) $number, (string) pow(10, $precision), $precision);
+        return bcdiv($number, (string) pow(10, $precision), $precision);
     }
 }
 
