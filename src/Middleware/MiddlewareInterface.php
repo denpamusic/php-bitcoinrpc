@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 interface MiddlewareInterface
 {
     /**
-     * Creates middleware instance
+     * Creates middleware instance.
      *
      * @param \Denpa\Bitcoin\ConfigInterface $config
      *
@@ -20,7 +20,7 @@ interface MiddlewareInterface
     public static function middleware(ConfigInterface $config) : callable;
 
     /**
-     * Handles middleware calls
+     * Handles middleware calls.
      *
      * @param \Psr\Http\Message\RequestInterface $request
      * @param array                              $options
@@ -30,7 +30,7 @@ interface MiddlewareInterface
     public function __invoke(RequestInterface $request, array $options) : RequestInterface;
 
     /**
-     * Handles requests
+     * Handles requests.
      *
      * @param \Psr\Http\Message\RequestInterface $request
      * @param array                              $options
@@ -40,7 +40,7 @@ interface MiddlewareInterface
     public function handleRequest(RequestInterface $request, array $options) : RequestInterface;
 
     /**
-     * Handles responses
+     * Handles responses.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
      *

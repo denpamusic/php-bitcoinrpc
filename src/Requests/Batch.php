@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Requests;
 
-use Countable;
 use ArrayAccess;
+use Countable;
 use Denpa\Traits\Collection;
 
 class Batch implements Countable, ArrayAccess, RequestInterface
@@ -13,7 +13,7 @@ class Batch implements Countable, ArrayAccess, RequestInterface
     use Collection;
 
     /**
-     * @param array $requests
+     * @param array  $requests
      * @param string $handler
      *
      * @return void
@@ -26,7 +26,7 @@ class Batch implements Countable, ArrayAccess, RequestInterface
     }
 
     /**
-     * Gets request parameters
+     * Gets request parameters.
      *
      * @return array
      */
@@ -42,7 +42,7 @@ class Batch implements Countable, ArrayAccess, RequestInterface
     }
 
     /**
-     * Sets request parameters
+     * Sets request parameters.
      *
      * @param mixed $params,...
      *

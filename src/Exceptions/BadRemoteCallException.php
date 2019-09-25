@@ -9,14 +9,14 @@ use Psr\Http\Message\ResponseInterface;
 class BadRemoteCallException extends ClientException
 {
     /**
-     * Response instance
+     * Response instance.
      *
      * @var \Psr\Http\Message\ResponseInterface
      */
     protected $response;
 
     /**
-     * Constructs new bad remote call exception
+     * Constructs new bad remote call exception.
      *
      * @param \Psr\Http\Message\ResponseInterface $response
      *
@@ -30,7 +30,7 @@ class BadRemoteCallException extends ClientException
     }
 
     /**
-     * Gets response object
+     * Gets response object.
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
@@ -40,7 +40,7 @@ class BadRemoteCallException extends ClientException
     }
 
     /**
-     * Returns array of parameters
+     * Returns array of parameters.
      *
      * @return array
      */

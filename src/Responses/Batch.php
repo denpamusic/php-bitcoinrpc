@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Responses;
 
-use Countable;
 use ArrayAccess;
-use Denpa\Traits\Collection;
+use Countable;
 use Denpa\Bitcoin\Traits\Message;
+use Denpa\Traits\Collection;
 use Psr\Http\Message\ResponseInterface;
 
 class Batch implements ResponseInterface, Countable, ArrayAccess
@@ -15,7 +15,7 @@ class Batch implements ResponseInterface, Countable, ArrayAccess
     use Message, Collection;
 
     /**
-     * Response instance
+     * Response instance.
      *
      * @var \Psr\Http\Message\ResponseInterface
      */
@@ -23,7 +23,7 @@ class Batch implements ResponseInterface, Countable, ArrayAccess
 
     /**
      * @param ResponseInterface $response
-     * @param string $handler
+     * @param string            $handler
      *
      * @return void
      */

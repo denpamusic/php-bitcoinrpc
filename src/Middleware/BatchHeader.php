@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 class BatchHeader extends Middleware
 {
     /**
-     * Request options
+     * Request options.
      *
      * @var array
      */
@@ -41,7 +41,7 @@ class BatchHeader extends Middleware
     public function handleResponse(ResponseInterface $response) : ResponseInterface
     {
         if (isset($this->options['meta']) && is_array($this->options['meta'])) {
-            foreach($options['meta'] as $key => $value) {
+            foreach ($options['meta'] as $key => $value) {
                 $response = $response->withAddedHeader('X-Meta-'.$key, $value);
             }
         }

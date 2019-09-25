@@ -11,14 +11,14 @@ use Psr\Http\Message\ResponseInterface;
 abstract class Middleware implements MiddlewareInterface
 {
     /**
-     * Next handler
+     * Next handler.
      *
      * @var callable
      */
     protected $next;
 
     /**
-     * Client configuration
+     * Client configuration.
      *
      * @var \Denpa\Bitcoin\ConfigInterface
      */

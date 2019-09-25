@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Denpa\Bitcoin;
 
 use Denpa\Bitcoin\Exceptions\BadConfigurationException;
-use Denpa\Bitcoin\Requests\Request;
-use Denpa\Bitcoin\Response\Response;
-use Denpa\Bitcoin\Requests\Batch as RequestBatch;
-use Denpa\Bitcoin\Responses\Batch as ResponseBatch;
 use Denpa\Bitcoin\Exceptions\Handler as ExceptionHandler;
+use Denpa\Bitcoin\Requests\Batch as RequestBatch;
+use Denpa\Bitcoin\Requests\Request;
+use Denpa\Bitcoin\Responses\Batch as ResponseBatch;
 
 /**
  * Converts from satoshi to bitcoin.
@@ -130,7 +129,7 @@ function request_for($value, RequestInterface $handler) : Request
 /**
  * Gets exception handler instance.
  *
- * @param mixed $value
+ * @param mixed             $value
  * @param ResponseInterface $handler
  *
  * @return \Denpa\Bitcoin\Exceptions\Handler
@@ -200,6 +199,7 @@ function dot_set(&$items, $key, $value) : void
             foreach ($items as &$item) {
                 dot_set($item, $key, $value);
             }
+
             return;
         }
 
@@ -207,6 +207,7 @@ function dot_set(&$items, $key, $value) : void
             if (is_array($items)) {
                 $items[$part] = $value;
             }
+
             return;
         }
 
@@ -233,11 +234,13 @@ function dot_delete(&$items, $key) : void
             foreach ($items as &$item) {
                 dot_delete($item, $key);
             }
+
             return;
         }
 
         if (count($key) == 0) {
             unset($items[$part]);
+
             return;
         }
 
@@ -258,7 +261,7 @@ function arr_collapse(array $array)
         new RecursiveArrayIterator($array)
     );
 
-    foreach($iterator as $item) {
+    foreach ($iterator as $item) {
         $result[] = $item;
     }
 

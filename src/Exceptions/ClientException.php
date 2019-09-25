@@ -9,7 +9,7 @@ use Exception;
 abstract class ClientException extends Exception
 {
     /**
-     * Returns class name in provided namespace
+     * Returns class name in provided namespace.
      *
      * @param string $namespace
      *
@@ -29,7 +29,7 @@ abstract class ClientException extends Exception
     }
 
     /**
-     * Gets exception class name
+     * Gets exception class name.
      *
      * @return string
      */
@@ -41,7 +41,7 @@ abstract class ClientException extends Exception
     }
 
     /**
-     * Returns array of parameters
+     * Returns array of parameters.
      *
      * @return array
      */

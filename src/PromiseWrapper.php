@@ -49,7 +49,7 @@ class PromiseWrapper implements PromiseInterface
     }
 
     /**
-     * Iterates over response and calls callback
+     * Iterates over response and calls callback.
      *
      * @param callable $onFulfilled
      *

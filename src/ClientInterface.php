@@ -2,27 +2,27 @@
 
 namespace Denpa\Bitcoin;
 
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 interface ClientInterface
 {
     /**
-     * Client path
+     * Client path.
      *
      * @var string
      */
     public $path = '/';
 
     /**
-     * Gets client id
+     * Gets client id.
      *
      * @return int
      */
     public function id() : int;
 
     /**
-     * Gets or sets client configuration
+     * Gets or sets client configuration.
      *
      * @param array|null $config
      *
@@ -31,7 +31,7 @@ interface ClientInterface
     public function config(?array $config = null) : Config;
 
     /**
-     * Sets wallet
+     * Sets wallet.
      *
      * @param string $name
      *
@@ -40,7 +40,7 @@ interface ClientInterface
     public function wallet(string $name);
 
     /**
-     * Sends request
+     * Sends request.
      *
      * @param mixed $requests,...
      *
@@ -49,7 +49,7 @@ interface ClientInterface
     public function send(...$requests) : ResponseInterface;
 
     /**
-     * Sends asynchronous request
+     * Sends asynchronous request.
      *
      * @param mixed $requests,...
      *
@@ -58,7 +58,7 @@ interface ClientInterface
     public function sendAsync(...$requests) : PromiseInterface;
 
     /**
-     * Waits on promises to complete
+     * Waits on promises to complete.
      *
      * @return void
      */

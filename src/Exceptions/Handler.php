@@ -13,21 +13,21 @@ class Handler
     use Singleton;
 
     /**
-     * Exception namespace
+     * Exception namespace.
      *
      * @var string
      */
     protected $namespace = null;
 
     /**
-     * Handler functions array
+     * Handler functions array.
      *
      * @var array
      */
     protected $handlers = [];
 
     /**
-     * Constructs exception handler
+     * Constructs exception handler.
      *
      * @return void
      */
@@ -38,7 +38,7 @@ class Handler
     }
 
     /**
-     * Handles namespace change
+     * Handles namespace change.
      *
      * @param \Throwable $exception
      *
@@ -54,7 +54,7 @@ class Handler
     }
 
     /**
-     * Handles request exception
+     * Handles request exception.
      *
      * @param \Throwable $exception
      *
@@ -78,7 +78,7 @@ class Handler
     }
 
     /**
-     * Registers new handler function
+     * Registers new handler function.
      *
      * @param callable $handler
      *
@@ -92,7 +92,7 @@ class Handler
     }
 
     /**
-     * Handles exception
+     * Handles exception.
      *
      * @param \Throwable $exception
      *

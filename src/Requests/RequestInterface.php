@@ -5,33 +5,32 @@ declare(strict_types=1);
 namespace Denpa\Bitcoin\Request;
 
 use Denpa\Bitcoin\Client;
-use GuzzleHttp\Promise\PromiseInterface;
 
 interface RequestInterface
 {
     /**
-     * Request method
+     * Request method.
      *
      * @var string
      */
     public $method;
 
     /**
-     * Request id
+     * Request id.
      *
      * @var int
      */
     public $id = 0;
 
     /**
-     * Gets request parameters
+     * Gets request parameters.
      *
      * @return array
      */
     public function getParams() : array;
 
     /**
-     * Sets request parameters
+     * Sets request parameters.
      *
      * @param mixed $params,...
      *
@@ -40,7 +39,7 @@ interface RequestInterface
     public function setParams(...$params);
 
     /**
-     * Assigns client to the request
+     * Assigns client to the request.
      *
      * @param \Denpa\Bitcoin\Client $client
      *
@@ -49,14 +48,14 @@ interface RequestInterface
     public function assign(Client $client);
 
     /**
-     * Serializes request
+     * Serializes request.
      *
      * @return array
      */
     public function serialize() : array;
 
     /**
-     * Gets request options
+     * Gets request options.
      *
      * @return array
      */

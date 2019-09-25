@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Denpa\Bitcoin;
 
 use ArrayAccess;
-use GuzzleHttp\HandlerStack;
 use Denpa\Bitcoin\Traits\Collection;
+use GuzzleHttp\HandlerStack;
 
 class Config implements ArrayAccess
 {
     use Collection;
 
     /**
-     * Configuration defaults
+     * Configuration defaults.
      *
      * @var array
      */
@@ -30,7 +30,7 @@ class Config implements ArrayAccess
     ];
 
     /**
-     * Constructs new configuration
+     * Constructs new configuration.
      *
      * @param array $config
      *
@@ -47,7 +47,7 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Serializes config
+     * Serializes config.
      *
      * @return array
      */
@@ -62,7 +62,7 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Gets CA file from config
+     * Gets CA file from config.
      *
      * @return string|null
      */
@@ -76,7 +76,7 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Gets authentication array
+     * Gets authentication array.
      *
      * @return array
      */
@@ -89,7 +89,7 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Gets base uri
+     * Gets base uri.
      *
      * @return string
      */
@@ -101,7 +101,7 @@ class Config implements ArrayAccess
     }
 
     /**
-     * Gets Guzzle handler stack
+     * Gets Guzzle handler stack.
      *
      * @return \GuzzleHttp\HandlerStack
      */

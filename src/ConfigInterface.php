@@ -7,7 +7,7 @@ namespace Denpa\Bitcoin;
 interface ConfigInterface
 {
     /**
-     * Serializes config
+     * Serializes config.
      *
      * @return array
      */

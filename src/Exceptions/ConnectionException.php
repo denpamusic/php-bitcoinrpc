@@ -9,14 +9,14 @@ use Psr\Http\Message\RequestInterface;
 class ConnectionException extends ClientException
 {
     /**
-     * Request object
+     * Request object.
      *
      * @var \Psr\Http\Message\RequestInterface
      */
     protected $request;
 
     /**
-     * Constructs new connection exception
+     * Constructs new connection exception.
      *
      * @param \Psr\Http\Message\RequestInterface $request
      * @param mixed                              $args,...
@@ -31,7 +31,7 @@ class ConnectionException extends ClientException
     }
 
     /**
-     * Gets request object
+     * Gets request object.
      *
      * @return \Psr\Http\Message\RequestInterface
      */
@@ -41,7 +41,7 @@ class ConnectionException extends ClientException
     }
 
     /**
-     * Returns array of parameters
+     * Returns array of parameters.
      *
      * @return array
      */
