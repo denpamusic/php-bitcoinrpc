@@ -6,15 +6,8 @@ namespace Denpa\Bitcoin\Requests;
 
 use Denpa\Bitcoin\Client;
 
-class Request
+class Request implements RequestInterface
 {
-    /**
-     * Request method.
-     *
-     * @var array
-     */
-    protected $method;
-
     /**
      * Request parameters.
      *
@@ -23,7 +16,7 @@ class Request
     protected $params;
 
     /**
-     * Constructs new request.
+     * {@inheritdoc}
      *
      * @param string $method
      * @param mixed  $params,...
@@ -37,17 +30,7 @@ class Request
     }
 
     /**
-     * Gets request method.
-     *
-     * @return string
-     */
-    public function getMethod() : string
-    {
-        return $this->method;
-    }
-
-    /**
-     * Gets request parameters.
+     * {@inheritdoc}
      *
      * @return array
      */
@@ -57,7 +40,7 @@ class Request
     }
 
     /**
-     * Sets request parameters.
+     * {@inheritdoc}
      *
      * @param mixed $params,...
      *
@@ -69,19 +52,49 @@ class Request
     }
 
     /**
-     * Serializes request as array for client.
+     * {@inheritdoc}
      *
      * @param \Denpa\Bitcoin\Client $client
      *
+     * @return self
+     */
+    public function assign(Client $client) : self
+    {
+        $this->id = $client->id();
+
+        if ($client->config()->get('preserve_case', false)) {
+            $this->method = strtolower($this->method);
+        }
+
+        return self
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * @return array
      */
-    public function serializeFor(Client $client) : array
+    public function serialize() : array
     {
         return [
-            'method' => $client->getConfig()['preserve_case'] ?
-                $this->method : strtolower($this->method),
-            'params' => $this->params,
-            'id'     => $client->getId(),
+            'jsonrpc' => '2.0',
+            'method'  => $this->method,
+            'params'  => $this->params,
+            'id'      => $this->id,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return array
+     */
+    public function options() : array
+    {
+        return [
+            'meta' => [
+                'Batch' => 0,
+            ],
         ];
     }
 }

@@ -41,13 +41,29 @@ class PromiseWrapper implements PromiseInterface
         callable $onFulfilled = null,
         callable $onRejected = null
     ) : PromiseInterface {
-        return $this->promise->then($onFulfilled, function ($exception) use ($onRejected) {
-            try {
-                exception()->handle($exception);
-            } catch (Throwable $exception) {
-                $onRejected($exception);
-            }
-        });
+        $rejected = function (Throwable $exception) use ($onRejected) {
+            $onRejected(exception()->handle($exception));
+        };
+
+        return $this->promise->then($onFulfilled, $rejected);
+    }
+
+    /**
+     * Iterates over response and calls callback
+     *
+     * @param callable $onFulfilled
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function each(callable $onFulfilled) : PromiseInterface
+    {
+        $fulfilled = function ($batch) use ($onFulfilled) {
+            $batch->each(function (&$response) use ($onFulfilled) {
+                $onFulfilled($response);
+            });
+        };
+
+        return $this->then($fulfilled, null);
     }
 
     /**
@@ -135,6 +151,6 @@ class PromiseWrapper implements PromiseInterface
      */
     public function wait($unwrap = true)
     {
-        return $this->promise->wait();
+        return $this->promise->wait($unwrap);
     }
 }

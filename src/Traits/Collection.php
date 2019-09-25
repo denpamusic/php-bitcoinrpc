@@ -4,352 +4,290 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
-use InvalidArgumentException;
+use function Denpa\Bitcoin\dot_get;
+use function Denpa\Bitcoin\dot_set;
+use function Denpa\Bitcoin\dot_delete;
 
 trait Collection
 {
+    use Serializable;
+
     /**
-     * Current key.
-     *
-     * @var string
+     * @var bool
      */
-    protected $current;
+    public $changed = false;
 
     /**
-     * Gets data by using key with dotted notation.
-     *
-     * @param string|null $key
-     *
-     * @return mixed
+     * @var array
      */
-    public function get(?string $key = null)
-    {
-        $key = $this->constructKey($key);
-
-        if (is_null($key)) {
-            $array = $this->toArray();
-
-            return $this->count() == 1 ? end($array) : $array;
-        }
-
-        return $this->parseKey($key, function ($part, $result) {
-            if (isset($result[$part])) {
-                return $result[$part];
-            }
-        });
-    }
+    protected $items = [];
 
     /**
-     * Checks if key exists.
-     *
-     * @param string|null $key
-     *
-     * @return bool
-     */
-    public function exists(?string $key = null) : bool
-    {
-        $key = $this->constructKey($key);
-
-        return $this->parseKey($key, function ($part, $result) {
-            return array_key_exists($part, $result);
-        });
-    }
-
-    /**
-     * Checks if key exists and not null.
-     *
-     * @param string|null $key
-     *
-     * @return bool
-     */
-    public function has(?string $key = null) : bool
-    {
-        $key = $this->constructKey($key);
-
-        return $this->parseKey($key, function ($part, $result) {
-            return isset($result[$part]);
-        });
-    }
-
-    /**
-     * Gets first element.
-     *
-     * @param string|null $key
-     *
-     * @return mixed
-     */
-    public function first(?string $key = null)
-    {
-        $value = $this->get($key);
-
-        if (is_array($value)) {
-            return reset($value);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Gets last element.
-     *
-     * @param string|null $key
-     *
-     * @return mixed
-     */
-    public function last(?string $key = null)
-    {
-        $value = $this->get($key);
-
-        if (is_array($value)) {
-            return end($value);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Checks if response contains value.
-     *
-     * @param mixed       $needle
-     * @param string|null $key
-     *
-     * @return bool
-     */
-    public function contains($needle, ?string $key = null) : bool
-    {
-        $value = $this->get($key);
-
-        if (!is_array($value)) {
-            throw new InvalidArgumentException(
-                'method contains() should be called on array'
-            );
-        }
-
-        return in_array($needle, $value);
-    }
-
-    /**
-     * Sets current key.
-     *
-     * @param string|null $key
+     * @param mixed $items
      *
      * @return self
      */
-    public function key(?string $key = null) : self
+    public function collect($items) : self
     {
-        $new = clone $this;
-        $new->current = $key;
-
-        return $new;
+        $this->items = (array) $items;
+        return $this;
     }
 
     /**
-     * Gets response keys.
-     *
-     * @param string|null $key
-     *
      * @return array
      */
-    public function keys(?string $key = null) : array
+    public function all() : array
     {
-        $value = $this->get($key);
-
-        if (!is_array($value)) {
-            throw new InvalidArgumentException(
-                'method keys() should be called on array'
-            );
-        }
-
-        return array_keys($value);
+        return $this->items;
     }
 
     /**
-     * Gets response values.
-     *
      * @param string|null $key
-     *
-     * @return array
-     */
-    public function values(?string $key = null) : array
-    {
-        $value = $this->get($key);
-
-        if (!is_array($value)) {
-            throw new InvalidArgumentException(
-                'method values() should be called on array'
-            );
-        }
-
-        return array_values($value);
-    }
-
-    /**
-     * Gets random value.
-     *
-     * @param int         $number
-     * @param string|null $key
+     * @param mixed       $default
      *
      * @return mixed
      */
-    public function random(int $number = 1, ?string $key = null)
+    public function get(?string $key = null, $default = null)
     {
-        $value = $this->get($key);
-
-        if (is_array($value)) {
-            $keys = array_keys($value);
-            $keysLength = count($keys);
-
-            shuffle($keys);
-
-            if ($number > $keysLength) {
-                $number = $keysLength;
-            }
-
-            for ($result = [], $count = 0; $count < $number; $count++) {
-                $result[$keys[$count]] = $value[$keys[$count]];
-            }
-
-            return count($result) > 1 ? $result : current($result);
+        if (is_null($key)) {
+            return $this->items;
         }
 
-        return $value;
+        return dot_get($this->items, $key, $default);
     }
 
     /**
-     * Counts response items.
+     * @param mixed $value,...
      *
-     * @param string|null $key
-     *
-     * @return int
+     * @return void
      */
-    public function count(?string $key = null) : int
+    public function set(...$value) : void
     {
-        if (is_null($this->constructKey($key))) {
-            return count($this->toArray());
-        }
+        dot_set($this->items, $this->getKey($value), $value[0]);
 
-        $value = $this->get($key);
+        $this->changed = true;
+    }
 
-        if (!is_array($value)) {
+    /**
+     * @param mixed $value,...
+     *
+     * @return void
+     */
+    public function push(...$value) : void
+    {
+        $key = $this->getKey($callback);
+        $items = dot_get($this->items, $key) ?? [];
+
+        array_push($items, $value);
+        dot_set($this->items, $key, $items);
+
+        $this->changed = true;
+    }
+
+    /**
+     * @param mixed $callback,...
+     *
+     * @return void
+     */
+    public function each(...$callback) : void
+    {
+        $key = $this->getKey($callback);
+        $items = dot_get($this->items, $key) ?? [];
+
+        if (!is_array($items)) {
             throw new InvalidArgumentException(
-                'method count() should be called on array'
+                'method each() should be called on array'
             );
         }
 
-        return count($value);
+        array_walk($items, $callback[0]);
+        dot_set($this->items, $key, $items)
+
+        $this->changed = true;
     }
 
     /**
-     * Flattens multi-dimensional array.
+     * @param mixed $array,...
      *
-     * @param string|null $key
-     *
-     * @return array
+     * @return void
      */
-    public function flatten(?string $key = null) : array
+    public function merge(...$array) : void
     {
-        $array = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator((array) $this->get($key))
-        );
+        $key = $this->getKey($array);
+        $items = dot_get($this->items, $key);
 
-        $tmp = [];
-        foreach ($array as $value) {
-            $tmp[] = $value;
+        if (!is_array($items)) {
+            throw new InvalidArgumentException(
+                'method merge() should be called on array'
+            );
         }
 
-        return $tmp;
+        $result = array_merge($items, ...$array);
+        dot_set($this->items, $key, $result);
+
+        $this->changed = true;
     }
 
     /**
-     * Gets sum of values.
+     * @param string $key
      *
-     * @param string|null $key
+     * @return void
+     */
+    public function delete(string $key) : void
+    {
+        dot_delete($this->items, $key);
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function exists(string $key) : bool
+    {
+        dot_get($this->items, $key, null, $exists);
+        return $exists;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function has(string $key) : bool
+    {
+        return !is_null(dot_get($this->items, $key));
+    }
+
+    /**
+     * @param string $key
      *
      * @return float
      */
-    public function sum(?string $key = null) : float
+    public function sum(string $key) : float
     {
-        return array_sum($this->flatten($key));
+        return array_sum((array) dot_get($this->items, $key));
     }
 
     /**
-     * Gets response item by key.
+     * @param string $key
      *
-     * @param string|null $key
-     *
-     * @return self
+     * @return int
      */
-    public function __invoke(?string $key = null) : self
+    public function count(string $key) : int
     {
-        return $this->key($key);
+        return count((array) dot_get($this->items, $key));
     }
 
     /**
-     * Converts response to string on current key.
+     * @param string $key
      *
-     * @return string
+     * @return float
      */
-    public function __toString() : string
+    public function avg(string $key) : float
     {
-        $value = $this->get();
-
-        if (is_array($value) || is_object($value)) {
-            return json_encode($value);
-        }
-
-        return (string) $value;
+        return $this->sum($key) / $this->count($key);
     }
 
     /**
-     * Constructs full key.
+     * @param string $key
      *
-     * @param string|null $key
-     *
-     * @return string|null
+     * @return float
      */
-    protected function constructKey(?string $key = null) : ?string
+    public function max(string $key) : float
     {
-        if (!is_null($key) && !is_null($this->current)) {
-            return $this->current.'.'.$key;
-        }
-
-        if (is_null($key) && !is_null($this->current)) {
-            return $this->current;
-        }
-
-        return $key;
+        return max((array) dot_get($this->items, $key));
     }
 
     /**
-     * Parses dotted notation.
+     * @param string $key
      *
-     * @param array|string $key
-     * @param callable     $callback
-     * @param array|null   $result
+     * @return float
+     */
+    public function min(string $key) : float
+    {
+        return min((array) dot_get($this->items, $key));
+    }
+
+    /**
+     * @param string $key
+     * @param int    $number
      *
      * @return mixed
      */
-    protected function parseKey($key, callable $callback, ?array $result = null)
+    public function random(string $key, int $number = 1)
     {
-        $parts = is_array($key) ? $key : explode('.', trim($key, '.'));
-        $result = $result ?: $this->toArray();
+        $array = (array) dot_get($this->items, $key);
+        $result = [];
 
-        while (!is_null($part = array_shift($parts))) {
-            if ($part == '*') {
-                array_walk($result, function (&$value) use ($parts, $callback) {
-                    $value = $this->parseKey($parts, $callback, $value);
-                });
-
-                return $result;
-            }
-
-            if (!$return = $callback($part, $result)) {
-                return $return;
-            }
-
-            $result = $result[$part];
+        foreach ((array) array_rand($array, $number) as $key) {
+            $result[] = $array[$key];
         }
 
-        return $return;
+        return $this->collapse($result);
+    }
+
+    /**
+     * Assigns a value to the specified offset.
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function offsetSet($offset, $value) : void
+    {
+        $this->set($value, $offset);
+    }
+
+    /**
+     * Whether or not an offset exists.
+     *
+     * @param mixed $offset
+     *
+     * @return bool
+     */
+    public function offsetExists($offset) : bool
+    {
+        return $this->exists($offset);
+    }
+
+    /**
+     * Unsets the offset.
+     *
+     * @param mixed $offset
+     *
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        $this->delete($offset);
+    }
+
+    /**
+     * Returns the value at specified offset.
+     *
+     * @param mixed $offset
+     *
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * @param array $args
+     *
+     * @return array
+     */
+    protected function getKey(array &$args)
+    {
+        if (count($args) == 1) {
+            // if only one arg, assume that key is not set
+            return null;
+        }
+
+        return array_shift($args);
     }
 }

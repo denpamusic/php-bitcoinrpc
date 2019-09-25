@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
+use ArrayAccess;
+use GuzzleHttp\HandlerStack;
 use Denpa\Bitcoin\Traits\Collection;
-use Denpa\Bitcoin\Traits\ImmutableArray;
 
-class Config implements \ArrayAccess, \Countable
+class Config implements ArrayAccess
 {
-    use Collection, ImmutableArray;
+    use Collection;
 
     /**
-     * Default configuration.
+     * Configuration defaults
      *
      * @var array
      */
-    protected $config = [
+    protected $defaults = [
         'scheme'        => 'http',
         'host'          => '127.0.0.1',
         'port'          => 8332,
@@ -24,10 +25,12 @@ class Config implements \ArrayAccess, \Countable
         'password'      => null,
         'ca'            => null,
         'preserve_case' => false,
+        'request'       => ['handler' => 'Denpa\\Bitcoin\\Requests\\Request'],
+        'response'      => ['handler' => 'Denpa\\Bitcoin\\Responses\\Response'],
     ];
 
     /**
-     * Constructs new configuration.
+     * Constructs new configuration
      *
      * @param array $config
      *
@@ -35,79 +38,81 @@ class Config implements \ArrayAccess, \Countable
      */
     public function __construct(array $config = [])
     {
-        $this->set($config);
+        $this->collect($this->defaults)->merge($config);
+
+        $this->set('response.middleware', [
+            'Denpa\\Bitcoin\\Middleware\\Response',
+            'Denpa\\Bitcoin\\Middleware\\BatchHeader',
+        ]);
     }
 
     /**
-     * Gets CA file from config.
+     * Serializes config
+     *
+     * @return array
+     */
+    public function serialize() : array
+    {
+        return [
+            'base_uri' => $this->getBaseUri(),
+            'auth'     => $this->getAuth(),
+            'verify'   => $this->getCa(),
+            'handler'  => $this->getHandler(),
+        ];
+    }
+
+    /**
+     * Gets CA file from config
      *
      * @return string|null
      */
-    public function getCa() : ?string
+    protected function getCa() : ?string
     {
-        if (isset($this->config['ca']) && is_file($this->config['ca'])) {
-            return $this->config['ca'];
+        if ($this->has('ca') && is_file($this->get('ca'))) {
+            return $this->get('ca');
         }
 
         return null;
     }
 
     /**
-     * Gets authentication array.
+     * Gets authentication array
      *
      * @return array
      */
-    public function getAuth() : array
+    protected function getAuth() : array
     {
         return [
-            $this->config['user'],
-            $this->config['password'],
+            $this->get('user'),
+            $this->get('password', $this->get('pass')),
         ];
     }
 
     /**
-     * Gets DSN string.
+     * Gets base uri
      *
      * @return string
      */
-    public function getDsn() : string
+    protected function getBaseUri() : string
     {
-        $scheme = $this->config['scheme'] ?? 'http';
-
-        return $scheme.'://'.
-            $this->config['host'].':'.
-            $this->config['port'];
+        return $this->get('scheme', 'http').'://'.
+            $this->get('host').':'.
+            $this->get('port');
     }
 
     /**
-     * Merge config.
+     * Gets Guzzle handler stack
      *
-     * @param array $config
-     *
-     * @return self
+     * @return \GuzzleHttp\HandlerStack
      */
-    public function set(array $config = []) : self
+    protected function getHandler() : HandlerStack
     {
-        // use same var name as laravel-bitcoinrpc
-        $config['password'] = $config['password'] ?? $config['pass'] ?? null;
+        $stack = HandlerStack::create();
 
-        if (is_null($config['password'])) {
-            // use default value from getDefaultConfig()
-            unset($config['password']);
+        foreach ($this->get('response.middleware', []) as $middleware) {
+            $stack->push($middleware::middleware($this));
         }
 
-        $this->config = array_merge($this->config, $config);
-
-        return $this;
-    }
-
-    /**
-     * Gets config as array.
-     *
-     * @return array
-     */
-    protected function toArray() : array
-    {
-        return $this->config;
+        return $stack;
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Traits;
 
-trait SerializableContainer
+trait Serializable
 {
     /**
      * Returns the string representation of the object.
@@ -13,7 +13,7 @@ trait SerializableContainer
      */
     public function serialize() : string
     {
-        return serialize($this->toContainer());
+        return serialize($this->items);
     }
 
     /**
@@ -25,7 +25,7 @@ trait SerializableContainer
      */
     public function unserialize($serialized) : void
     {
-        $this->container = unserialize($serialized);
+        $this->items = unserialize($serialized);
     }
 
     /**
@@ -35,6 +35,6 @@ trait SerializableContainer
      */
     public function jsonSerialize() : array
     {
-        return $this->toContainer();
+        return $this->items;
     }
 }

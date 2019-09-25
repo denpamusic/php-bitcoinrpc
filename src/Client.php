@@ -4,56 +4,44 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin;
 
-use Denpa\Bitcoin\Exceptions\BadRemoteCallException;
-use Denpa\Bitcoin\Requests\Request;
+use Throwable;
 use GuzzleHttp\Client as GuzzleHttp;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
-use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
 
-class Client
+class Client implements ClientInterface
 {
     /**
-     * Http Client.
-     *
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
-
-    /**
-     * Client configuration.
+     * Client configuration
      *
      * @var \Denpa\Bitcoin\Config
      */
     protected $config;
 
     /**
-     * Array of GuzzleHttp promises.
+     * Configuration provider class name
+     *
+     * @var string
+     */
+    protected $configProvider = 'Denpa\\Bitcoin\\Config';
+
+    /**
+     * json-rpc request id
+     *
+     * @var int
+     */
+    protected $id = 0;
+
+    /**
+     * Array of GuzzleHttp promises
      *
      * @var array
      */
     protected $promises = [];
 
     /**
-     * URL path.
-     *
-     * @var string
-     */
-    protected $path = '/';
-
-    /**
-     * JSON-RPC Id.
-     *
-     * @var int
-     */
-    protected $rpcId = 0;
-
-    /**
-     * Constructs new client.
+     * Constructs new client instance
      *
      * @param array|string $config
      *
@@ -65,21 +53,11 @@ class Client
             $config = split_url($config);
         }
 
-        // init configuration
-        $provider = $this->getConfigProvider();
-        $this->config = new $provider($config);
-
-        // construct client
-        $this->client = new GuzzleHttp([
-            'base_uri' => $this->config->getDsn(),
-            'auth'     => $this->config->getAuth(),
-            'verify'   => $this->config->getCa(),
-            'handler'  => $this->getHandler(),
-        ]);
+        $this->config = new $this->configProvider($config);
     }
 
     /**
-     * Wait for all promises on object destruction.
+     * Waits for all promises to resolve
      *
      * @return void
      */
@@ -89,41 +67,33 @@ class Client
     }
 
     /**
-     * Gets client config.
+     * {@inheritdoc}
+     *
+     * @return int
+     */
+    public function id() : int
+    {
+        return $this->id++;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array|null $config
      *
      * @return \Denpa\Bitcoin\Config
      */
-    public function getConfig() : Config
+    public function config(?array $config = null) : Config
     {
+        if (!is_null($config)) {
+            $this->config->set($config);
+        }
+
         return $this->config;
     }
 
     /**
-     * Gets http client.
-     *
-     * @return \GuzzleHttp\ClientInterface
-     */
-    public function getClient() : ClientInterface
-    {
-        return $this->client;
-    }
-
-    /**
-     * Sets http client.
-     *
-     * @param  \GuzzleHttp\ClientInterface
-     *
-     * @return self
-     */
-    public function setClient(ClientInterface $client) : self
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    /**
-     * Sets wallet for multi-wallet rpc request.
+     * {@inheritdoc}
      *
      * @param string $name
      *
@@ -137,62 +107,77 @@ class Client
     }
 
     /**
-     * Makes request to Bitcoin Core.
+     * {@inheritdoc}
      *
-     * @param \Denpa\Bitcoin\Requests\Request $requests,...
+     * @param array $requests,...
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function send(...$requests) : ResponseInterface
     {
-        try {
-            $json = $this->makeJson(...$requests);
-            $response = $this->client->post($this->path, $json);
+        $result = null;
 
-            if ($response->hasError()) {
-                // throw exception on error
+        $success = function (ResponseInterface $response) use (&$result) {
+            if ($response->error) {
                 throw new BadRemoteCallException($response);
             }
 
-            return $response;
+            $result = $response;
+        };
+
+        $failure = function (Throwable $exception) {
+            throw $exception;
+        };
+
+        try {
+            $this->sendAsync(...$requests)->then($success, $failure)->wait();
         } catch (Throwable $exception) {
             throw exception()->handle($exception);
         }
+
+        return $result;
     }
 
     /**
-     * Makes async request to Bitcoin Core.
+     * {@inheritdoc}
      *
-     * @param \Denpa\Bitcoin\Requests\Request $requests,...
+     * @param array $requests,...
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function sendAsync(...$requests) : PromiseInterface
     {
-        $json = $this->makeJson(...$requests);
-        $promise = $this->client->postAsync($this->path, $json);
+        $handler = $this->config->get(
+            'request.handler', 'Denpa\\Bitcoin\\Requests\\Request'
+        );
 
-        $promise = new PromiseWrapper($promise);
+        $request = request_for($requests, $handler)->assign($this);
 
-        $this->promises[] = $promise;
+        $promise = $this
+            ->guzzle()
+            ->postAsync(
+                $this->path,
+                ['json' => $request->serialize()],
+                $request->options()
+            );
+
+        $promises[] = new PromiseWrapper($promise);
 
         return $promise;
     }
 
     /**
-     * Settle all promises.
+     * {@inheritdoc}
      *
      * @return void
      */
     public function wait() : void
     {
-        if (!empty($this->promises)) {
-            Promise\settle($this->promises)->wait();
-        }
+        Promise\settle($this->promises)->wait();
     }
 
     /**
-     * Makes request to Bitcoin Core.
+     * Makes json-rpc request via magic call
      *
      * @param string $method
      * @param array  $params
@@ -202,78 +187,26 @@ class Client
     public function __call(string $method, array $params = [])
     {
         if (strtolower(substr($method, -5)) == 'async') {
-            return $this->sendAsync(
-                new Request(substr($method, 0, -5), ...$params)
-            );
+            return $this->sendAsync([substr($method, 0, -5) => $params]);
         }
 
-        return $this->send(new Request($method, ...$params));
+        return $this->send([$method => $params]);
     }
 
     /**
-     * Get JSON-RPC id.
+     * Gets guzzle client instance
      *
-     * @return int
+     * @return \GuzzleHttp\Client
      */
-    public function getId() : int
+    protected function guzzle() : GuzzleHttp
     {
-        return $this->rpcId++;
-    }
+        static $guzzle = null;
 
-    /**
-     * Gets config provider class name.
-     *
-     * @return string
-     */
-    protected function getConfigProvider() : string
-    {
-        return 'Denpa\\Bitcoin\\Config';
-    }
+        if (!$guzzle || $this->config->changed) {
+            $guzzle = new GuzzleHttp($this->config->serialize());
+            $this->config->changed = false;
+        }
 
-    /**
-     * Gets response handler class name.
-     *
-     * @return string
-     */
-    protected function getResponseHandler() : string
-    {
-        return 'Denpa\\Bitcoin\\Responses\\BitcoindResponse';
-    }
-
-    /**
-     * Gets Guzzle handler stack.
-     *
-     * @return \GuzzleHttp\HandlerStack
-     */
-    protected function getHandler() : HandlerStack
-    {
-        $stack = HandlerStack::create();
-
-        $stack->push(
-            Middleware::mapResponse(function (ResponseInterface $response) {
-                $handler = $this->getResponseHandler();
-
-                return new $handler($response);
-            }),
-            'bitcoind_response'
-        );
-
-        return $stack;
-    }
-
-    /**
-     * Gets json array.
-     *
-     * @param \Denpa\Bitcoin\Requests\Request $requests,...
-     *
-     * @return array
-     */
-    protected function makeJson(...$requests) : array
-    {
-        $requests = array_map(function ($value) {
-            return request_for($value)->serializeFor($this);
-        }, $requests);
-
-        return ['json' => count($requests) > 1 ? $requests : $requests[0]];
+        return $guzzle
     }
 }

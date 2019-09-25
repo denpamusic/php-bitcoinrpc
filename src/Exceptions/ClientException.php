@@ -9,17 +9,17 @@ use Exception;
 abstract class ClientException extends Exception
 {
     /**
-     * Returns class name in provided namespace.
+     * Returns class name in provided namespace
      *
      * @param string $namespace
      *
      * @return \Exception
      */
-    public function withNamespace($namespace) : Exception
+    public function withNamespace(string $namespace) : Exception
     {
         $classname = $this->getClassName();
 
-        $class = $namespace."\\$classname";
+        $class = "$namespace\\$classname";
 
         if (class_exists($class)) {
             return new $class(...$this->getConstructorParameters());
@@ -29,7 +29,7 @@ abstract class ClientException extends Exception
     }
 
     /**
-     * Gets exception class name.
+     * Gets exception class name
      *
      * @return string
      */
@@ -41,7 +41,7 @@ abstract class ClientException extends Exception
     }
 
     /**
-     * Returns array of parameters.
+     * Returns array of parameters
      *
      * @return array
      */

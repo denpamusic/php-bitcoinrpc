@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
-use GuzzleHttp\Psr7\Request;
+use Psr\Http\Message\RequestInterface;
 
 class ConnectionException extends ClientException
 {
     /**
-     * Request object.
+     * Request object
      *
-     * @var \GuzzleHttp\Psr7\Request
+     * @var \Psr\Http\Message\RequestInterface
      */
     protected $request;
 
     /**
-     * Constructs new connection exception.
+     * Constructs new connection exception
      *
-     * @param \GuzzleHttp\Psr7\Request $request
-     * @param mixed                    $args,...
+     * @param \Psr\Http\Message\RequestInterface $request
+     * @param mixed                              $args,...
      *
      * @return void
      */
-    public function __construct(Request $request, ...$args)
+    public function __construct(RequestInterface $request, ...$args)
     {
         $this->request = $request;
 
@@ -31,17 +31,17 @@ class ConnectionException extends ClientException
     }
 
     /**
-     * Gets request object.
+     * Gets request object
      *
-     * @return \GuzzleHttp\Psr7\Request
+     * @return \Psr\Http\Message\RequestInterface
      */
-    public function getRequest() : Request
+    public function getRequest() : RequestInterface
     {
         return $this->request;
     }
 
     /**
-     * Returns array of parameters.
+     * Returns array of parameters
      *
      * @return array
      */

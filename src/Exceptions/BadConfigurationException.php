@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
+use Denpa\Bitcoin\ConfigInterface;
+
 class BadConfigurationException extends ClientException
 {
     /**
-     * Configuration container.
+     * Configuration container
      *
      * @var array
      */
     protected $config;
 
     /**
-     * Constructs new bad configuration exception.
+     * Constructs new bad configuration exception
      *
-     * @param array $config
-     * @param mixed $args,...
+     * @param \Denpa\Bitcoin\ConfigInterface $config
+     * @param mixed                          $args,...
      *
      * @return void
      */
-    public function __construct(array $config, ...$args)
+    public function __construct(ConfigInterface $config, ...$args)
     {
         $this->config = $config;
 
@@ -29,7 +31,7 @@ class BadConfigurationException extends ClientException
     }
 
     /**
-     * Gets config data.
+     * Gets config data
      *
      * @return array
      */
@@ -39,7 +41,7 @@ class BadConfigurationException extends ClientException
     }
 
     /**
-     * Returns array of parameters.
+     * Returns array of parameters
      *
      * @return array
      */

@@ -4,44 +4,43 @@ declare(strict_types=1);
 
 namespace Denpa\Bitcoin\Exceptions;
 
-use Denpa\Bitcoin\Responses\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class BadRemoteCallException extends ClientException
 {
     /**
-     * Response object.
+     * Response instance
      *
-     * @var \Denpa\Bitcoin\Responses\Response
+     * @var \Psr\Http\Message\ResponseInterface
      */
     protected $response;
 
     /**
-     * Constructs new bad remote call exception.
+     * Constructs new bad remote call exception
      *
-     * @param \Denpa\Bitcoin\Responses\Response $response
+     * @param \Psr\Http\Message\ResponseInterface $response
      *
      * @return void
      */
-    public function __construct(Response $response)
+    public function __construct(ResponseInterface $response)
     {
         $this->response = $response;
 
-        $error = $response->error();
-        parent::__construct($error['message'], $error['code']);
+        parent::__construct($response->error['message'], $response->error['code']);
     }
 
     /**
-     * Gets response object.
+     * Gets response object
      *
-     * @return \Denpa\Bitcoin\Responses\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getResponse() : Response
+    public function getResponse() : ResponseInterface
     {
         return $this->response;
     }
 
     /**
-     * Returns array of parameters.
+     * Returns array of parameters
      *
      * @return array
      */
