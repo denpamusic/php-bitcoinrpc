@@ -72,10 +72,12 @@ class Client
 
         // construct client
         $this->client = new GuzzleHttp([
-            'base_uri' => $this->config->getDsn(),
-            'auth'     => $this->config->getAuth(),
-            'verify'   => $this->config->getCa(),
-            'handler'  => $this->getHandler(),
+            'base_uri'        => $this->config->getDsn(),
+            'auth'            => $this->config->getAuth(),
+            'verify'          => $this->config->getCa(),
+            'timeout'         => (float) $this->config['timeout'],
+            'connect_timeout' => (float) $this->config['timeout'],
+            'handler'         => $this->getHandler(),
         ]);
     }
 

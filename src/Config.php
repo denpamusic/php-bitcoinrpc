@@ -23,6 +23,7 @@ class Config implements \ArrayAccess, \Countable
         'user'          => null,
         'password'      => null,
         'ca'            => null,
+        'timeout'       => false,
         'preserve_case' => false,
     ];
 
