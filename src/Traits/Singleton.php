@@ -18,7 +18,7 @@ trait Singleton
      *
      * @return self
      */
-    public static function getInstance() : self
+    public static function getInstance(): self
     {
         if (is_null(self::$instance)) {
             self::$instance = new self();
@@ -32,7 +32,7 @@ trait Singleton
      *
      * @return void
      */
-    public static function clearInstance() : void
+    public static function clearInstance(): void
     {
         self::$instance = null;
     }

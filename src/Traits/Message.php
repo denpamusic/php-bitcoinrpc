@@ -13,7 +13,7 @@ trait Message
      *
      * @return float
      */
-    public function getProtocolVersion() : float
+    public function getProtocolVersion(): float
     {
         return $this->response->getProtocolVersion();
     }
@@ -25,7 +25,7 @@ trait Message
      *
      * @return self
      */
-    public function withProtocolVersion($version) : self
+    public function withProtocolVersion($version): self
     {
         $new = clone $this;
 
@@ -39,7 +39,7 @@ trait Message
      *
      * @return array
      */
-    public function getHeaders() : array
+    public function getHeaders(): array
     {
         return $this->response->getHeaders();
     }
@@ -51,7 +51,7 @@ trait Message
      *
      * @return bool
      */
-    public function hasHeader($name) : bool
+    public function hasHeader($name): bool
     {
         return $this->response->hasHeader($name);
     }
@@ -63,7 +63,7 @@ trait Message
      *
      * @return array
      */
-    public function getHeader($name) : array
+    public function getHeader($name): array
     {
         return $this->response->getHeader($name);
     }
@@ -75,7 +75,7 @@ trait Message
      *
      * @return string
      */
-    public function getHeaderLine($name) : string
+    public function getHeaderLine($name): string
     {
         return $this->response->getHeaderLine($name);
     }
@@ -88,7 +88,7 @@ trait Message
      *
      * @return self
      */
-    public function withHeader($name, $value) : self
+    public function withHeader($name, $value): self
     {
         $new = clone $this;
 
@@ -103,7 +103,7 @@ trait Message
      *
      * @return self
      */
-    public function withAddedHeader($name, $value) : self
+    public function withAddedHeader($name, $value): self
     {
         $new = clone $this;
 
@@ -117,7 +117,7 @@ trait Message
      *
      * @return self
      */
-    public function withoutHeader($name) : self
+    public function withoutHeader($name): self
     {
         $new = clone $this;
 
@@ -129,7 +129,7 @@ trait Message
      *
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function getBody() : StreamInterface
+    public function getBody(): StreamInterface
     {
         return $this->response->getBody();
     }
@@ -141,7 +141,7 @@ trait Message
      *
      * @return self
      */
-    public function withBody(StreamInterface $body) : self
+    public function withBody(StreamInterface $body): self
     {
         $new = clone $this;
 

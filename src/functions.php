@@ -15,7 +15,7 @@ if (!function_exists('to_bitcoin')) {
      *
      * @return string
      */
-    function to_bitcoin(int $satoshi) : string
+    function to_bitcoin(int $satoshi): string
     {
         return bcdiv((string) $satoshi, (string) 1e8, 8);
     }
@@ -29,7 +29,7 @@ if (!function_exists('to_satoshi')) {
      *
      * @return string
      */
-    function to_satoshi($bitcoin) : string
+    function to_satoshi($bitcoin): string
     {
         return bcmul(to_fixed($bitcoin, 8), (string) 1e8);
     }
@@ -43,7 +43,7 @@ if (!function_exists('to_ubtc')) {
      *
      * @return string
      */
-    function to_ubtc($bitcoin) : string
+    function to_ubtc($bitcoin): string
     {
         return bcmul(to_fixed($bitcoin, 8), (string) 1e6, 4);
     }
@@ -57,7 +57,7 @@ if (!function_exists('to_mbtc')) {
      *
      * @return string
      */
-    function to_mbtc($bitcoin) : string
+    function to_mbtc($bitcoin): string
     {
         return bcmul(to_fixed($bitcoin, 8), (string) 1e3, 4);
     }
@@ -72,7 +72,7 @@ if (!function_exists('to_fixed')) {
      *
      * @return string
      */
-    function to_fixed(string $number, int $precision = 8) : string
+    function to_fixed(string $number, int $precision = 8): string
     {
         $number = bcmul($number, (string) pow(10, $precision));
 
@@ -88,7 +88,7 @@ if (!function_exists('split_url')) {
      *
      * @return array
      */
-    function split_url(string $url) : array
+    function split_url(string $url): array
     {
         $allowed = ['scheme', 'host', 'port', 'user', 'pass'];
 
@@ -112,7 +112,7 @@ if (!function_exists('exception')) {
      *
      * @return \Denpa\Bitcoin\Exceptions\Handler
      */
-    function exception() : ExceptionHandler
+    function exception(): ExceptionHandler
     {
         return ExceptionHandler::getInstance();
     }

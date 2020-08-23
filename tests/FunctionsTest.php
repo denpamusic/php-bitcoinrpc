@@ -18,7 +18,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToBtc(int $satoshi, string $bitcoin) : void
+    public function testToBtc(int $satoshi, string $bitcoin): void
     {
         $this->assertEquals($bitcoin, Bitcoin\to_bitcoin($satoshi));
     }
@@ -33,7 +33,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToSatoshi(int $satoshi, string $bitcoin) : void
+    public function testToSatoshi(int $satoshi, string $bitcoin): void
     {
         $this->assertEquals($satoshi, Bitcoin\to_satoshi($bitcoin));
     }
@@ -48,7 +48,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider bitsBtcProvider
      */
-    public function testToBits(int $ubtc, string $bitcoin) : void
+    public function testToBits(int $ubtc, string $bitcoin): void
     {
         $this->assertEquals($ubtc, Bitcoin\to_ubtc($bitcoin));
     }
@@ -63,7 +63,7 @@ class FunctionsTest extends TestCase
      *
      * @dataProvider mbtcBtcProvider
      */
-    public function testToMbtc(float $mbtc, string $bitcoin) : void
+    public function testToMbtc(float $mbtc, string $bitcoin): void
     {
         $this->assertEquals($mbtc, Bitcoin\to_mbtc($bitcoin));
     }
@@ -83,7 +83,7 @@ class FunctionsTest extends TestCase
         float $float,
         int $precision,
         string $expected
-    ) : void {
+    ): void {
         $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
     }
 
@@ -108,7 +108,7 @@ class FunctionsTest extends TestCase
         ?int $port,
         ?string $user,
         ?string $pass
-    ) : void {
+    ): void {
         $parts = Bitcoin\split_url($url);
 
         $this->assertEquals($parts['scheme'], $scheme);
@@ -125,7 +125,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function testSplitUrlWithInvalidUrl() : void
+    public function testSplitUrlWithInvalidUrl(): void
     {
         $this->expectException(BadConfigurationException::class);
         $this->expectExceptionMessage('Invalid url');
@@ -138,7 +138,7 @@ class FunctionsTest extends TestCase
      *
      * @return void
      */
-    public function testExceptionHandlerHelper() : void
+    public function testExceptionHandlerHelper(): void
     {
         $this->assertInstanceOf(ExceptionHandler::class, Bitcoin\exception());
     }
@@ -148,7 +148,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function urlProvider() : array
+    public function urlProvider(): array
     {
         return [
             ['https://localhost', 'https', 'localhost', null, null, null],
@@ -165,7 +165,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function satoshiBtcProvider() : array
+    public function satoshiBtcProvider(): array
     {
         return [
             [1000, '0.00001000'],
@@ -182,7 +182,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function bitsBtcProvider() : array
+    public function bitsBtcProvider(): array
     {
         return [
             [10, '0.00001000'],
@@ -198,7 +198,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function mbtcBtcProvider() : array
+    public function mbtcBtcProvider(): array
     {
         return [
             [0.01, '0.00001000'],
@@ -214,7 +214,7 @@ class FunctionsTest extends TestCase
      *
      * @return array
      */
-    public function floatProvider() : array
+    public function floatProvider(): array
     {
         return [
             [1.2345678910, 0, '1'],

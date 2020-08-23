@@ -14,14 +14,16 @@ class BitcoindResponse extends Response implements
     \Serializable,
     \JsonSerializable
 {
-    use Collection, ImmutableArray, SerializableContainer;
+    use Collection;
+    use ImmutableArray;
+    use SerializableContainer;
 
     /**
      * Gets array representation of response object.
      *
      * @return array
      */
-    public function toArray() : array
+    public function toArray(): array
     {
         return (array) $this->result();
     }
@@ -31,7 +33,7 @@ class BitcoindResponse extends Response implements
      *
      * @return array
      */
-    public function toContainer() : array
+    public function toContainer(): array
     {
         return $this->container;
     }

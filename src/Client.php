@@ -96,7 +96,7 @@ class Client
      *
      * @return \Denpa\Bitcoin\Config
      */
-    public function getConfig() : Config
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -106,7 +106,7 @@ class Client
      *
      * @return \GuzzleHttp\ClientInterface
      */
-    public function getClient() : ClientInterface
+    public function getClient(): ClientInterface
     {
         return $this->client;
     }
@@ -118,7 +118,7 @@ class Client
      *
      * @return self
      */
-    public function setClient(ClientInterface $client) : self
+    public function setClient(ClientInterface $client): self
     {
         $this->client = $client;
 
@@ -132,7 +132,7 @@ class Client
      *
      * @return self
      */
-    public function wallet(string $name) : self
+    public function wallet(string $name): self
     {
         $this->path = "/wallet/$name";
 
@@ -147,7 +147,7 @@ class Client
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function request(string $method, ...$params) : ResponseInterface
+    public function request(string $method, ...$params): ResponseInterface
     {
         try {
             $response = $this->client
@@ -178,7 +178,8 @@ class Client
         string $method,
         $params = [],
         ?callable $fulfilled = null,
-        ?callable $rejected = null) : Promise\Promise
+        ?callable $rejected = null
+    ): Promise\Promise
     {
         $promise = $this->client
             ->postAsync($this->path, $this->makeJson($method, $params));
@@ -205,7 +206,7 @@ class Client
      *
      * @return void
      */
-    public function wait() : void
+    public function wait(): void
     {
         if (!empty($this->promises)) {
             Promise\settle($this->promises)->wait();
@@ -234,7 +235,7 @@ class Client
      *
      * @return string
      */
-    protected function getConfigProvider() : string
+    protected function getConfigProvider(): string
     {
         return 'Denpa\\Bitcoin\\Config';
     }
@@ -244,7 +245,7 @@ class Client
      *
      * @return string
      */
-    protected function getResponseHandler() : string
+    protected function getResponseHandler(): string
     {
         return 'Denpa\\Bitcoin\\Responses\\BitcoindResponse';
     }
@@ -254,7 +255,7 @@ class Client
      *
      * @return \GuzzleHttp\HandlerStack
      */
-    protected function getHandler() : HandlerStack
+    protected function getHandler(): HandlerStack
     {
         $stack = HandlerStack::create();
 
@@ -278,7 +279,7 @@ class Client
      *
      * @return array
      */
-    protected function makeJson(string $method, $params = []) : array
+    protected function makeJson(string $method, $params = []): array
     {
         return [
             'json' => [

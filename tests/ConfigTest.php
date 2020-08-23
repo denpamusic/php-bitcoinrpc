@@ -11,7 +11,7 @@ class ConfigTest extends TestCase
      *
      * @return void
      */
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -27,7 +27,7 @@ class ConfigTest extends TestCase
      *
      * @return void
      */
-    public function testGetCa() : void
+    public function testGetCa(): void
     {
         $this->assertEquals(__FILE__, $this->config->getCa());
     }
@@ -37,7 +37,7 @@ class ConfigTest extends TestCase
      *
      * @return void
      */
-    public function testGetAuth() : void
+    public function testGetAuth(): void
     {
         $this->assertEquals(['testuser', 'testpass'], $this->config->getAuth());
     }
@@ -47,7 +47,7 @@ class ConfigTest extends TestCase
      *
      * @return void
      */
-    public function testGetDsn() : void
+    public function testGetDsn(): void
     {
         $this->assertEquals('http://127.0.0.1:8332', $this->config->getDsn());
     }
@@ -57,7 +57,7 @@ class ConfigTest extends TestCase
      *
      * @return void
      */
-    public function testSet() : void
+    public function testSet(): void
     {
         $this->config->set(['password' => 'testpass2']);
 

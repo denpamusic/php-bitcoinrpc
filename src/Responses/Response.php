@@ -43,7 +43,7 @@ abstract class Response implements ResponseInterface
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function response() : ResponseInterface
+    public function response(): ResponseInterface
     {
         return $this->response;
     }
@@ -55,7 +55,7 @@ abstract class Response implements ResponseInterface
      *
      * @return self
      */
-    public function setResponse(ResponseInterface $response) : self
+    public function setResponse(ResponseInterface $response): self
     {
         $this->response = $response;
 
@@ -67,7 +67,7 @@ abstract class Response implements ResponseInterface
      *
      * @return bool
      */
-    public function hasError() : bool
+    public function hasError(): bool
     {
         return isset($this->container['error']);
     }
@@ -77,7 +77,7 @@ abstract class Response implements ResponseInterface
      *
      * @return array|null
      */
-    public function error() : ?array
+    public function error(): ?array
     {
         return $this->container['error'] ?? null;
     }
@@ -87,7 +87,7 @@ abstract class Response implements ResponseInterface
      *
      * @return bool
      */
-    public function hasResult() : bool
+    public function hasResult(): bool
     {
         return isset($this->container['result']);
     }
@@ -107,7 +107,7 @@ abstract class Response implements ResponseInterface
      *
      * @return int
      */
-    public function getStatusCode() : int
+    public function getStatusCode(): int
     {
         return $this->response->getStatusCode();
     }
@@ -120,7 +120,7 @@ abstract class Response implements ResponseInterface
      *
      * @return self
      */
-    public function withStatus($code, $reasonPhrase = '') : self
+    public function withStatus($code, $reasonPhrase = ''): self
     {
         $new = clone $this;
 
@@ -134,7 +134,7 @@ abstract class Response implements ResponseInterface
      *
      * @return string
      */
-    public function getReasonPhrase() : string
+    public function getReasonPhrase(): string
     {
         return $this->response->getReasonPhrase();
     }

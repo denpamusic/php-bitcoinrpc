@@ -12,7 +12,7 @@ class ClientExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testWithNamespace() : void
+    public function testWithNamespace(): void
     {
         $exception = (new FakeClientException())
             ->withNamespace('Test\\Exceptions');
@@ -28,7 +28,7 @@ class ClientExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testWithNamespaceWithNonexistentClass() : void
+    public function testWithNamespaceWithNonexistentClass(): void
     {
         $exception = (new FakeClientException())
             ->withNamespace('Test\\Nonexistents');
@@ -41,7 +41,7 @@ class ClientExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetClassName() : void
+    public function testGetClassName(): void
     {
         $exception = new FakeClientException();
 
@@ -53,12 +53,12 @@ class FakeClientException extends ClientException
 {
     // original ClientException is an abstract class
 
-    public function getClassName() : string
+    public function getClassName(): string
     {
         return parent::getClassName();
     }
 
-    protected function getConstructorParameters() : array
+    protected function getConstructorParameters(): array
     {
         return [];
     }

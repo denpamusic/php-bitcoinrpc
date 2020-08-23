@@ -17,7 +17,7 @@ trait HandlesAsync
      *
      * @return void
      */
-    protected function onSuccess(ResponseInterface $response, ?callable $callback = null) : void
+    protected function onSuccess(ResponseInterface $response, ?callable $callback = null): void
     {
         if (!is_null($callback)) {
             $callback($response);
@@ -32,7 +32,7 @@ trait HandlesAsync
      *
      * @return void
      */
-    protected function onError(Exception $exception, ?callable $callback = null) : void
+    protected function onError(Exception $exception, ?callable $callback = null): void
     {
         if (!is_null($callback)) {
             $callback($exception);

@@ -11,7 +11,7 @@ trait SerializableContainer
      *
      * @return string
      */
-    public function serialize() : string
+    public function serialize(): string
     {
         return serialize($this->toContainer());
     }
@@ -23,7 +23,7 @@ trait SerializableContainer
      *
      * @return void
      */
-    public function unserialize($serialized) : void
+    public function unserialize($serialized): void
     {
         $this->container = unserialize($serialized);
     }
@@ -33,7 +33,7 @@ trait SerializableContainer
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return $this->toContainer();
     }

@@ -14,7 +14,7 @@ class HandlerTest extends TestCase
      *
      * @return void
      */
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -27,7 +27,7 @@ class HandlerTest extends TestCase
      *
      * @return void
      */
-    public function testSingleton() : void
+    public function testSingleton(): void
     {
         $this->assertInstanceOf(
             ExceptionHandler::class,
@@ -40,7 +40,7 @@ class HandlerTest extends TestCase
      *
      * @return void
      */
-    public function testRegisterHandler() : void
+    public function testRegisterHandler(): void
     {
         ExceptionHandler::getInstance()->registerHandler(function ($exception) {
             $this->assertEquals('Test message', $exception->getMessage());
@@ -56,7 +56,7 @@ class HandlerTest extends TestCase
      *
      * @return void
      */
-    public function testSetNamespace() : void
+    public function testSetNamespace(): void
     {
         $this->expectException(BadConfigurationException::class);
         $this->expectExceptionMessage('Test message');
