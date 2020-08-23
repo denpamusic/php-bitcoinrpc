@@ -46,7 +46,7 @@ trait Collection
      *
      * @return bool
      */
-    public function exists(?string $key = null) : bool
+    public function exists(?string $key = null): bool
     {
         $key = $this->constructKey($key);
 
@@ -62,7 +62,7 @@ trait Collection
      *
      * @return bool
      */
-    public function has(?string $key = null) : bool
+    public function has(?string $key = null): bool
     {
         $key = $this->constructKey($key);
 
@@ -115,7 +115,7 @@ trait Collection
      *
      * @return bool
      */
-    public function contains($needle, ?string $key = null) : bool
+    public function contains($needle, ?string $key = null): bool
     {
         $value = $this->get($key);
 
@@ -135,7 +135,7 @@ trait Collection
      *
      * @return self
      */
-    public function key(?string $key = null) : self
+    public function key(?string $key = null): self
     {
         $new = clone $this;
         $new->current = $key;
@@ -150,7 +150,7 @@ trait Collection
      *
      * @return array
      */
-    public function keys(?string $key = null) : array
+    public function keys(?string $key = null): array
     {
         $value = $this->get($key);
 
@@ -170,7 +170,7 @@ trait Collection
      *
      * @return array
      */
-    public function values(?string $key = null) : array
+    public function values(?string $key = null): array
     {
         $value = $this->get($key);
 
@@ -222,7 +222,7 @@ trait Collection
      *
      * @return int
      */
-    public function count(?string $key = null) : int
+    public function count(?string $key = null): int
     {
         if (is_null($this->constructKey($key))) {
             return count($this->toArray());
@@ -246,7 +246,7 @@ trait Collection
      *
      * @return array
      */
-    public function flatten(?string $key = null) : array
+    public function flatten(?string $key = null): array
     {
         $array = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator((array) $this->get($key))
@@ -267,7 +267,7 @@ trait Collection
      *
      * @return float
      */
-    public function sum(?string $key = null) : float
+    public function sum(?string $key = null): float
     {
         return array_sum($this->flatten($key));
     }
@@ -279,7 +279,7 @@ trait Collection
      *
      * @return self
      */
-    public function __invoke(?string $key = null) : self
+    public function __invoke(?string $key = null): self
     {
         return $this->key($key);
     }
@@ -289,7 +289,7 @@ trait Collection
      *
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
         $value = $this->get();
 
@@ -307,7 +307,7 @@ trait Collection
      *
      * @return string|null
      */
-    protected function constructKey(?string $key = null) : ?string
+    protected function constructKey(?string $key = null): ?string
     {
         if (!is_null($key) && !is_null($this->current)) {
             return $this->current.'.'.$key;

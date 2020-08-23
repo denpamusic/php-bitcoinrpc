@@ -15,7 +15,7 @@ abstract class ClientException extends Exception
      *
      * @return \Exception
      */
-    public function withNamespace($namespace) : Exception
+    public function withNamespace($namespace): Exception
     {
         $classname = $this->getClassName();
 
@@ -33,7 +33,7 @@ abstract class ClientException extends Exception
      *
      * @return string
      */
-    protected function getClassName() : string
+    protected function getClassName(): string
     {
         $pos = ($pos = strrpos(static::class, '\\')) !== false ? $pos + 1 : 0;
 

@@ -12,7 +12,7 @@ class BadConfigurationExceptionTest extends TestCase
      *
      * @return void
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +24,7 @@ class BadConfigurationExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testThrow() : void
+    public function testThrow(): void
     {
         $this->expectException(BadConfigurationException::class);
         $this->expectExceptionMessage('Test message');
@@ -38,7 +38,7 @@ class BadConfigurationExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetConfig() : void
+    public function testGetConfig(): void
     {
         $exception = new BadConfigurationException($this->config);
 
@@ -50,7 +50,7 @@ class BadConfigurationExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetConstructionParameters() : void
+    public function testGetConstructionParameters(): void
     {
         $exception = new FakeBadConfigurationException($this->config);
 
@@ -67,7 +67,7 @@ class BadConfigurationExceptionTest extends TestCase
 
 class FakeBadConfigurationException extends BadConfigurationException
 {
-    public function getConstructorParameters() : array
+    public function getConstructorParameters(): array
     {
         return parent::getConstructorParameters();
     }

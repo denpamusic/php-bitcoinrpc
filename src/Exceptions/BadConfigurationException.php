@@ -33,7 +33,7 @@ class BadConfigurationException extends ClientException
      *
      * @return array
      */
-    public function getConfig() : array
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -43,7 +43,7 @@ class BadConfigurationException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters() : array
+    protected function getConstructorParameters(): array
     {
         return [
             $this->getConfig(),

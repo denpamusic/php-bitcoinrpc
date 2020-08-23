@@ -35,7 +35,7 @@ class ConnectionException extends ClientException
      *
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function getRequest() : Request
+    public function getRequest(): Request
     {
         return $this->request;
     }
@@ -45,7 +45,7 @@ class ConnectionException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters() : array
+    protected function getConstructorParameters(): array
     {
         return [
             $this->getRequest(),

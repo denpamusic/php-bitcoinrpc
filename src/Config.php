@@ -9,7 +9,8 @@ use Denpa\Bitcoin\Traits\ImmutableArray;
 
 class Config implements \ArrayAccess, \Countable
 {
-    use Collection, ImmutableArray;
+    use Collection;
+    use ImmutableArray;
 
     /**
      * Default configuration.
@@ -44,7 +45,7 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return string|null
      */
-    public function getCa() : ?string
+    public function getCa(): ?string
     {
         if (isset($this->config['ca']) && is_file($this->config['ca'])) {
             return $this->config['ca'];
@@ -58,7 +59,7 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return array
      */
-    public function getAuth() : array
+    public function getAuth(): array
     {
         return [
             $this->config['user'],
@@ -71,7 +72,7 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return string
      */
-    public function getDsn() : string
+    public function getDsn(): string
     {
         $scheme = $this->config['scheme'] ?? 'http';
 
@@ -87,7 +88,7 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return self
      */
-    public function set(array $config = []) : self
+    public function set(array $config = []): self
     {
         // use same var name as laravel-bitcoinrpc
         $config['password'] = $config['password'] ?? $config['pass'] ?? null;
@@ -107,7 +108,7 @@ class Config implements \ArrayAccess, \Countable
      *
      * @return array
      */
-    protected function toArray() : array
+    protected function toArray(): array
     {
         return $this->config;
     }

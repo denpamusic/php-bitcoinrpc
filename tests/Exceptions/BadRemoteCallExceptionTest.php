@@ -13,7 +13,7 @@ class BadRemoteCallExceptionTest extends TestCase
      *
      * @return void
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class BadRemoteCallExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testThrow() : void
+    public function testThrow(): void
     {
         $this->expectException(BadRemoteCallException::class);
         $this->expectExceptionMessage('Test message');
@@ -47,7 +47,7 @@ class BadRemoteCallExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetResponse() : void
+    public function testGetResponse(): void
     {
         $exception = new BadRemoteCallException($this->response);
 
@@ -59,7 +59,7 @@ class BadRemoteCallExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetConstructionParameters() : void
+    public function testGetConstructionParameters(): void
     {
         $exception = new FakeBadRemoteCallException($this->response);
 
@@ -74,7 +74,7 @@ class BadRemoteCallExceptionTest extends TestCase
 
 class FakeBadRemoteCallException extends BadRemoteCallException
 {
-    public function getConstructorParameters() : array
+    public function getConstructorParameters(): array
     {
         return parent::getConstructorParameters();
     }

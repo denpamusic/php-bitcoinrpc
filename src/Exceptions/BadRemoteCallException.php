@@ -35,7 +35,7 @@ class BadRemoteCallException extends ClientException
      *
      * @return \Denpa\Bitcoin\Responses\Response
      */
-    public function getResponse() : Response
+    public function getResponse(): Response
     {
         return $this->response;
     }
@@ -45,7 +45,7 @@ class BadRemoteCallException extends ClientException
      *
      * @return array
      */
-    protected function getConstructorParameters() : array
+    protected function getConstructorParameters(): array
     {
         return [
             $this->getResponse(),

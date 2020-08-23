@@ -44,7 +44,7 @@ class Handler
      *
      * @return \Throwable|null
      */
-    protected function namespaceHandler(Throwable $exception) : ?Throwable
+    protected function namespaceHandler(Throwable $exception): ?Throwable
     {
         if ($this->namespace && $exception instanceof ClientException) {
             return $exception->withNamespace($this->namespace);
@@ -60,7 +60,7 @@ class Handler
      *
      * @return \Throwable|null
      */
-    protected function requestExceptionHandler(Throwable $exception) : ?Throwable
+    protected function requestExceptionHandler(Throwable $exception): ?Throwable
     {
         if ($exception instanceof RequestException) {
             if (
@@ -87,7 +87,7 @@ class Handler
      *
      * @return self
      */
-    public function registerHandler(callable $handler) : self
+    public function registerHandler(callable $handler): self
     {
         $this->handlers[] = $handler;
 
@@ -101,7 +101,7 @@ class Handler
      *
      * @return void
      */
-    public function handle(Throwable $exception) : void
+    public function handle(Throwable $exception): void
     {
         foreach ($this->handlers as $handler) {
             $result = $handler($exception);
@@ -121,7 +121,7 @@ class Handler
      *
      * @return self
      */
-    public function setNamespace($namespace) : self
+    public function setNamespace($namespace): self
     {
         $this->namespace = $namespace;
 

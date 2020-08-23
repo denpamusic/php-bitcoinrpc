@@ -20,7 +20,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -88,7 +88,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return string
      */
-    protected function error500() : string
+    protected function error500(): string
     {
         return 'Server error: `POST /` '.
             'resulted in a `500 Internal Server Error` response';
@@ -101,7 +101,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return callable
      */
-    protected function mockCallable(array $with = []) : callable
+    protected function mockCallable(array $with = []): callable
     {
         $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
@@ -125,7 +125,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function mockGuzzle(
         array $queue = [],
         HandlerStack $handler = null
-    ) : GuzzleClient {
+    ): GuzzleClient {
         $handler = $handler ?: $this->bitcoind->getClient()->getConfig('handler');
 
         if ($handler) {
@@ -146,7 +146,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function getBlockResponse(int $code = 200) : ResponseInterface
+    protected function getBlockResponse(int $code = 200): ResponseInterface
     {
         $json = json_encode([
             'result' => self::$getBlockResponse,
@@ -164,7 +164,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function getBalanceResponse(int $code = 200) : ResponseInterface
+    protected function getBalanceResponse(int $code = 200): ResponseInterface
     {
         $json = json_encode([
             'result' => self::$balanceResponse,
@@ -182,7 +182,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function rawTransactionError(int $code = 500) : ResponseInterface
+    protected function rawTransactionError(int $code = 500): ResponseInterface
     {
         $json = json_encode([
             'result' => null,
@@ -198,7 +198,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return callable
      */
-    protected function requestExceptionWithResponse() : callable
+    protected function requestExceptionWithResponse(): callable
     {
         $exception = function ($request) {
             return new RequestException(
@@ -216,7 +216,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return callable
      */
-    protected function requestExceptionWithoutResponse() : callable
+    protected function requestExceptionWithoutResponse(): callable
     {
         $exception = function ($request) {
             return new RequestException('test', $request);
@@ -238,7 +238,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         string $method,
         int $id,
         ...$params
-    ) : array {
+    ): array {
         return [
             'method' => $method,
             'params' => (array) $params,
@@ -253,7 +253,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
      *
      * @return \Psr\Http\Message\UriInterface|null
      */
-    protected function getHistoryRequestUri(int $index = 0) : ?UriInterface
+    protected function getHistoryRequestUri(int $index = 0): ?UriInterface
     {
         if (isset($this->history[$index])) {
             return $this->history[$index]['request']->getUri();

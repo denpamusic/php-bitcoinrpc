@@ -16,7 +16,7 @@ trait ImmutableArray
      *
      * @return void
      */
-    public function offsetSet($offset, $value) : void
+    public function offsetSet($offset, $value): void
     {
         throw new BadMethodCallException('Cannot modify immutable object');
     }
@@ -28,7 +28,7 @@ trait ImmutableArray
      *
      * @return bool
      */
-    public function offsetExists($offset) : bool
+    public function offsetExists($offset): bool
     {
         return isset($this->toArray()[$offset]);
     }
@@ -40,7 +40,7 @@ trait ImmutableArray
      *
      * @return void
      */
-    public function offsetUnset($offset) : void
+    public function offsetUnset($offset): void
     {
         throw new BadMethodCallException('Cannot modify immutable object');
     }
