@@ -36,7 +36,7 @@ trait SerializableContainer
     public function __serialize(): array
     {
         return [
-            'container' => $this->toContainer()
+            'container' => $this->toContainer(),
         ];
     }
 
