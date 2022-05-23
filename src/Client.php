@@ -179,8 +179,7 @@ class Client
         $params = [],
         ?callable $fulfilled = null,
         ?callable $rejected = null
-    ): Promise\Promise
-    {
+    ): Promise\Promise {
         $promise = $this->client
             ->postAsync($this->path, $this->makeJson($method, $params));
 
