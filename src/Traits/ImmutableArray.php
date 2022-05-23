@@ -52,7 +52,7 @@ trait ImmutableArray
      *
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->toArray()[$offset] ?? null;
     }
