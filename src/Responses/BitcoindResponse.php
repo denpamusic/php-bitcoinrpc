@@ -11,7 +11,6 @@ use Denpa\Bitcoin\Traits\SerializableContainer;
 class BitcoindResponse extends Response implements
     \ArrayAccess,
     \Countable,
-    \Serializable,
     \JsonSerializable
 {
     use Collection;

@@ -470,10 +470,10 @@ class BitcoindResponseTest extends TestCase
      */
     public function testProtocolVersion(): void
     {
-        $response = $this->response->withProtocolVersion(1.0);
+        $response = $this->response->withProtocolVersion('1.1');
         $protocolVersion = $response->getProtocolVersion();
 
-        $this->assertEquals('1.0', $protocolVersion);
+        $this->assertEquals('1.1', $protocolVersion);
     }
 
     /**
@@ -557,14 +557,13 @@ class BitcoindResponseTest extends TestCase
      */
     public function testSerialize(): void
     {
-        $serializedContainer = serialize($this->response->toContainer());
+        $serializedContainer = serialize($this->response->__serialize());
 
         $serialized = sprintf(
-            'C:%u:"%s":%u:{%s}',
+            'O:%u:"%s":1:{%s}',
             strlen(BitcoindResponse::class),
             BitcoindResponse::class,
-            strlen($serializedContainer),
-            $serializedContainer
+            substr($serializedContainer, 5, (strlen($serializedContainer) - 6))
         );
 
         $this->assertEquals(

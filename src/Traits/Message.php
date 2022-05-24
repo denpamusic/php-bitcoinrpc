@@ -11,9 +11,9 @@ trait Message
     /**
      * Retrieves the HTTP protocol version as a string.
      *
-     * @return float
+     * @return string
      */
-    public function getProtocolVersion(): float
+    public function getProtocolVersion(): string
     {
         return $this->response->getProtocolVersion();
     }

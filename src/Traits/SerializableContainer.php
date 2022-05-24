@@ -7,28 +7,6 @@ namespace Denpa\Bitcoin\Traits;
 trait SerializableContainer
 {
     /**
-     * Returns the string representation of the object.
-     *
-     * @return string
-     */
-    public function serialize(): string
-    {
-        return serialize($this->toContainer());
-    }
-
-    /**
-     * Constructs object from serialized string.
-     *
-     * @param string $serialized
-     *
-     * @return void
-     */
-    public function unserialize($serialized): void
-    {
-        $this->container = unserialize($serialized);
-    }
-
-    /**
      * Returns array containing all the necessary state of the object.
      *
      * @return array

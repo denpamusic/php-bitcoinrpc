@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1']
+        php-version: ['8.0', '8.1']
 
     steps:
     - uses: actions/checkout@v2
@@ -18,15 +18,21 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        tools: phpunit
+        tools: composer
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Install dependencies
+      run: |
+        composer self-update
+        composer install --prefer-source --no-interaction
+
     - name: Run tests
-      run: phpunit
+      run: vendor/bin/phpunit
 
     - uses: paambaati/codeclimate-action@v3.0.0
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
-        coverageLocation: ${{github.workspace}}/clover.xml:clover
+        coverageLocations: |
+          ${{github.workspace}}/clover.xml:clover
